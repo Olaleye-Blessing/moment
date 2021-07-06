@@ -18,16 +18,13 @@ app.use(express.json({ limit: "30mb" }));
 
 app.use(cookieParser());
 
-app.use(
-    "/static",
-    express.static(path.join(__dirname, "../client/build//static"))
-);
-
-// app.get("*", function (req, res) {
-//     res.sendFile("index.html", {
-//         root: path.join(__dirname, "../../client/build/"),
-//     });
-// });
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static("client/build"));
+    // app.use(
+    //     "/static",
+    //     express.static(path.join(__dirname, "../client/build//static"))
+    // );
+}
 
 app.use("/moments", momentRoutes);
 app.use("/auth", authenticationRoutes);
