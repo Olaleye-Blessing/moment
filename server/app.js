@@ -31,7 +31,9 @@ app.use("/auth", authenticationRoutes);
 app.use("/comments", commentRoutes);
 
 app.use((req, res, next) => {
-    res.sendFile(path.join(__dirname, "..", "build", "index.html"));
+    res.sendFile(
+        path.join(__dirname, "..", "moment", "client", "build", "index.html")
+    );
 });
 
 app.use(globalErrorHandler);
