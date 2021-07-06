@@ -9,6 +9,7 @@ import momentRoutes from "./routes/moment.js";
 import authenticationRoutes from "./routes/users.js";
 import commentRoutes from "./routes/comment.js";
 import { globalErrorHandler } from "./controllers/error.js";
+import { rootDir } from "../parentRoot.js";
 
 const app = express();
 
@@ -29,8 +30,13 @@ app.use(express.json({ limit: "30mb" }));
 
 app.use(cookieParser());
 
-if (process.env.NODE_ENV === "production")
-    app.use(express.static(path.resolve("client", "build")));
+if (process.env.NODE_ENV.trim() === "production") {
+    app.use(express.static(path.resolve(rootDir, "client", "build")));
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(rootDir, "client", "build", "index.html"));
+    });
+}
 
 app.use("/moments", momentRoutes);
 app.use("/auth", authenticationRoutes);
