@@ -1,7 +1,7 @@
 /* eslint-disable no-throw-literal */
-import getBaseUrl from "./../utilities/getBaseUrl";
+// import getBaseUrl from "./../utilities/getBaseUrl";
 
-let baseUrl = getBaseUrl();
+// let baseUrl = getBaseUrl();
 
 let headers = new Headers();
 headers.set("Content-type", "application/json;charset=utf-8");
@@ -20,7 +20,8 @@ export const fetchData = async (
         credentials: "include",
     };
     try {
-        let req = await fetch(`${baseUrl}${url}`, options);
+        // let req = await fetch(`${baseUrl}${url}`, options);
+        let req = await fetch(`${url}`, options);
         let res = await req.json();
         if (!(req.status >= 200 && req.status <= 299)) throw res;
         return res;
