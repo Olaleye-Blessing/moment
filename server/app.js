@@ -1,7 +1,7 @@
 import path from "path";
 
 import express from "express";
-import cors from "cors";
+// import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 
@@ -17,15 +17,15 @@ app.use(express.json({ limit: "30mb" }));
 
 // app.enable("trust proxy");
 
-app.use(
-    cors({
-        origin:
-            process.env.NODE_ENV.trim() === "development"
-                ? "http://localhost:3000"
-                : "https://momentss.netlify.app",
-        credentials: true,
-    })
-);
+// app.use(
+//     cors({
+//         origin:
+//             process.env.NODE_ENV.trim() === "development"
+//                 ? "http://localhost:3000"
+//                 : "https://momentss.netlify.app",
+//         credentials: true,
+//     })
+// );
 
 app.use(cookieParser());
 
