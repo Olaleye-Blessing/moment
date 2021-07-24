@@ -70,10 +70,12 @@ const Navbar = () => {
                             <li key={name}>
                                 <NavLink
                                     to={`/${name}`}
-                                    className={`btn nav__link`}
+                                    className={`btn nav__link link`}
                                 >
                                     {icon}
-                                    <span className="nav__text">{name}</span>
+                                    <span className="nav__text">{`${name[0].toUpperCase()}${name.slice(
+                                        1
+                                    )}`}</span>
                                 </NavLink>
                             </li>
                         );
@@ -87,7 +89,12 @@ const Navbar = () => {
                                     to={`/profile/${user._id}`}
                                     className="btn btn__avatar"
                                 >
-                                    {user.profilePic ? (
+                                    {/* <Avatar sub_class="nav__ava" /> */}
+                                    <Avatar
+                                        sub_class="nav__ava"
+                                        src={user.profilePic}
+                                    />
+                                    {/* {user.profilePic ? (
                                         <Avatar
                                             src={user?.profilePic || mjImg}
                                         />
@@ -95,15 +102,17 @@ const Navbar = () => {
                                         <figure className="avatar__icon">
                                             <BsPerson />
                                         </figure>
-                                    )}
+                                    )} */}
                                 </NavLink>
                             </li>
                             <li>
                                 <button
-                                    className="btn btn__link btn-logout logout"
+                                    // className="btn btn__link btn-logout logout"
+                                    className="link link-bg"
+                                    // className="link link__btn"
                                     onClick={logoutUser}
                                 >
-                                    logout
+                                    Logout
                                 </button>
                             </li>
                         </>
@@ -112,17 +121,20 @@ const Navbar = () => {
                             <li>
                                 <NavLink
                                     to="/auth/login"
-                                    className="btn btn__link nav__link login"
+                                    // className="btn btn__link nav__link login"
+                                    className="link link-white link__extra-pad"
                                 >
-                                    login
+                                    Login
                                 </NavLink>
                             </li>
                             <li>
                                 <NavLink
                                     to="/auth/signup"
-                                    className="btn btn__link signup"
+                                    // className="btn btn__link signup"
+                                    className="link link-bg link__extra-pad"
+                                    // className="link link__btn"
                                 >
-                                    signup
+                                    Signup
                                 </NavLink>
                             </li>
                         </>

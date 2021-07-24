@@ -15,6 +15,8 @@ import FormButton from "./../components/Form/FormButton";
 import { createComment } from "../reducer/fetchActions/comment";
 import { actions } from "../reducer/actions";
 import { momentDetails } from "../reducer/fetchActions/moment";
+import { BsPerson } from "react-icons/bs";
+import UserName from "../components/User/UserName";
 
 const Moment = () => {
     let history = useHistory();
@@ -22,8 +24,6 @@ const Moment = () => {
     let { state, dispatch } = useMomentContext();
     const [comment, setComment] = useState("");
     let { moments, user } = state;
-    console.log(user);
-    console.log(Boolean(user));
 
     const [moment, setMoment] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -74,9 +74,11 @@ const Moment = () => {
             moment: moment._id,
         };
 
+        console.log(data);
         try {
+            // let res = await createComment(JSON.stringify(data));
             let res = await createComment(data);
-            // console.log(res);
+            console.log(res);
             dispatch({
                 type: actions.CREATE_COMMENT,
                 payload: res.data.comment,
@@ -86,6 +88,7 @@ const Moment = () => {
         }
     };
 
+    // console.log({ user });
     return (
         // <>
         <div className="bigFlex" data-page="moment">
@@ -112,7 +115,8 @@ const Moment = () => {
                                 >
                                     <button
                                         type="button"
-                                        className="btn moment__tag-link"
+                                        // className="btn moment__tag-link"
+                                        className="link moment__tag-link"
                                         style={{ fontSize: "16px" }}
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -131,10 +135,12 @@ const Moment = () => {
                                 src={profilePic}
                                 sub_class="moment__creator-avatar"
                             />
+
                             <div>
-                                <button
+                                {/* <button
                                     type="button"
-                                    className="btn moment__creator-name"
+                                    // className="btn moment__creator-name"
+                                    className="btn moment__creator-name link"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         console.log("clicked....");
@@ -142,11 +148,20 @@ const Moment = () => {
                                     }}
                                 >
                                     {name}
-                                </button>
-                                <p className="moment__createdAt">
-                                    {/* time */}
-                                    {/* {humanDate(createdAt)} */}
-                                </p>
+                                    <span className="moment__creator-username">
+                                        @kikky
+                                    </span>
+                                </button> */}
+                                <UserName
+                                    name={name}
+                                    username={`kiki`}
+                                    id={creator._id}
+                                />
+                                {/* <p className="moment__createdAt"> */}
+                                {/* sunday */}
+                                {/* time */}
+                                {/* {humanDate(createdAt)} */}
+                                {/* </p> */}
                             </div>
                         </div>
                     </section>
@@ -168,10 +183,21 @@ const Moment = () => {
                                 onSubmit={handleSubmit}
                             >
                                 <div>
-                                    <Avatar
+                                    {/* <Avatar
                                         src={user.profilePic}
                                         sub_class="moment__creator-avatar"
-                                    />
+                                    /> */}
+                                    {/* {Boolean(user.profilePic) ? (
+                                        <Avatar
+                                            src={profilePic}
+                                            sub_class="moment__creator-avatar"
+                                        />
+                                    ) : (
+                                        <figure className="avatar__icon">
+                                            <BsPerson />
+                                        </figure>
+                                    )} */}
+                                    <Avatar sub_class="article__form-user" />
                                     <FormTextArea
                                         // name="comment"
                                         // rows={22}
@@ -210,7 +236,14 @@ const Moment = () => {
                                     <li key={_id} className="article__comment">
                                         <Avatar src={user.profilePic} />
                                         <div>
-                                            <h6>{user.name}</h6>
+                                            {/* <h6>{user.name}</h6> */}
+                                            <h6>
+                                                <UserName
+                                                    name={user.name}
+                                                    username={`kiki`}
+                                                    id={_id}
+                                                />
+                                            </h6>
                                             <p>{comment}</p>
                                         </div>
                                     </li>
@@ -220,7 +253,7 @@ const Moment = () => {
                     )}
                 </article>
             </main>
-            <aside>creator profile</aside>
+            <aside>creator's profile</aside>
         </div>
     );
 };

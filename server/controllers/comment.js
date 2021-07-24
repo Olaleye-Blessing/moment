@@ -11,6 +11,7 @@ export const getComments = catchAsync(async (req, res, next) => {
 });
 
 export const createComment = catchAsync(async (req, res, next) => {
+    console.log("comment got here");
     let { comment, moment } = req.body;
     let { user: bodyUser } = req;
     let { _id: user } = bodyUser;

@@ -10,11 +10,13 @@ import { imagesToBase64 } from "../utilities/imageToBase64";
 const useSignUpForm = (validate) => {
     let history = useHistory();
     let { dispatch } = useMomentContext();
+    const [loading, setLoading] = useState(false);
 
     const [values, setValues] = useState({
         firstName: "",
         lastName: "",
         email: "",
+        username: "",
         password: "",
         confirmPassword: "",
         profilePic: "",
@@ -25,6 +27,7 @@ const useSignUpForm = (validate) => {
         firstName: { msg: "", status: true },
         lastName: { msg: "", status: true },
         email: { msg: "", status: true },
+        username: { msg: "", status: true },
         password: { msg: "", status: true },
         confirmPassword: { msg: "", status: true },
         // profilePic: { msg: "", status: true },
@@ -63,6 +66,7 @@ const useSignUpForm = (validate) => {
         firstName: false,
         lastName: false,
         email: false,
+        username: false,
         password: false,
         confirmPassword: false,
         profilePic: false,
@@ -76,6 +80,7 @@ const useSignUpForm = (validate) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setDisabledSubmitBtn(true);
+        setLoading(true);
 
         try {
             let res = await signup(values);
@@ -87,6 +92,7 @@ const useSignUpForm = (validate) => {
         } catch (error) {
             dispatch({ type: actions.ERROR, payload: error });
             setDisabledSubmitBtn(false);
+            setLoading(false);
         }
     };
 
@@ -99,6 +105,7 @@ const useSignUpForm = (validate) => {
         touched,
         handleKeyDown,
         disabledSubmitBtn,
+        loading,
     };
 };
 

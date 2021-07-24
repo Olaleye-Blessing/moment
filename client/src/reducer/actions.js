@@ -7,4 +7,5 @@ export const actions = {
     "LOGOUT": "LOGOUT",
     "ERROR": "ERROR",
     "CREATE_COMMENT": "CREATE_COMMENT",
+    "UPDATE_USER": "UPDATE_USER",
 };

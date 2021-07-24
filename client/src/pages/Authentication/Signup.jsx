@@ -20,6 +20,7 @@ import useSignUpForm from "../../hook/useSignUpForm";
 import validateInfo from "../../utilities/Form/validateSignUpInfo";
 import validatePasswordErrors from "../../utilities/Form/validatePassword";
 import ToggleButton from "../../components/ToggleButton";
+import ProcessIndicator from "../../components/ProcessIndicator";
 
 const Signup = () => {
     let { state } = useMomentContext();
@@ -32,6 +33,7 @@ const Signup = () => {
         touched,
         handleKeyDown,
         disabledSubmitBtn,
+        loading,
     } = useSignUpForm(validateInfo);
 
     const fieldError = (field) => {
@@ -166,6 +168,27 @@ const Signup = () => {
                     )}
                 </FormText>
                 <FormText
+                    type="text"
+                    name="username"
+                    value={values.username}
+                    handleChange={handleChange}
+                    handleKeyDown={(e) => handleKeyDown(e, "username")}
+                    errorClass={fieldError("username")}
+                    required={true}
+                >
+                    {errors.username.status && (
+                        <small className="form__input-error">
+                            {errors.username.msg}
+                        </small>
+                    )}
+                    {fieldError("username") === "invalid" && (
+                        <AiFillExclamationCircle className="form__input-icon form__input-icon-error" />
+                    )}
+                    {fieldError("username") === "valid" && (
+                        <AiFillCheckCircle className="form__input-icon form__input-icon-valid" />
+                    )}
+                </FormText>
+                <FormText
                     type={showPswd ? "text" : "password"}
                     name="password"
                     value={values.password}
@@ -245,7 +268,9 @@ const Signup = () => {
                         disabledSubmitBtn ? "disabled" : "not"
                     }`}
                     disabled={disabledSubmitBtn}
-                />
+                >
+                    {loading && <ProcessIndicator />}
+                </FormButton>
             </form>
             <p className="form__other">
                 Already have an account? <Link to="/auth/login">Login</Link>

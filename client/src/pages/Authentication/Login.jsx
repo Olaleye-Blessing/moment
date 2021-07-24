@@ -4,6 +4,7 @@ import Alert from "../../components/Alert";
 import FormButton from "../../components/Form/FormButton";
 import FormText from "../../components/Form/FormText";
 import HomeLogo from "../../components/HomeLogo";
+import ProcessIndicator from "../../components/ProcessIndicator";
 import ToggleButton from "../../components/ToggleButton";
 import { useMomentContext } from "../../context/MomentsContext";
 import { actions } from "../../reducer/actions";
@@ -15,6 +16,7 @@ const Login = () => {
     let { errorAlert } = state;
     let history = useHistory();
 
+    const [loading, setLoading] = useState(false);
     const [loginData, setLoginData] = useState({
         email: "",
         password: "",
@@ -31,6 +33,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setDisableSubmitBtn(true);
+        setLoading(true);
         try {
             let res = await login(loginData);
             if (res.status === "success") {
@@ -47,6 +50,7 @@ const Login = () => {
             }
         } catch (error) {
             setDisableSubmitBtn(false);
+            setLoading(false);
             dispatch({ type: actions.ERROR, payload: error });
         }
     };
@@ -84,7 +88,9 @@ const Login = () => {
                         disableSubmitBtn ? "disabled" : ""
                     }`}
                     disabled={disableSubmitBtn}
-                />
+                >
+                    {loading && <ProcessIndicator />}
+                </FormButton>
             </form>
             <p className="form__other">
                 Don't have an account? <Link to="/auth/signup">Sign up</Link>

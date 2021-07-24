@@ -31,6 +31,7 @@ export const reducer = (state, action) => {
             return { ...state, moment: currentMoments };
 
         case actions.AUTHENTICATION:
+        case actions.UPDATE_USER:
             localStorage.setItem("profile", JSON.stringify(action.payload));
             return { ...state, user: action.payload };
 

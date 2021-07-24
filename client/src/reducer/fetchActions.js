@@ -1,7 +1,4 @@
 /* eslint-disable no-throw-literal */
-// import getBaseUrl from "./../utilities/getBaseUrl";
-
-// let baseUrl = getBaseUrl();
 
 let headers = new Headers();
 headers.set("Content-type", "application/json;charset=utf-8");
@@ -26,8 +23,8 @@ export const fetchData = async (
         if (!(req.status >= 200 && req.status <= 299)) throw res;
         return res;
     } catch (error) {
-        console.log(error);
-        console.info({ name: error.name });
+        // console.log(error);
+        // console.info({ name: error.name });
         if (error.name !== "AbortError") {
             let message = {
                 show: true,
@@ -40,3 +37,14 @@ export const fetchData = async (
         }
     }
 };
+
+export const getData = async (url, signal) =>
+    await fetchData(url, "GET", signal);
+
+export const createData = async (url, data) =>
+    await fetchData(url, "POST", undefined, data);
+
+export const updateData = async (url, data) =>
+    await fetchData(url, "PATCH", undefined, data);
+
+export const deleteData = async (url) => await fetchData(url, "DELETE");

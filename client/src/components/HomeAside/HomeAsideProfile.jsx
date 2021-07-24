@@ -74,17 +74,19 @@ const HomeAsideProfile = () => {
                         <li>
                             <NavLink
                                 to="/auth/login"
-                                className="btn btn__link nav__link login"
+                                // className="btn btn__link nav__link login"
+                                className="link link-white link__extra-pad"
                             >
-                                login
+                                Login
                             </NavLink>
                         </li>
                         <li>
                             <NavLink
                                 to="/auth/signup"
-                                className="btn btn__link signup"
+                                // className="btn btn__link signup"
+                                className="link link-bg link__extra-pad"
                             >
-                                signup
+                                Signup
                             </NavLink>
                         </li>
                     </ul>
@@ -98,7 +100,7 @@ const HomeAsideProfile = () => {
                             <Link
                                 // to={`/${link || text}`}
                                 to={text === "Home" ? "/" : `/${link || text}`}
-                                className="btn nav__link"
+                                className="btn nav__link link"
                             >
                                 {icon}
                                 <span>{text}</span>
@@ -115,7 +117,7 @@ const HomeAsideProfile = () => {
                             <a
                                 href={link}
                                 title={text}
-                                className={`btn ${text}`}
+                                className={`btn ${text} link link__icon-action`}
                                 target="_blank"
                                 rel="noreferrer noopener"
                             >

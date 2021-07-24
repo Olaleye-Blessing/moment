@@ -1,13 +1,21 @@
-const FormButton = ({ text, type, classname, disabled, handleClick }) => {
+const FormButton = ({
+    text,
+    type,
+    classname,
+    disabled,
+    handleClick,
+    children,
+}) => {
     return (
         <div className="form__control">
             <button
-                className={`form__button btn ${classname}`}
+                // className={`form__button btn ${classname}`}
+                className={`form__button link ${classname}`}
                 type={type}
                 onClick={handleClick}
                 disabled={disabled}
             >
-                {/* form__button-submit */}
+                {children}
                 {text}
             </button>
         </div>

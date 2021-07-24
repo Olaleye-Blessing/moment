@@ -11,12 +11,15 @@ import { useMomentContext } from "../../context/MomentsContext";
 import { actions } from "../../reducer/actions";
 import Alert from "../Alert";
 import { createPost, updatePost } from "../../reducer/fetchActions/moment";
+import ProcessIndicator from "../ProcessIndicator";
 
 const AddMoment = () => {
     let history = useHistory();
 
     let { state, dispatch, currentMomentId, setCurrentMomentId } =
         useMomentContext();
+
+    const [loading, setLoading] = useState(false);
     const [momentData, setMomentData] = useState({
         title: "",
         message: "",
@@ -55,7 +58,7 @@ const AddMoment = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true);
         if (currentMomentId) {
             let { moment } = await updatePost(currentMomentId, momentData);
             dispatch({ type: actions.UPDATE_MOMENT, payload: moment });
@@ -127,7 +130,9 @@ const AddMoment = () => {
                     text="publish"
                     type="submit"
                     classname="form__button-submit"
-                />
+                >
+                    {loading && <ProcessIndicator />}
+                </FormButton>
                 <FormButton
                     text="reset"
                     type="reset"

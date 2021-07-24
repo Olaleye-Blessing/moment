@@ -13,6 +13,7 @@ import Avatar from "../../Avatar";
 // import { deletePost } from "../../../reducer/fetchActions";
 import { deletePost } from "../../../reducer/fetchActions/moment";
 import { actions } from "../../../reducer/actions";
+import UserName from "../../User/UserName";
 
 const Moment = ({ moment }) => {
     // console.log(moment);
@@ -36,7 +37,7 @@ const Moment = ({ moment }) => {
     // console.log(moment);
     let { profilePic, name } = creator;
 
-    profilePic = profilePic || defaultImage;
+    // profilePic = profilePic || defaultImage;
 
     tags = [...new Set([...tags])]; //? eliminate duplicate tags
 
@@ -74,6 +75,7 @@ const Moment = ({ moment }) => {
         }
         // history.replace("/");
     };
+
     return (
         <article className="moment box" tabIndex={0} onClick={showMomentDetail}>
             {/* {image ? (
@@ -88,9 +90,14 @@ const Moment = ({ moment }) => {
                         sub_class="moment__creator-avatar"
                     />
                     <div>
-                        <button
+                        <UserName
+                            name={name}
+                            username={"kikky"}
+                            id={creator._id}
+                        />
+                        {/* <button
                             type="button"
-                            className="btn moment__creator-name"
+                            className="btn moment__creator-name link"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 console.log("clicked....");
@@ -98,7 +105,7 @@ const Moment = ({ moment }) => {
                             }}
                         >
                             {name}
-                        </button>
+                        </button> */}
                         <p className="moment__createdAt">
                             {humanDate(createdAt)}
                         </p>
@@ -107,35 +114,42 @@ const Moment = ({ moment }) => {
                 <div className="moment__detail-other">
                     <h3 className="moment__title">{title}</h3>
                     <p className="moment__message">{message}</p>
-                    <ul className="moment__tags">
-                        {tags.map((tag) => (
-                            <li key={tag} className="moment__tag">
-                                <button
-                                    type="button"
-                                    className="btn moment__tag-link"
-                                    style={{ fontSize: "16px" }}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        history.push(`/moments/tags/${tag}`);
-                                    }}
-                                >
-                                    {tag}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+                    {tags[0] !== "" && (
+                        <ul className="moment__tags">
+                            {tags.map((tag) => (
+                                <li key={tag} className="moment__tag">
+                                    <button
+                                        type="button"
+                                        // className="btn moment__tag-link link"
+                                        className="link moment__tag-link"
+                                        style={{ fontSize: "16px" }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            history.push(
+                                                `/moments/tags/${tag}`
+                                            );
+                                        }}
+                                    >
+                                        {tag}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                     <div>
                         <ul className="moment__reactions">
                             <li>
-                                <VscReactions />
-                                <span>
-                                    {reactions} reaction
-                                    {reactions > 0 ? "s" : null}
-                                </span>
+                                <div className="link">
+                                    <VscReactions />
+                                    <span>
+                                        {reactions} reaction
+                                        {reactions > 0 ? "s" : null}
+                                    </span>
+                                </div>
                             </li>
                             <li>
                                 <button
-                                    className="btn"
+                                    className="btn link"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         history.push(
@@ -164,7 +178,8 @@ const Moment = ({ moment }) => {
                             {user?._id === creator._id ? (
                                 <li>
                                     <button
-                                        className="btn"
+                                        // className="btn"
+                                        className="link link__icon-action"
                                         onClick={deleteMoment}
                                     >
                                         <MdDelete className="moment__delete" />
@@ -174,7 +189,8 @@ const Moment = ({ moment }) => {
                             {user?._id === creator._id && (
                                 <li>
                                     <button
-                                        className="btn"
+                                        // className="btn"
+                                        className="link link__icon-action"
                                         onClick={(e) => {
                                             e.stopPropagation();
 
@@ -194,6 +210,7 @@ const Moment = ({ moment }) => {
                         </ul>
                     </div>
                 </div>
+                <div className="moment__timePast">11 days ago</div>
             </section>
         </article>
     );

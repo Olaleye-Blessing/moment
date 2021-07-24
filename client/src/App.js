@@ -9,16 +9,15 @@ import ForgetPassword from "./pages/Authentication/ForgetPassword";
 import Moment from "./pages/Moment";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import ResetPassword from "./pages/Authentication/ResetPassword";
+import Settings from "./pages/Settings";
 
 function App() {
     let { pathname } = useLocation();
 
     return (
         <>
-            {pathname !== "/auth/signup" &&
-                pathname !== "/auth/login" &&
-                pathname !== "/auth/forgotPassword" &&
-                pathname !== "/auth/resetPassword" && <Navbar />}
+            {!pathname.startsWith("/auth") && <Navbar />}
             <Switch>
                 <Route path="/" exact>
                     <Homepage />
@@ -38,8 +37,14 @@ function App() {
                 <Route path="/auth/forgotPassword">
                     <ForgetPassword />
                 </Route>
+                <Route path="/auth/resetPassword/:token">
+                    <ResetPassword />
+                </Route>
                 <Route path="/profile/:id">
                     <Profile />
+                </Route>
+                <Route path="/settings">
+                    <Settings />
                 </Route>
                 <Route path="*">
                     <NotFound />

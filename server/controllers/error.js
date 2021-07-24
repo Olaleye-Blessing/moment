@@ -1,4 +1,4 @@
-// import { AppError } from "../utility/AppError.js";
+import { AppError } from "../utility/AppError.js";
 
 const handleDBValidationError = (err) => {
     let { errors: allErrors } = err;
@@ -18,7 +18,14 @@ const handleDuplicateValueError = (err) => {
     return message;
 };
 
+const handleJwtError = () =>
+    new AppError("Invalid token. Please login again", 401);
+
+const handleJWTExpiredError = () =>
+    new AppError("Token has expired! Please login again", 401);
+
 export const globalErrorHandler = (err, req, res, next) => {
+    // console.log(err.name);
     // console.log(err);
     err.statusCode = err.statusCode || 500;
     err.status = err.status || "error";
@@ -33,6 +40,15 @@ export const globalErrorHandler = (err, req, res, next) => {
         err.statusCode = 400;
     }
 
+    if (err.name === "JsonWebTokenError") {
+        // err.message = handleJwtError();
+        err = handleJwtError();
+    }
+
+    if (err.name === "TokenExpiredError") {
+        err = handleJWTExpiredError();
+    }
+    // console.log(err);
     // console.log({ ...err });
 
     return res.status(err.statusCode).json({

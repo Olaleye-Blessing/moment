@@ -19,7 +19,7 @@ const Moments = ({ moments }) => {
 
     return (
         <>
-            <header className="moments__header">
+            {/* <header className="moments__header">
                 <h3>Moments</h3>
                 <ul className="moments__tags">
                     {periods.map((period) => {
@@ -29,18 +29,11 @@ const Moments = ({ moments }) => {
                                 <Link to={`/text`} className={`btn nav__link`}>
                                     {text}
                                 </Link>
-                                {/* <NavLink
-                                    to={`/`}
-                                    className={`btn nav__link`}
-                                    activeClassName={active && "white-link"}
-                                >
-                                    {text}
-                                </NavLink> */}
                             </li>
                         );
                     })}
                 </ul>
-            </header>
+            </header> */}
             <section className="moments">
                 {moments.map((moment) => (
                     <Moment key={moment._id} moment={moment} />

@@ -34,7 +34,7 @@ export const getMoment = catchAsync(async (req, res, next) => {
 
     let moment = await Moment.findById(id);
     // let moment = await Moment.findById(id).populate("comments");
-    console.log(moment);
+    // console.log(moment);
 
     return res.status(200).json({ status: "success", data: moment });
 });

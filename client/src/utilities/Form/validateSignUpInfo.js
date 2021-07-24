@@ -39,6 +39,16 @@ const validateInfo = (name, value, values) => {
             }
             return error;
 
+        case "username":
+            if (!value.trim()) {
+                error.username.msg = "provide unique username";
+                error.username.status = true;
+            } else {
+                error.username.msg = "";
+                error.username.status = false;
+            }
+            return error;
+
         case "password":
             if (!value) {
                 error.password.msg = "password is required";

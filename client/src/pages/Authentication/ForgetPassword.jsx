@@ -5,18 +5,42 @@ import FormText from "../../components/Form/FormText";
 import { useState } from "react";
 import FormButton from "../../components/Form/FormButton";
 import { Link } from "react-router-dom";
+import { forgetPassword } from "../../reducer/fetchActions/auth";
+import { actions } from "../../reducer/actions";
 
 const ForgetPassword = () => {
-    let { state } = useMomentContext();
+    let { state, dispatch } = useMomentContext();
     let { errorAlert } = state;
 
     const [email, setEmail] = useState("");
     const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("submitted.....");
         setDisableSubmitBtn(true);
+
+        if (!email) {
+            setDisableSubmitBtn(false);
+            return;
+        }
+
+        try {
+            let res = await forgetPassword({ email });
+
+            let message = {
+                show: true,
+                type: "valid",
+                msg: res.data.message,
+            };
+
+            dispatch({ type: actions.ERROR, payload: message });
+        } catch (error) {
+            dispatch({ type: actions.ERROR, payload: error });
+        }
+        setDisableSubmitBtn(false);
     };
+
     return (
         <section data-form="auth">
             {errorAlert.show && <Alert {...errorAlert} />}
@@ -33,7 +57,7 @@ const ForgetPassword = () => {
                 />
 
                 <FormButton
-                    text="login"
+                    text="send"
                     type="submit"
                     classname={`form__button-submit ${
                         disableSubmitBtn ? "disabled" : ""

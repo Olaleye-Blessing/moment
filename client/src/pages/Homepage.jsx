@@ -58,7 +58,7 @@ const Homepage = () => {
     return (
         <div data-page="homepage" className="width width-one">
             {errorAlert.show && <Alert {...errorAlert} />}
-            <aside>
+            <aside className="aside__home">
                 <HomeAsideProfile />
             </aside>
             <main data-content="moments">

@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 import mongoose from "mongoose";
 import bycrypt from "bcryptjs";
 import { validateEmail } from "../utility/validateEmail.js";
@@ -20,7 +22,11 @@ const userSchema = new Schema({
         type: String,
         default: "",
     },
-    nickname: String,
+    username: {
+        type: String,
+        // unique: true,
+        // required: true,
+    },
     coverPic: String,
     password: {
         type: String,
@@ -39,7 +45,47 @@ const userSchema = new Schema({
             message: "passwords do not match",
         },
     },
+    activationToken: String,
+    activationExpires: Date,
     profilePic: String,
+    coverPic: String,
+    work: {
+        type: String,
+        default: "",
+    },
+    education: {
+        type: String,
+        default: "",
+    },
+    lives: {
+        type: String,
+        default: "",
+    },
+    hometown: {
+        type: String,
+        default: "",
+    },
+    twitter: String,
+    github: String,
+    instagram: String,
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    verified: {
+        type: Boolean,
+        default: false,
+    },
+    status: {
+        type: String,
+        // values:
+        /*
+        pending: newly created account(active)
+        active: verified email(active)
+        deactivated
+        */
+        default: "pending",
+        enum: ["pending", "active", "deactivated"],
+    },
 });
 
 //+ only run this middleware when password is saved/modified
@@ -56,8 +102,76 @@ userSchema.pre("save", async function (next) {
     next();
 });
 
+userSchema.pre("save", function (next) {
+    if (!this.isModified("password") || this.isNew) return next();
+
+    this.passwordChangedAt = Date.now() - 1000;
+    next();
+});
+
+userSchema.methods.generateAccountActivationToken = function () {
+    //? send this token to the user
+    let activateToken = crypto.randomBytes(32).toString("hex");
+
+    //? hash it cause it behaves like a real password and you're saving it in the database
+
+    this.activationToken = crypto
+        .createHash("sha256")
+        .update(activateToken)
+        .digest("hex");
+
+    //? expires after 2 mins
+    // this.passwordResetExpires = new Date(
+    //     Date.now() + 10 * 60 * 1000
+    // ).toString();
+    this.activationExpires = Date.now() + 2 * 60 * 1000;
+    console.log({ time: this.activationExpires });
+
+    return activateToken;
+};
+
 userSchema.methods.validatePassword = async (incomingPswd, savedPswd) =>
     await bycrypt.compare(incomingPswd, savedPswd);
+
+userSchema.methods.passwordChangedAfter = function (JWTTimeStamp) {
+    if (this.passwordChangedAt) {
+        const changedTimeStamp = parseInt(
+            this.passwordChangedAt.getTime() / 1000,
+            10
+        );
+
+        console.log({ JWTTimeStamp, changedTimeStamp });
+
+        //? return true if token was issued at 1000(3:40) and user changed password at 2000(3:45)
+        //? return false if token was issued at 4000(5:00) and user changed password at 3000(4:00)
+        return JWTTimeStamp < changedTimeStamp;
+    }
+
+    //? some users might not change their password throghout
+    return false;
+};
+
+userSchema.methods.generatePasswordToken = function () {
+    //? send this token to the user
+    let resetToken = crypto.randomBytes(32).toString("hex");
+
+    //? hash it cause it behaves like a real password and you're saving it in the database
+
+    this.passwordResetToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
+
+    //? expires after 2 mins
+    // this.passwordResetExpires = new Date(
+    //     Date.now() + 2 * 60 * 1000
+    // ).toString();
+    this.passwordResetExpires = Date.now() + 2 * 60 * 1000;
+    console.log({ time: this.passwordResetExpires });
+
+    // console.log({ resetToken, hashed: this.passwordResetToken });
+    return resetToken;
+};
 
 const User = model("User", userSchema);
 
