@@ -1,4 +1,8 @@
+/* eslint-disable default-case */
 /* eslint-disable no-throw-literal */
+
+import toast from "react-hot-toast";
+import { handleToastNotification } from "./handleToastNotification";
 
 let headers = new Headers();
 headers.set("Content-type", "application/json;charset=utf-8");
@@ -16,24 +20,28 @@ export const fetchData = async (
         body: JSON.stringify(body),
         credentials: "include",
     };
+    console.log("got to fetch function...");
+    console.log(body);
+
     try {
         // let req = await fetch(`${baseUrl}${url}`, options);
         let req = await fetch(`${url}`, options);
         let res = await req.json();
         if (!(req.status >= 200 && req.status <= 299)) throw res;
+        // console.log(res);
+        // if (res.data.message) {
+        // handleToastNotification(method, res.data.message);
+        // }
         return res;
     } catch (error) {
         // console.log(error);
-        // console.info({ name: error.name });
         if (error.name !== "AbortError") {
-            let message = {
-                show: true,
-                type: "invalid",
-                msg: `${error.message}.`,
-            };
             if (error.type === "fail")
-                message.msg = `Please check your internt connection. Come back later if error persist!`;
-            throw message;
+                error.message = `Please check your internt connection. Come back later if error persist!`;
+            let message = error.message;
+            toast.error(message);
+            // throw message;
+            throw error;
         }
     }
 };

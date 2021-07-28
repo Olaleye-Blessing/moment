@@ -1,9 +1,10 @@
-import { NavLink } from "react-router-dom";
+// import { NavLink } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { IoMdNotifications } from "react-icons/io";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useEffect, useRef } from "react";
 import { BsPerson } from "react-icons/bs";
+import { GiHamburgerMenu } from "react-icons/gi";
 
 import HomeLogo from "../HomeLogo";
 import Avatar from "../Avatar";
@@ -11,9 +12,21 @@ import mjImg from "./../../data/images/mj1.jpg";
 import { useMomentContext } from "../../context/MomentsContext";
 import { actions } from "../../reducer/actions";
 import { logout } from "../../reducer/fetchActions/auth";
+// import NavLinkItem from "./NavLinkItem";
+// import NavLinkItem from "./NavLinkItem";
+import NavLinkItem from "./NavLinkItem";
+import Button from "../Button/Button";
+import { getData } from "../../reducer/fetchActions";
 
 const Navbar = () => {
-    let { dispatch, state } = useMomentContext();
+    let {
+        dispatch,
+        state,
+        asideProfRef,
+        showAsideProfNav,
+        setShowAsideProfNav,
+    } = useMomentContext();
+    console.log(state);
 
     let { user } = state;
 
@@ -21,17 +34,17 @@ const Navbar = () => {
         {
             name: "search",
             active: "false",
-            icon: <BsSearch className="nav__icon" />,
+            icon: <BsSearch className="" />,
         },
         {
             name: "notification",
             active: "false",
-            icon: <IoMdNotifications className="nav__icon" />,
+            icon: <IoMdNotifications className="" />,
         },
         {
             name: "moment",
             active: "false",
-            icon: <AiOutlinePlus className="nav__icon" />,
+            icon: <AiOutlinePlus className="" />,
         },
     ];
     const navRef = useRef(null);
@@ -40,8 +53,8 @@ const Navbar = () => {
         if (navRef.current) {
             let currentWindowScrollHeigth = window.pageYOffset;
             currentWindowScrollHeigth > 20
-                ? navRef.current.classList.add("bg-color")
-                : navRef.current.classList.remove("bg-color");
+                ? navRef.current.classList.add("bg-black-subtle")
+                : navRef.current.classList.remove("bg-black-subtle");
         }
     };
 
@@ -53,65 +66,120 @@ const Navbar = () => {
     }, []);
 
     const logoutUser = async (e) => {
-        let res = await logout();
+        // let res = await logout();
+        let res = await getData(`/auth/logout`);
         if (res.status === "success") {
             dispatch({ type: actions.LOGOUT, payload: res });
         }
     };
 
+    const toggleAsideProfRef = () => {
+        asideProfRef.current.classList.remove("right-full");
+        asideProfRef.current.classList.add("right-0");
+        asideProfRef.current.classList.add("left-0");
+
+        setShowAsideProfNav(true);
+    };
+
     return (
-        <nav className="nav" ref={navRef}>
-            <div className="width">
+        <nav
+            className="py-3 px-3 sticky top-0 duration-300 z-30 md:px-8 border-b border-green-dark mb-1 lg:px-16 xl:px-32"
+            ref={navRef}
+        >
+            <div className="flex items-center justify-start sm:gap-3">
+                {!showAsideProfNav && (
+                    <Button
+                        onClick={toggleAsideProfRef}
+                        extraClass="mr-2 btn-icon hover:text-green-secondary flex-shrink-0 sm:hidden text-2xl"
+                        type="button"
+                    >
+                        <GiHamburgerMenu />
+                    </Button>
+                )}
                 <HomeLogo />
-                <ul className="nav__lists-main">
+                <ul className="ml-auto flex items-center justify-center gap-2 fixed bottom-0 left-0 right-0 pt-1 pb-0 border-t border-white sm:border-t-0 sm:relative sm:py-0 bg-black-subtle sm:bg-transparent">
                     {links.map((link) => {
                         let { name, icon } = link;
                         return (
-                            <li key={name}>
-                                <NavLink
-                                    to={`/${name}`}
-                                    className={`btn nav__link link`}
+                            <li key={name} className="">
+                                <NavLinkItem
+                                    href={`/${name}`}
+                                    extraClass="pt-2 text-2xl"
                                 >
                                     {icon}
-                                    <span className="nav__text">{`${name[0].toUpperCase()}${name.slice(
-                                        1
-                                    )}`}</span>
-                                </NavLink>
+                                </NavLinkItem>
                             </li>
                         );
                     })}
                 </ul>
-                <ul className="nav__lists-sub">
+
+                <ul className="flex items-center justify-end gap-2 ml-auto sm:ml-0">
                     {user ? (
+                        <>
+                            <li className="flex-shrink-0">
+                                <NavLinkItem
+                                    href={`/profile/${user._id}`}
+                                    // extraClass="rounded-50 flex items-center justify-center pt-2"
+                                    extraClass="rounded-50 btn-icon py-1 px-1"
+                                >
+                                    <Avatar
+                                        sub_class=""
+                                        src={user.profilePic}
+                                    />
+                                </NavLinkItem>
+                            </li>
+                            <li className="">
+                                <Button
+                                    text="Logout"
+                                    extraClass="pl-4 pr-4 bg-green-secondary font-semibold hover:bg-green-secondary"
+                                    onClick={logoutUser}
+                                />
+                            </li>
+                        </>
+                    ) : (
+                        <>
+                            <div>
+                                <NavLinkItem
+                                    href="/auth/login"
+                                    text="Login"
+                                    title="login to your account"
+                                />
+                            </div>
+                            <div>
+                                <NavLinkItem
+                                    href="/auth/signup"
+                                    text="Signup"
+                                    title="create new account"
+                                    extraClass="pl-4 pr-4 bg-green-secondary font-semibold hover:bg-green-secondary"
+                                />
+                            </div>
+                            {/* <li>
+                                <NavLink to="/auth/login" className="">
+                                    Login
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/auth/signup" className="">
+                                    Signup
+                                </NavLink>
+                            </li> */}
+                        </>
+                    )}
+                    {/* {user ? (
                         <>
                             <li>
                                 <NavLink
                                     to={`/profile/${user._id}`}
-                                    className="btn btn__avatar"
+                                    className=""
                                 >
-                                    {/* <Avatar sub_class="nav__ava" /> */}
                                     <Avatar
-                                        sub_class="nav__ava"
+                                        sub_class=""
                                         src={user.profilePic}
                                     />
-                                    {/* {user.profilePic ? (
-                                        <Avatar
-                                            src={user?.profilePic || mjImg}
-                                        />
-                                    ) : (
-                                        <figure className="avatar__icon">
-                                            <BsPerson />
-                                        </figure>
-                                    )} */}
                                 </NavLink>
                             </li>
                             <li>
-                                <button
-                                    // className="btn btn__link btn-logout logout"
-                                    className="link link-bg"
-                                    // className="link link__btn"
-                                    onClick={logoutUser}
-                                >
+                                <button className="" onClick={logoutUser}>
                                     Logout
                                 </button>
                             </li>
@@ -119,26 +187,17 @@ const Navbar = () => {
                     ) : (
                         <>
                             <li>
-                                <NavLink
-                                    to="/auth/login"
-                                    // className="btn btn__link nav__link login"
-                                    className="link link-white link__extra-pad"
-                                >
+                                <NavLink to="/auth/login" className="">
                                     Login
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink
-                                    to="/auth/signup"
-                                    // className="btn btn__link signup"
-                                    className="link link-bg link__extra-pad"
-                                    // className="link link__btn"
-                                >
+                                <NavLink to="/auth/signup" className="">
                                     Signup
                                 </NavLink>
                             </li>
                         </>
-                    )}
+                    )} */}
                 </ul>
             </div>
         </nav>
@@ -146,3 +205,11 @@ const Navbar = () => {
 };
 
 export default Navbar;
+// {/* <li key={name}>
+//     <NavLink to={`/${name}`} className={``}>
+//         {icon}
+//         <span className="">
+//             {`${name[0].toUpperCase()}${name.slice(1)}`}
+//         </span>
+//     </NavLink>
+// </li> */}

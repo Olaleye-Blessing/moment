@@ -1,19 +1,22 @@
 import { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import Alert from "../../components/Alert";
-import FormButton from "../../components/Form/FormButton";
+// import Alert from "../../components/Alert";
+import Button from "../../components/Button/Button";
+// import FormButton from "../../components/Form/FormButton";
+import FormContainer from "../../components/Form/FormContainer";
+import FormHomeLogo from "../../components/Form/FormHomeLogo";
 import FormText from "../../components/Form/FormText";
-import HomeLogo from "../../components/HomeLogo";
 import ProcessIndicator from "../../components/ProcessIndicator";
 import ToggleButton from "../../components/ToggleButton";
 import { useMomentContext } from "../../context/MomentsContext";
 import { actions } from "../../reducer/actions";
-import { login } from "../../reducer/fetchActions/auth";
+import { createData } from "../../reducer/fetchActions";
+// import { login } from "../../reducer/fetchActions/auth";
 // import { login } from "../../reducer/fetchActions";
+import SubmitButton from "./../../components/Button/SubmitButton";
 
 const Login = () => {
-    let { state, dispatch } = useMomentContext();
-    let { errorAlert } = state;
+    let { dispatch } = useMomentContext();
     let history = useHistory();
 
     const [loading, setLoading] = useState(false);
@@ -30,22 +33,15 @@ const Login = () => {
     const [showPswd, setShowPswd] = useState(false);
     const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
+        // e.preventDefault();
         setDisableSubmitBtn(true);
         setLoading(true);
         try {
-            let res = await login(loginData);
+            // let res = await login(loginData);
+            let res = await createData(`/auth/login`, loginData);
             if (res.status === "success") {
                 dispatch({ type: actions.AUTHENTICATION, payload: res.user });
-
-                let message = {
-                    show: true,
-                    type: "valid",
-                    msg: "successfully logged in. Redirecting in a second..",
-                };
-                dispatch({ type: actions.ERROR, payload: message });
-
                 history.replace("/");
             }
         } catch (error) {
@@ -56,13 +52,9 @@ const Login = () => {
     };
 
     return (
-        <section data-form="auth">
-            {errorAlert.show && <Alert {...errorAlert} />}
-            <h2 className="form__home">
-                <HomeLogo />
-            </h2>
-            <form className="form" onSubmit={handleSubmit}>
-                <h2>Sign In</h2>
+        <section data-form="auth" className="px-4">
+            <FormHomeLogo />
+            <FormContainer onSubmit={handleSubmit} headerTitle="Sign In">
                 <FormText
                     type="email"
                     name="email"
@@ -80,24 +72,35 @@ const Login = () => {
                         showPswd={showPswd}
                     />
                 </FormText>
-                <FormButton
-                    text="login"
-                    type="submit"
-                    // classname="form__button-submit"
-                    classname={`form__button-submit ${
-                        disableSubmitBtn ? "disabled" : ""
-                    }`}
-                    disabled={disableSubmitBtn}
-                >
-                    {loading && <ProcessIndicator />}
-                </FormButton>
-            </form>
-            <p className="form__other">
-                Don't have an account? <Link to="/auth/signup">Sign up</Link>
-            </p>
-            <p className="form__other">
-                <Link to="/auth/forgotPassword">Forgot Password?</Link>
-            </p>
+                <div className="text-center mt-14 mb-7">
+                    <SubmitButton
+                        text="Login"
+                        loading={loading}
+                        disabled={disableSubmitBtn}
+                    />
+                    {/* <Button
+                        text="login"
+                        type="submit"
+                        disabled={disableSubmitBtn}
+                        extraClass={`btn-submit ${
+                            disableSubmitBtn
+                                ? "btn-submit-disable"
+                                : "btn-submit-enable"
+                        }`}
+                    >
+                        {loading && <ProcessIndicator />}
+                    </Button> */}
+                </div>
+            </FormContainer>
+            <div className="form__alt">
+                <p>
+                    Don't have an account?{" "}
+                    <Link to="/auth/signup">Sign up</Link>
+                </p>
+                <p>
+                    <Link to="/auth/forgotPassword">Forgot Password?</Link>
+                </p>
+            </div>
         </section>
     );
 };

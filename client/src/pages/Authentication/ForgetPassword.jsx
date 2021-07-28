@@ -1,22 +1,23 @@
-import Alert from "../../components/Alert";
 import { useMomentContext } from "../../context/MomentsContext";
-import HomeLogo from "../../components/HomeLogo";
 import FormText from "../../components/Form/FormText";
 import { useState } from "react";
-import FormButton from "../../components/Form/FormButton";
 import { Link } from "react-router-dom";
-import { forgetPassword } from "../../reducer/fetchActions/auth";
+// import { forgetPassword } from "../../reducer/fetchActions/auth";
 import { actions } from "../../reducer/actions";
+import FormHomeLogo from "../../components/Form/FormHomeLogo";
+import FormContainer from "../../components/Form/FormContainer";
+import Button from "../../components/Button/Button";
+import { createData } from "../../reducer/fetchActions";
+import SubmitButton from "../../components/Button/SubmitButton";
 
 const ForgetPassword = () => {
-    let { state, dispatch } = useMomentContext();
-    let { errorAlert } = state;
+    let { dispatch } = useMomentContext();
 
     const [email, setEmail] = useState("");
     const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
+        // e.preventDefault();
         console.log("submitted.....");
         setDisableSubmitBtn(true);
 
@@ -26,51 +27,50 @@ const ForgetPassword = () => {
         }
 
         try {
-            let res = await forgetPassword({ email });
+            // let res = await forgetPassword({ email });
+            let res = await createData(`/auth/forgetPassword`, { email });
+            console.log(res);
 
-            let message = {
-                show: true,
-                type: "valid",
-                msg: res.data.message,
-            };
+            // let message = {
+            //     show: true,
+            //     type: "valid",
+            //     msg: res.data.message,
+            // };
 
-            dispatch({ type: actions.ERROR, payload: message });
+            // dispatch({ type: actions.ERROR, payload: message });
         } catch (error) {
-            dispatch({ type: actions.ERROR, payload: error });
+            // dispatch({ type: actions.ERROR, payload: error });
         }
         setDisableSubmitBtn(false);
     };
 
     return (
-        <section data-form="auth">
-            {errorAlert.show && <Alert {...errorAlert} />}
-            <h2 className="form__home">
-                <HomeLogo />
-            </h2>
-            <form className="form" onSubmit={handleSubmit}>
-                <h2>Request Password Reset</h2>
+        <section data-form="auth" className="px-4">
+            <FormHomeLogo />
+            <FormContainer onSubmit={handleSubmit} headerTitle="Sign In">
                 <FormText
                     type="email"
                     name="email"
                     value={email}
                     handleChange={(e) => setEmail(e.target.value)}
                 />
-
-                <FormButton
-                    text="send"
-                    type="submit"
-                    classname={`form__button-submit ${
-                        disableSubmitBtn ? "disabled" : ""
-                    }`}
-                    disabled={disableSubmitBtn}
-                />
-            </form>
-            <p className="form__other">
-                Don't have an account? <Link to="/auth/signup">Sign up</Link>
-            </p>
-            <p className="form__other">
-                <Link to="/auth/login">Remember Password?</Link>
-            </p>
+                <div className="text-center mt-14 mb-7">
+                    <SubmitButton
+                        text="Request Reset"
+                        loading={disableSubmitBtn}
+                        disabled={disableSubmitBtn}
+                    />
+                </div>
+            </FormContainer>
+            <div className="form__alt">
+                <p>
+                    Don't have an account?{" "}
+                    <Link to="/auth/signup">Sign up</Link>
+                </p>
+                <p>
+                    <Link to="/auth/login">Remember Password?</Link>
+                </p>
+            </div>
         </section>
     );
 };

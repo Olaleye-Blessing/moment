@@ -21,14 +21,12 @@ export const reducer = (state, action) => {
 
         case actions.DELETE_MOMENT:
             let { moments: currentMoments } = state;
-            console.log(currentMoments);
 
-            currentMoments = currentMoments.filter(
+            currentMoments = [...currentMoments].filter(
                 (moment) => moment._id !== action.payload
             );
 
-            console.log(currentMoments);
-            return { ...state, moment: currentMoments };
+            return { ...state, moments: currentMoments };
 
         case actions.AUTHENTICATION:
         case actions.UPDATE_USER:
@@ -38,9 +36,6 @@ export const reducer = (state, action) => {
         case actions.LOGOUT:
             localStorage.removeItem("profile");
             return { ...state, user: null };
-
-        case actions.ERROR:
-            return { ...state, errorAlert: { ...action.payload } };
 
         case actions.CREATE_COMMENT:
             let oldMoments = [...state.moments];

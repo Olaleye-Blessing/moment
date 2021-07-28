@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-bold;
+    }
+    svg,
+    img {
+        max-width: 100%;
+    }
+
+    a {
+        @apply transition-colors ease-linear duration-200;
+    }
+
+    ::-webkit-scrollbar {
+        width: 12px;
+        height: 8px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        border-radius: 1px;
+        background: #101820;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e0;
+        border-radius: 1px;
+        border-left: 1px solid #888;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+    }
+}
+
+@layer components {
+    .form__control {
+        @apply flex flex-col mb-10 gap-2 relative w-full;
+    }
+    .form-input {
+        @apply rounded-sm pt-2 pb-2 pl-2 text-black border-current focus:outline-none focus:ring-2 hover:bg-white transition hover:opacity-90;
+    }
+    .form__alt {
+        @apply mx-auto max-w-lg mt-8 text-center flex flex-col gap-4 mb-9;
+    }
+
+    .form__alt a {
+        @apply text-green-primary hover:text-opacity-80 hover:underline;
+    }
+
+    .btn {
+        @apply inline-block pt-1 pb-2 pl-2 pr-2 text-white-primary rounded transition duration-200;
+    }
+
+    .btn-icon {
+        @apply p-0;
+    }
+
+    .btn-general {
+        @apply hover:bg-black-smooth;
+    }
+
+    .btn-submit {
+        @apply mx-auto pl-8 pr-8 text-xl;
+        /* @apply mx-auto pl-8 pr-8 text-xl !important; */
+    }
+
+    .btn-submit-enable {
+        @apply bg-green-secondary hover:bg-green-secondary hover:bg-opacity-80;
+    }
+
+    .btn-submit-disable {
+        @apply bg-green-dark hover:bg-green-dark cursor-not-allowed;
+    }
+
+    .btn-reset {
+        @apply pl-8 pr-8 text-xl bg-red-primary text-white hover:bg-opacity-70;
+    }
+}
+
+@layer utilities {
+    @variants responsive {
+        .box-shadow {
+            box-shadow: 0.2rem 0.2rem 1rem rgb(0 0 0 / 20%),
+                -0.2rem -0.2rem 1rem rgb(0 0 0 / 20%);
+            @apply transition-shadow duration-200 ease-in-out;
+        }
+        .box-shadow:hover {
+            box-shadow: 0 0 0.4rem rgb(0 0 0 / 30%), 0 0 0.4rem rgb(0 0 0 / 30%);
+        }
+    }
+
+    .rounded-50 {
+        border-radius: 50%;
+    }
+
+    .trans-x-50 {
+        transform: translateX(-50%);
+    }
+
+    .bg-gradient {
+        /* background-image: linear-gradient(to left bottom, #cbd5e0, #a0aec0); */
+        /* background-image: linear-gradient(135deg, #a0aec0, #a0aec0, #b3cff2, #a6cdff); */
+        /* background-image: linear-gradient(
+            135deg,
+            #b3cff2,
+            #b3cff2,
+            #a6cdff,
+            #a6cdff,
+            #a6cdff
+        ); */
+        background-image: linear-gradient(
+            135deg,
+            #33333333,
+            #101820,
+            #101820,
+            #101820,
+            #101820,
+            #242526
+        );
+    }
+}
+
+/* body {
+    
+} */

@@ -1,12 +1,14 @@
 import { Route, Switch, useLocation } from "react-router";
+import { Toaster } from "react-hot-toast";
 
-import AddMoment from "./components/Moments/AddMoment";
+import AddMoment from "./pages/Moment/AddMoment";
 import Navbar from "./components/Navbar/Navbar";
 import Homepage from "./pages/Homepage";
 import Login from "./pages/Authentication/Login";
 import Signup from "./pages/Authentication/Signup";
 import ForgetPassword from "./pages/Authentication/ForgetPassword";
-import Moment from "./pages/Moment";
+// import Moment from "./pages/Moment";
+import Moment from "./pages/Moment/Moment";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ResetPassword from "./pages/Authentication/ResetPassword";
@@ -17,6 +19,18 @@ function App() {
 
     return (
         <>
+            <Toaster
+                toastOptions={{
+                    className: "border-2 border-current",
+                    success: {
+                        className: "bg-green-lighter text-green-primary",
+                        icon: "✨",
+                    },
+                    error: {
+                        className: "bg-red-lighter text-red-dark",
+                    },
+                }}
+            />
             {!pathname.startsWith("/auth") && <Navbar />}
             <Switch>
                 <Route path="/" exact>

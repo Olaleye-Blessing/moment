@@ -1,5 +1,5 @@
 // import { useState } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import Moment from "./Moment/Moment";
 
 const Moments = ({ moments }) => {
@@ -10,12 +10,12 @@ const Moments = ({ moments }) => {
     //     { text: "year", active: false },
     // ]);
 
-    let periods = [
-        { text: "latest", active: true },
-        { text: "week", active: false },
-        { text: "month", active: false },
-        { text: "year", active: false },
-    ];
+    // let periods = [
+    //     { text: "latest", active: true },
+    //     { text: "week", active: false },
+    //     { text: "month", active: false },
+    //     { text: "year", active: false },
+    // ];
 
     return (
         <>
@@ -34,7 +34,7 @@ const Moments = ({ moments }) => {
                     })}
                 </ul>
             </header> */}
-            <section className="moments">
+            <section className="">
                 {moments.map((moment) => (
                     <Moment key={moment._id} moment={moment} />
                 ))}

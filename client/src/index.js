@@ -3,7 +3,8 @@ import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import "./css/index.css";
+// import "./css/index.css";
+import "./index.css";
 import { MomentsProvider } from "./context/MomentsContext";
 // import Particles from "react-particles-js";
 

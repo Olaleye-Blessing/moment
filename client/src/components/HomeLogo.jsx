@@ -1,24 +1,23 @@
 import { NavLink } from "react-router-dom";
 
-const HomeLogo = () => {
+const HomeLogo = ({ extraClass }) => {
     return (
-        <NavLink to="/" className="btn nav__home">
-            {/* <figure>
-                <figcaption>MOMENTS</figcaption>
-            </figure> */}
+        <NavLink to="/" className={`${extraClass} text-xl md:text-3xl`}>
             <div>
-                <div>
-                    <span>M</span>
-                    <span>O</span>
-                    <span>M</span>
-                    <span>E</span>
-                    <span>N</span>
-                    <span>T</span>
-                    <span>S</span>
-                </div>
+                <span className="text-green-secondary">M</span>
+                <span className="">O</span>
+                <span className="text-green-secondary">M</span>
+                <span className="">E</span>
+                <span className="text-green-secondary">N</span>
+                <span className="">T</span>
+                <span className="text-green-secondary">S</span>
             </div>
         </NavLink>
     );
+};
+
+HomeLogo.defaultProps = {
+    extraClass: "",
 };
 
 export default HomeLogo;

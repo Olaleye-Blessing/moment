@@ -6,7 +6,7 @@ const UserName = ({ name, username, checkDetail, id }) => {
         <button
             type="button"
             // className="btn moment__creator-name"
-            className="btn moment__creator-name link"
+            className="text-lg group hover:text-green-secondary"
             onClick={(e) => {
                 e.stopPropagation();
                 console.log("clicked....");
@@ -15,7 +15,9 @@ const UserName = ({ name, username, checkDetail, id }) => {
             // onClick={checkDetail}
         >
             {name}
-            <span className="moment__creator-username">@{username}</span>
+            <span className="text-xs text-white-secondary p-1 group-hover:text-green-light transition-colors">
+                @{username}
+            </span>
         </button>
     );
 };

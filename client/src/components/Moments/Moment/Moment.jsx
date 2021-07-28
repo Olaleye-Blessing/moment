@@ -8,12 +8,17 @@ import { VscEdit, VscReactions } from "react-icons/vsc";
 
 import { useMomentContext } from "../../../context/MomentsContext";
 import humanDate from "../../../utilities/humanDate";
-import defaultImage from "./../../../data/images/blueFlower.jpg";
+// import defaultImage from "./../../../data/images/blueFlower.jpg";
 import Avatar from "../../Avatar";
 // import { deletePost } from "../../../reducer/fetchActions";
 import { deletePost } from "../../../reducer/fetchActions/moment";
 import { actions } from "../../../reducer/actions";
 import UserName from "../../User/UserName";
+import Button from "../../Button/Button";
+import ButtonIcon from "../../Button/ButtonIcon";
+import MomentTags from "./MomentTags";
+import AvatarUserCreatedAt from "../../User/AvatarUserCreatedAt";
+import { deletedToastNotification } from "../../../utilities/Toast";
 
 const Moment = ({ moment }) => {
     // console.log(moment);
@@ -57,161 +62,112 @@ const Moment = ({ moment }) => {
     // console.log(moment);
     // console.log(likes, dislikes);
 
-    let reactions = Number(likes) + Number(dislikes);
+    // let reactions = Number(likes) + Number(dislikes);
 
     // console.log(creator);
 
     const deleteMoment = async (e) => {
         e.stopPropagation();
-        console.log("delete clicked");
+        // console.log("delete clicked");
         dispatch({
             type: actions.DELETE_MOMENT,
             payload: moment._id,
         });
         try {
+            // console.log("got to delete moment...");
             await deletePost(moment._id);
+            deletedToastNotification("successfully deleted");
+            // console.log("done");
         } catch (error) {
             console.log(error);
         }
-        // history.replace("/");
     };
 
     return (
-        <article className="moment box" tabIndex={0} onClick={showMomentDetail}>
-            {/* {image ? (
-                <figure className="moment__figure">
-                    <img src={image} alt="" className="moment__figure-img" />
-                </figure>
-            ) : null} */}
-            <section className="moment__detail">
-                <div className="moment__detail-profileDate">
-                    <Avatar
-                        src={profilePic}
-                        sub_class="moment__creator-avatar"
-                    />
-                    <div>
-                        <UserName
-                            name={name}
-                            username={"kikky"}
-                            id={creator._id}
-                        />
-                        {/* <button
-                            type="button"
-                            className="btn moment__creator-name link"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                console.log("clicked....");
-                                history.push(`/profile/${creator._id}`);
-                            }}
-                        >
-                            {name}
-                        </button> */}
-                        <p className="moment__createdAt">
-                            {humanDate(createdAt)}
-                        </p>
-                    </div>
+        <article
+            className="box-shadow bg-black-subtle px-6 py-4 mb-8 transition-colors duration-500 cursor-pointer"
+            tabIndex={0}
+            onClick={showMomentDetail}
+        >
+            {/* <div className="mb-5 flex gap-2">
+                <Avatar src={profilePic} extraClass="bg-black" />
+                <div className="">
+                    <UserName name={name} username={"kikky"} id={creator._id} />
+                    <p className="text-xs text-white-secondary">
+                        {humanDate(createdAt)}
+                    </p>
                 </div>
-                <div className="moment__detail-other">
-                    <h3 className="moment__title">{title}</h3>
-                    <p className="moment__message">{message}</p>
-                    {tags[0] !== "" && (
-                        <ul className="moment__tags">
-                            {tags.map((tag) => (
-                                <li key={tag} className="moment__tag">
-                                    <button
-                                        type="button"
-                                        // className="btn moment__tag-link link"
-                                        className="link moment__tag-link"
-                                        style={{ fontSize: "16px" }}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            history.push(
-                                                `/moments/tags/${tag}`
-                                            );
-                                        }}
-                                    >
-                                        {tag}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                    <div>
-                        <ul className="moment__reactions">
+            </div> */}
+            <AvatarUserCreatedAt
+                profilePic={profilePic}
+                name={name}
+                userName="kikky"
+                createdAt={createdAt}
+                id={creator._id}
+            />
+
+            <div className="pl-10">
+                <h3 className="text-lg text-center mb-3 text-white">{title}</h3>
+                <p className="line-clamp-9 mb-3 text-white opacity-80">
+                    {message}
+                </p>
+                {tags[0] !== "" && <MomentTags tags={tags} />}
+                <div className="flex items-center justify-between mt-5">
+                    <ul className="flex items-center justify-start gap-4">
+                        <li>
+                            <div className="flex items-center justify-start btn-icon gap-1">
+                                <VscReactions
+                                    className=""
+                                    style={{ fontSize: "20px" }}
+                                />
+                                <span className="text-base text-white-secondary">
+                                    2
+                                </span>
+                            </div>
+                        </li>
+                        <li>
+                            <Button
+                                extraClass="btn-icon text-sm flex items-center justify-start gap-2 btn-general py-1 px-2 text-white-secondary hover:text-white"
+                                text={comments.length}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    history.push(`/moments/${_id}/#comments`);
+                                }}
+                            >
+                                <FaRegComment />
+                            </Button>
+                        </li>
+                    </ul>
+                    <ul className="flex items-center justify-start gap-2">
+                        {user?._id === creator._id ? (
                             <li>
-                                <div className="link">
-                                    <VscReactions />
-                                    <span>
-                                        {reactions} reaction
-                                        {reactions > 0 ? "s" : null}
-                                    </span>
-                                </div>
+                                <ButtonIcon
+                                    extraClass="hover:text-red-primary"
+                                    icon={<MdDelete />}
+                                    onClick={deleteMoment}
+                                />
                             </li>
+                        ) : null}
+                        {user?._id === creator._id && (
                             <li>
-                                <button
-                                    className="btn link"
+                                <ButtonIcon
+                                    icon={<VscEdit />}
+                                    extraClass="hover:text-green-primary"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        history.push(
-                                            `/moments/${_id}/#comments`
-                                        );
-                                    }}
-                                >
-                                    <FaRegComment />
-                                    <span>
-                                        {comments.length}{" "}
-                                        {comments.length > 1
-                                            ? "comments"
-                                            : "comment"}
-                                    </span>
-                                </button>
-                                {/* <FaRegComment />
-                                <span>
-                                    {comments.length}{" "}
-                                    {comments.length > 1
-                                        ? "comments"
-                                        : "comment"}
-                                </span> */}
-                            </li>
-                        </ul>
-                        <ul className="moment__actions">
-                            {user?._id === creator._id ? (
-                                <li>
-                                    <button
-                                        // className="btn"
-                                        className="link link__icon-action"
-                                        onClick={deleteMoment}
-                                    >
-                                        <MdDelete className="moment__delete" />
-                                    </button>
-                                </li>
-                            ) : null}
-                            {user?._id === creator._id && (
-                                <li>
-                                    <button
-                                        // className="btn"
-                                        className="link link__icon-action"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
 
-                                            setCurrentMomentId(moment._id);
-                                            history.replace("/moment");
-                                        }}
-                                    >
-                                        <VscEdit className="moment__edit" />
-                                    </button>
-                                </li>
-                            )}
-                            {/* <li>
-                                <button className="btn">
-                                    <BsBookmark className="moment__bookmark" />
-                                </button>
-                            </li> */}
-                        </ul>
-                    </div>
+                                        setCurrentMomentId(moment._id);
+                                        history.replace("/moment");
+                                    }}
+                                />
+                            </li>
+                        )}
+                    </ul>
                 </div>
-                <div className="moment__timePast">11 days ago</div>
-            </section>
+            </div>
+            <div className="text-right text-xs mt-5 text-white text-opacity-50">
+                11 days ago
+            </div>
         </article>
     );
 };

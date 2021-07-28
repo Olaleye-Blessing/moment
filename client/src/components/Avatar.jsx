@@ -1,24 +1,31 @@
 import { BsPerson } from "react-icons/bs";
 
-const Avatar = ({ src, sub_class, alt }) => {
-    // console.log(src);
+const Avatar = ({ src, extraClass, alt, figureWidth }) => {
     return (
-        // <figure className={`avatar__img-cont ${sub_class}`}>
-        <figure className={`avatar ${sub_class}`}>
-            {/* {src ? (
-                <img src={src} alt="user" className="avatar__img" />
+        // <figure className="bg-red text-2xl rounded-full h-9 w-9 flex items-center justify-center p-0">
+        // <img src={src} alt={alt} className="w-9 h-9 rounded-50" />
+
+        <figure
+            className={`flex items-center justify-center rounded-50 ${extraClass} ${figureWidth}`}
+        >
+            {src ? (
+                <img
+                    src={src}
+                    alt={alt}
+                    className="w-9 h-9 rounded-50 align-middle"
+                />
             ) : (
-                <BsPerson />
-            )} */}
-            {src ? <img src={src} alt={alt} /> : <BsPerson />}
+                <BsPerson className="text-xl" />
+            )}
         </figure>
     );
 };
 
 Avatar.defaultProps = {
-    sub_class: "",
+    extraClass: "",
     src: "",
     alt: "",
+    figureWidth: "w-9 h-9",
 };
 
 export default Avatar;

@@ -3,13 +3,8 @@ const ToggleButton = ({ onClick, showPswd }) => {
     return (
         <button
             type="button"
-            className="toggle btn link link__icon-action link__noAction link__noAction-white"
+            className="w-max text-gray text-xl absolute right-2 top-11 inline-block"
             onClick={onClick}
-            // style={{
-            //     width: "auto",
-            //     color: "#fff",
-            //     backgroundColor: "transparent",
-            // }}
         >
             {showPswd ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
         </button>

@@ -14,11 +14,19 @@ import FormText from "../components/Form/FormText";
 import Modal from "../components/Modal";
 import { getProfile, updateAbout } from "../reducer/fetchActions/user";
 import { actions } from "../reducer/actions";
-import Alert from "../components/Alert";
 import { ImTwitter } from "react-icons/im";
 import { VscGithubInverted } from "react-icons/vsc";
-import { FiInstagram } from "react-icons/fi";
+import { FiInstagram, FiLinkedin } from "react-icons/fi";
 import defaultImage from "./../asset/images/momentDefaultImg.JPG";
+import Button from "./../components/Button/Button";
+import ButtonIcon from "../components/Button/ButtonIcon";
+import Moment from "../components/Moments/Moment/Moment";
+import { aboutProfile } from "../components/Profile/utilities";
+import FormContainer from "../components/Form/FormContainer";
+import ResetButton from "../components/Button/ResetButton";
+import SubmitButton from "../components/Button/SubmitButton";
+import toast from "react-hot-toast";
+import EditAboutFormContent from "../components/Profile/EditAboutFormContent";
 
 // RiSignalTowerFill -- following
 
@@ -27,7 +35,7 @@ const Profile = () => {
 
     let { id } = useParams();
     let { state, dispatch } = useMomentContext();
-    let { user, errorAlert } = state;
+    let { user } = state;
     const [profileLoading, setProfileLoading] = useState(true);
     const [profileError, setProfileError] = useState(null);
     const [profile, setProfile] = useState(null);
@@ -48,17 +56,19 @@ const Profile = () => {
             setChangedProfile(profile);
             changeLoadingAndError(false);
         } catch (error) {
+            console.clear();
+            console.log(error);
             changeLoadingAndError(false, error);
         }
     };
 
     useEffect(() => {
-        if (user?._id === id) {
-            changeLoadingAndError(false);
-            setProfile(user);
-            setChangedProfile(user);
-            return;
-        }
+        // if (user?._id === id) {
+        //     changeLoadingAndError(false);
+        //     setProfile(user);
+        //     setChangedProfile(user);
+        //     return;
+        // }
         fetchProfile();
 
         return () => abortFetch.abort();
@@ -93,62 +103,15 @@ const Profile = () => {
     let authorize = user?._id === profile._id;
     let userLoggedIn = Boolean(user);
 
-    let about = [
-        {
-            icon: <MdWork />,
-            text: `Works at `,
-            value: changedProfile.work,
-        },
-        {
-            icon: <IoSchoolSharp />,
-            text: `Went to `,
-            value: changedProfile.education,
-        },
-        {
-            icon: <AiFillHome />,
-            text: `Lives in `,
-            value: changedProfile.lives,
-        },
-        {
-            icon: <GoLocation />,
-            text: `From `,
-            value: changedProfile.hometown,
-        },
-        { icon: <BsClock />, text: `Joined `, value: `November 2017` },
-        { icon: <IoWifiSharp />, text: `Followers `, value: `200` },
-        { icon: <RiSignalTowerFill />, text: `Following `, value: `1` },
-        {
-            icon: <ImTwitter />,
-            value: changedProfile.twitter,
-            link: `https://www.twitter.com/${changedProfile.twitter}`,
-            classStyle: "twitter",
-        },
-        {
-            icon: <VscGithubInverted />,
-            value: changedProfile.github,
-            link: `https://github.com/${changedProfile.github}`,
-            classStyle: "github",
-        },
-        {
-            icon: <FiInstagram />,
-            value: changedProfile.instagram,
-            link: `https://www.instagram.com/${changedProfile.instagram}`,
-            classStyle: "instagram",
-        },
-    ];
+    let about = aboutProfile(changedProfile);
 
-    const handleSubmitAbout = async (e) => {
-        e.preventDefault();
+    const handleSubmitAbout = async () => {
+        // e.preventDefault();
         toggleModal(false);
 
         //+ in case someone manipulates your code to edit someone's data
         if (!authorize) {
-            let message = {
-                show: true,
-                type: "invalid",
-                msg: "you are not authorized to perform this action",
-            };
-            dispatch({ type: actions.ERROR, payload: message });
+            toast.error("you are not authorized to perform this action");
             return;
         }
 
@@ -162,7 +125,8 @@ const Profile = () => {
             //? test revert
             // await updateAbout(`${user._id}k`, changedProfile);
         } catch (error) {
-            dispatch({ type: actions.ERROR, payload: error });
+            // dispatch({ type: actions.ERROR, payload: error });
+            // toast.error(error);
 
             //? revert changes if there is an error
             setChangedProfile({ ...profile });
@@ -175,10 +139,286 @@ const Profile = () => {
         }
     };
 
+    console.clear();
+    console.log(profile);
+
+    let {
+        name,
+        bio,
+        profilePic,
+        coverPic,
+        // education,
+        // lives,
+        // hometown,
+        // twitter,
+        // instagram,
+        // github,
+        username,
+        moments,
+    } = profile;
+
+    // border - b - 2;
     return (
         <>
-            {errorAlert.show && <Alert {...errorAlert} />}
-            <main data-page="profile">
+            <main className="-mt-1 pb-12">
+                <section className="mb-6 bg-gradient">
+                    <div className="relative">
+                        <div className="relative mx-auto max-w-2xl rounded-b-md overflow-hidden">
+                            <figure className="h-80 lg:h-96 w-full">
+                                <img
+                                    className="block mx-auto object-cover object-top w-full "
+                                    src={coverPic || profilePic || defaultImage}
+                                    alt={`${profile.name} cover`}
+                                />
+                            </figure>
+                            {userLoggedIn && authorize ? (
+                                <Button
+                                    text="edit cover pic"
+                                    extraClass="bg-green-secondary flex items-center justify-center absolute bottom-3 right-3 text-2xl pt-2 hover:bg-opacity-60 sm:text-base sm:pt-1 gap-1 z-10"
+                                    childClass="hidden sm:block"
+                                >
+                                    <AiFillCamera className="" />
+                                </Button>
+                            ) : (
+                                <Button
+                                    text="follow"
+                                    extraClass="bg-green-secondary absolute bottom-3 right-3 pt-2 hover:bg-opacity-60 text-base sm:pt-1 gap-1 z-10"
+                                />
+                            )}
+                        </div>
+                        <div className="absolute -bottom-3 trans-x-50 left-1/2 w-32 h-32">
+                            <figure className="">
+                                <img
+                                    className="rounded-50 w-32 h-32 align-middle"
+                                    src={coverPic || profilePic || defaultImage}
+                                    alt="kkk"
+                                />
+                            </figure>
+                            {authorize && (
+                                <ButtonIcon
+                                    icon={<AiFillCamera />}
+                                    extraClass="bg-green-secondary absolute bottom-1 right-1 rounded-50 p-2 hover:bg-opacity-60 sm:text-base"
+                                />
+                            )}
+                        </div>
+                    </div>
+                    <header className="px-4 mt-8 mb-3">
+                        <h1 className="text-center text-2xl">{name}</h1>
+                        <small className="block mx-auto text-center mt-0 text-gray">
+                            @{username}
+                        </small>
+                    </header>
+                    {bio && (
+                        <div className="px-4 text-center mx-auto max-w-2xl pb-3">
+                            <p className="text-center mb-1 text-white text-opacity-90">
+                                {bio}
+                            </p>
+                            {authorize && (
+                                <Button
+                                    text="edit bio"
+                                    extraClass="text-green-secondary text-center mx-auto block hover:underline hover:opacity-90"
+                                />
+                            )}
+                        </div>
+                    )}
+                    {authorize && (
+                        <div className="w-max ml-auto">
+                            <Link
+                                to="/settings"
+                                className="btn bg-green-secondary hover:bg-opacity-80 pb-1"
+                            >
+                                Edit Profile
+                            </Link>
+                        </div>
+                    )}
+                </section>
+                <div className="px-4 sm:flex sm:gap-5 sm:items-start sm:justify-start md:gap-6 max-w-3xl mx-auto">
+                    <div className="sm:min-w-sm max-w-xs sm:px-0">
+                        <section className="box-shadow bg-black-subtle rounded py-4 px-4">
+                            <h4 className="mb-4">About</h4>
+                            <ul className="">
+                                {about.map(
+                                    ({
+                                        text,
+                                        icon,
+                                        value,
+                                        link,
+                                        classStyle,
+                                    }) => {
+                                        if (!value) return null;
+                                        return (
+                                            <li
+                                                key={link}
+                                                className="flex items-center justify-start mb-3 gap-3"
+                                            >
+                                                {link ? (
+                                                    <a
+                                                        href={link}
+                                                        className="flex items-center justify-start gap-3 group hover:text-green-secondary"
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                    >
+                                                        {icon}
+                                                        {value}
+                                                    </a>
+                                                ) : (
+                                                    <>
+                                                        {icon}
+                                                        <p className="text-white text-opacity-80">
+                                                            {text}{" "}
+                                                            <span className="text-white text-opacity-100 font-semibold">
+                                                                {value}
+                                                            </span>
+                                                        </p>
+                                                    </>
+                                                )}
+                                            </li>
+                                        );
+                                    }
+                                )}
+                                {authorize && (
+                                    <li className="text-center mt-6">
+                                        <Button
+                                            text="Edit About"
+                                            disabled={false}
+                                            extraClass="btn-submit btn-submit-enable w-full text-base"
+                                            onClick={() => {
+                                                console.log("toggle");
+                                                toggleModal(true);
+                                            }}
+                                        />
+                                    </li>
+                                )}
+                            </ul>
+                            {showModal && (
+                                <Modal
+                                    title="Edit About"
+                                    toggleModal={closeModal}
+                                >
+                                    <FormContainer onSubmit={handleSubmitAbout}>
+                                        <EditAboutFormContent
+                                            changedProfile={changedProfile}
+                                            onChange={onChange}
+                                        />
+                                        <div className="flex items-center justify-center gap-3">
+                                            <ResetButton
+                                                onClick={closeModal}
+                                                text="Cancel"
+                                            />
+                                            <SubmitButton text="Save" />
+                                        </div>
+                                    </FormContainer>
+                                    {/* <form
+                                        className="form-aboutDetail"
+                                        onSubmit={handleSubmitAbout}
+                                    >
+                                        <section>
+                                            <FormText
+                                                name="work"
+                                                value={changedProfile.work}
+                                                handleChange={onChange}
+                                                placeholder={`${"your current work"}`}
+                                            />
+                                            <FormText
+                                                name="education"
+                                                value={changedProfile.education}
+                                                handleChange={onChange}
+                                                placeholder={`${"your last/current institution"}`}
+                                            />
+                                            <FormText
+                                                name="lives"
+                                                label="current city"
+                                                value={changedProfile.lives}
+                                                handleChange={onChange}
+                                                placeholder={`${"city you are currently in"}`}
+                                            />
+                                            <FormText
+                                                name="hometown"
+                                                value={changedProfile.hometown}
+                                                handleChange={onChange}
+                                                placeholder={`${"your hometown"}`}
+                                            />
+                                        </section>
+                                        <section className="about__social">
+                                            <header
+                                                className="social__header"
+                                                style={{
+                                                    paddingLeft: "30px",
+                                                    paddingBottom: "30px",
+                                                }}
+                                            >
+                                                <h5>Social Links</h5>
+                                            </header>
+                                            <FormText
+                                                name="twitter"
+                                                value={changedProfile.twitter}
+                                                label="twitter"
+                                                handleChange={onChange}
+                                                placeholder={`${"your twitter handle without '@'"}`}
+                                            />
+                                            <FormText
+                                                name="instagram"
+                                                value={changedProfile.instagram}
+                                                label="instagram"
+                                                handleChange={onChange}
+                                                placeholder={`${"your instagram handle without '@'"}`}
+                                            />
+                                            <FormText
+                                                name="github"
+                                                value={changedProfile.github}
+                                                label="github"
+                                                handleChange={onChange}
+                                                placeholder={`${"your github username without '@'"}`}
+                                            />
+                                        </section>
+                                        <div>
+                                            <button
+                                                className="btn danger box"
+                                                type="button"
+                                                onClick={closeModal}
+                                            >
+                                                cancel update
+                                            </button>
+                                            <button
+                                                className="btn success box"
+                                                type="submit"
+                                            >
+                                                save
+                                            </button>
+                                        </div>
+                                    </form> */}
+                                </Modal>
+                            )}
+                        </section>
+                    </div>
+                    <div className="md:mr-auto lg:max-w-2xl">
+                        {moments.length > 0 && (
+                            <section className="mt-5 sm:mt-0">
+                                <ul>
+                                    {moments.map((moment) => (
+                                        <Moment
+                                            key={moment._id}
+                                            moment={moment}
+                                        />
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+                    </div>
+
+                    {/* </section> */}
+                </div>
+            </main>
+            {/* <button
+                                            className=""
+                                            type="button"
+                                            onClick={() => {
+                                                toggleModal(true);
+                                            }}
+                                        >
+                                            edit about
+                                        </button> */}
+            {/* <main data-page="profile">
                 <section className="profile__detail-1">
                     <div className="profile__detail-sub">
                         <figure className="user__coverPhoto">
@@ -233,7 +473,6 @@ const Profile = () => {
                         ) : authorize ? (
                             <Link
                                 to="/settings"
-                                // className="link link__noBg link__noBg-green"
                                 className="link"
                             >
                                 Edit Profile
@@ -408,7 +647,7 @@ const Profile = () => {
                     </div>
                     <div>moment</div>
                 </section>
-            </main>
+            </main> */}
         </>
     );
 };

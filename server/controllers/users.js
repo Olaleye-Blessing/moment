@@ -4,7 +4,14 @@ import { catchAsync } from "../utility/catchAsync.js";
 
 export const getProfile = catchAsync(async (req, res, next) => {
     let { id } = req.params;
-    let user = await User.findById(id);
+    // let user = await User.findById(id);
+
+    let user = await User.findById(id).populate({
+        path: "moments",
+    });
+
+    // console.log(user);
+
     if (!user) return next(new AppError("User not found", 404));
 
     return res.status(200).json({ status: "success", data: user });

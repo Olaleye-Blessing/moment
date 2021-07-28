@@ -1,4 +1,5 @@
 import Moment from "../model/moment.js";
+import User from "../model/users.js";
 import { catchAsync } from "../utility/catchAsync.js";
 
 export const getMoments = async (req, res, next) => {
@@ -56,42 +57,37 @@ export const createMoment = async (req, res, next) => {
         image,
     });
 
+    let userMomentAdded = await User.findByIdAndUpdate(creator, {
+        $push: { moments: moment._id },
+    });
+
     res.status(201).json({
         "status": "success",
         moment,
     });
 };
 
-export const updateMoment = async (req, res, next) => {
+export const updateMoment = catchAsync(async (req, res, next) => {
     let { id } = req.params;
     let { title, message, creator, tags, image } = req.body;
     tags = tags.split(" ");
 
-    try {
-        let updatedMoment = await Moment.findByIdAndUpdate(
-            id,
-            { title, message, creator, tags, image },
-            { new: true }
-        );
-        return res
-            .status(201)
-            .json({ status: "success", moment: updatedMoment });
-    } catch (error) {
-        return res.status(404).json({ "status": "fail" });
-    }
-};
+    let updatedMoment = await Moment.findByIdAndUpdate(
+        id,
+        { title, message, creator, tags, image },
+        { new: true }
+    );
 
-export const deleteMoment = async (req, res, next) => {
+    return res.status(201).json({ status: "success", moment: updatedMoment });
+});
+
+export const deleteMoment = catchAsync(async (req, res, next) => {
+    console.log(req.params);
     let { id } = req.params;
 
-    try {
-        await Moment.findByIdAndDelete(id);
-        return res.status(204).json({
-            "status": "success",
-        });
-    } catch (error) {
-        return res.status(404).json({
-            status: "fail",
-        });
-    }
-};
+    await Moment.findByIdAndDelete(id);
+
+    return res.status(200).json({
+        "status": "success",
+    });
+});

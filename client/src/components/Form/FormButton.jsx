@@ -7,10 +7,9 @@ const FormButton = ({
     children,
 }) => {
     return (
-        <div className="form__control">
+        <div className="">
             <button
-                // className={`form__button btn ${classname}`}
-                className={`form__button link ${classname}`}
+                className={`bg-red pt-1 pb-2 px-6 rounded`}
                 type={type}
                 onClick={handleClick}
                 disabled={disabled}

@@ -12,7 +12,8 @@ export const updatePost = async (id, moment) => {
 };
 
 export const deletePost = async (id) => {
-    await fetchData(`/moments/${id}`, "DELETE", undefined, undefined);
+    console.log("got to deletePost export...");
+    await fetchData(`/moments/${id}`, "DELETE", undefined, { id });
 };
 
 export const momentDetails = async (id, signal) =>

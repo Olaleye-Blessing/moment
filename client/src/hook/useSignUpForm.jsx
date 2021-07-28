@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { useMomentContext } from "../context/MomentsContext";
 import { actions } from "../reducer/actions";
+import { createData } from "../reducer/fetchActions";
 import { signup } from "../reducer/fetchActions/auth";
 // import { signup } from "../reducer/fetchActions";
 import { preventUnnecessaryKeys } from "../utilities/Form/preventUnnecessaryKeys";
@@ -77,14 +78,15 @@ const useSignUpForm = (validate) => {
         setTouched({ ...touched, [name]: true });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
+        // e.preventDefault();
         setDisabledSubmitBtn(true);
         setLoading(true);
 
         try {
-            let res = await signup(values);
-            console.log(res);
+            // let res = await signup(values);
+            let res = await createData(`/auth/signup`, values);
+            // console.log(res);
             if (res.status === "success") {
                 dispatch({ type: actions.AUTHENTICATION, payload: res.user });
                 history.replace("/");

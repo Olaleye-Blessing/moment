@@ -45,8 +45,14 @@ const userSchema = new Schema({
             message: "passwords do not match",
         },
     },
-    activationToken: String,
-    activationExpires: Date,
+    activationToken: {
+        type: String,
+        select: false,
+    },
+    activationExpires: {
+        type: Date,
+        select: false,
+    },
     profilePic: String,
     coverPic: String,
     work: {
@@ -68,6 +74,7 @@ const userSchema = new Schema({
     twitter: String,
     github: String,
     instagram: String,
+    linkedin: String,
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -86,6 +93,14 @@ const userSchema = new Schema({
         default: "pending",
         enum: ["pending", "active", "deactivated"],
     },
+    // mongoose.Schema.ObjectId
+    moments: [
+        {
+            type: Schema.ObjectId,
+            ref: "Moment",
+            select: false,
+        },
+    ],
 });
 
 //+ only run this middleware when password is saved/modified

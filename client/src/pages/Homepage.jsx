@@ -8,40 +8,39 @@ import LoadingIndicator from "../components/LoadingIndicator";
 // import cryingGif from "./data/gifs/crying.gif";
 import { Link } from "react-router-dom";
 import HomeAsideProfile from "../components/HomeAside/HomeAsideProfile";
-import HomeAsideOthers from "../components/HomeAside/HomeAsideOthers";
-import { fetchPosts } from "../reducer/fetchActions/moment";
+// import HomeAsideOthers from "../components/HomeAside/HomeAsideOthers";
+// import { fetchPosts } from "../reducer/fetchActions/moment";
 // import NotFound from "./NotFound";
-import Alert from "./../components/Alert";
+// import Alert from "./../components/Alert";
+// import CloseButton from "../components/Button/CloseButton";
+import { getData } from "../reducer/fetchActions";
+import ProcessIndicator from "../components/ProcessIndicator";
 
 const Homepage = () => {
-    let { state, dispatch } = useMomentContext();
-    // const [moments, setMoments] = useState([]);
-    let { errorAlert } = state;
+    let { state, dispatch, asideProfRef } = useMomentContext();
 
-    const [status, setStatus] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    let { moments } = state;
     useEffect(() => {
         let abort = new AbortController();
         let signal = abort.signal;
+        setLoading(true);
+        setError(null);
 
         const fetchAllPosts = async () => {
             try {
-                let response = await fetchPosts(signal);
+                // let response = await fetchPosts(signal);
                 // let response = await fetchData(`/moments`, signal);
-
-                if (response) {
-                    let { moments, status } = response;
-
-                    if (status === "success") {
-                        setStatus("success");
-                        dispatch({ type: actions.FETCH_ALL, payload: moments });
-                    }
-                }
+                let response = await getData(`/moments`, signal);
+                dispatch({
+                    type: actions.FETCH_ALL,
+                    payload: response.moments,
+                });
+                setLoading(false);
+                setError(null);
             } catch (error) {
-                // let message = {
-                //     show: true,
-                //     type: "invalid",
-                //     msg: `${error.message}.`,
-                // };
                 dispatch({ type: actions.ERROR, payload: error });
                 console.log(error);
             }
@@ -53,16 +52,33 @@ const Homepage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    let { moments } = state;
-
+    // sm:flex-auto sm:min-w-sm sm:max-w-xs sm:bg-transparent sm:px-0 md:mr-auto 2xl:mx-auto
     return (
-        <div data-page="homepage" className="width width-one">
-            {errorAlert.show && <Alert {...errorAlert} />}
-            <aside className="aside__home">
+        <div
+            data-page="homepage"
+            className="relative px-3 py-5 md:px-8 lg:px-16 xl:px-32 sm:flex sm:items-start sm:justify-start sm:gap-5"
+        >
+            {/* h-full */}
+            <aside
+                className="absolute -top-1 bg-black transition-transform right-full px-3 py-4 z-20 max-w-md sm:bg-transparent sm:static sm:pt-0 sm:min-w-sm sm:max-w-xs sm:px-0 md:mr-auto"
+                ref={asideProfRef}
+            >
                 <HomeAsideProfile />
             </aside>
-            <main data-content="moments">
-                {moments.length < 1 && !status ? (
+            <main className="sm:w-full lg:max-w-2xl" data-content="moments">
+                {moments.length === 0 && loading && (
+                    <ProcessIndicator
+                        parentExtraClass="w-full h-80"
+                        childExtraClass="w-40 h-40"
+                    />
+                )}
+                {error && <div>Error...</div>}
+                {!loading && moments.length < 1 ? (
+                    <div className="text-center">No moments</div>
+                ) : (
+                    <Moments moments={moments} />
+                )}
+                {/* {moments.length < 1 && !status ? (
                     <LoadingIndicator />
                 ) : moments.length < 1 && status ? (
                     <>
@@ -88,10 +104,12 @@ const Homepage = () => {
                     </>
                 ) : (
                     <Moments moments={moments} />
-                )}
+                )} */}
             </main>
-            <aside>
-                <HomeAsideOthers />
+            {/* lg:block */}
+            <aside className="hidden sm:min-w-sm sm:max-w-xs lg:ml-auto lg:block">
+                {/* <HomeAsideOthers /> */}
+                <HomeAsideProfile />
             </aside>
         </div>
     );

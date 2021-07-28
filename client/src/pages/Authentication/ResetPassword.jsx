@@ -1,18 +1,23 @@
 import { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import Alert from "../../components/Alert";
-import FormButton from "../../components/Form/FormButton";
+
+// import Alert from "../../components/Alert";
+import Button from "../../components/Button/Button";
+// import FormButton from "../../components/Form/FormButton";
+import FormContainer from "../../components/Form/FormContainer";
+import FormHomeLogo from "../../components/Form/FormHomeLogo";
 import FormText from "../../components/Form/FormText";
-import HomeLogo from "../../components/HomeLogo";
+// import HomeLogo from "../../components/HomeLogo";
 import { useMomentContext } from "../../context/MomentsContext";
 import { actions } from "../../reducer/actions";
-import { resetPassword } from "../../reducer/fetchActions/auth";
+import { updateData } from "../../reducer/fetchActions";
+// import { resetPassword } from "../../reducer/fetchActions/auth";
 
 const ResetPassword = () => {
     let history = useHistory();
     let { token } = useParams();
-    let { state, dispatch } = useMomentContext();
-    let { errorAlert } = state;
+    let { dispatch } = useMomentContext();
+
     const [data, setData] = useState({
         email: "",
         password: "",
@@ -20,8 +25,8 @@ const ResetPassword = () => {
     });
     const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
+        // e.preventDefault();
         // console.log(data);
         setDisableSubmitBtn(true);
 
@@ -31,7 +36,8 @@ const ResetPassword = () => {
         }
 
         try {
-            let req = await resetPassword(token, data);
+            // let req = await resetPassword(token, data);
+            let req = await updateData(`/auth/resetPassword/${token}`, data);
             // console.log(req);
             dispatch({ type: actions.AUTHENTICATION, payload: req.user });
 
@@ -55,13 +61,12 @@ const ResetPassword = () => {
         setData({ ...data, [name]: value });
     };
     return (
-        <section data-form="auth">
-            {errorAlert.show && <Alert {...errorAlert} />}
-            <h2 className="form__home">
-                <HomeLogo />
-            </h2>
-            <form className="form" onSubmit={handleSubmit}>
-                <h2>Change Password</h2>
+        <section data-form="auth" className="px-4">
+            <FormHomeLogo />
+            <FormContainer
+                onSubmit={handleSubmit}
+                headerTitle="Change Password"
+            >
                 <FormText
                     type="email"
                     name="email"
@@ -85,15 +90,28 @@ const ResetPassword = () => {
                     placeholder="confrim password"
                 />
 
-                <FormButton
+                {/* <FormButton
                     text="send"
                     type="submit"
                     classname={`form__button-submit ${
                         disableSubmitBtn ? "disabled" : ""
                     }`}
                     disabled={disableSubmitBtn}
-                />
-            </form>
+                /> */}
+                <div className="text-center mt-14 mb-7">
+                    <Button
+                        text="reset password"
+                        type="submit"
+                        disabled={disableSubmitBtn}
+                        extraClass={`btn-submit ${
+                            disableSubmitBtn
+                                ? "btn-submit-disable"
+                                : "btn-submit-enable"
+                        }`}
+                    ></Button>
+                </div>
+            </FormContainer>
+            {/* </form> */}
         </section>
     );
 };

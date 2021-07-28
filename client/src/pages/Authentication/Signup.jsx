@@ -1,18 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-    AiFillExclamationCircle,
-    AiFillCheckCircle,
-    // AiOutlineEye,
-    // AiOutlineEyeInvisible,
-} from "react-icons/ai";
+// import {
+//     AiFillExclamationCircle,
+//     AiFillCheckCircle,
+// } from "react-icons/ai";
 
-import Alert from "../../components/Alert";
-import FormButton from "../../components/Form/FormButton";
 import FormFile from "../../components/Form/FormFile";
 import FormText from "../../components/Form/FormText";
-import HomeLogo from "../../components/HomeLogo";
-import { useMomentContext } from "../../context/MomentsContext";
 import useSignUpForm from "../../hook/useSignUpForm";
 // import { actions } from "../../reducer/actions";
 // import { signup } from "../../reducer/fetchActions";
@@ -21,9 +15,13 @@ import validateInfo from "../../utilities/Form/validateSignUpInfo";
 import validatePasswordErrors from "../../utilities/Form/validatePassword";
 import ToggleButton from "../../components/ToggleButton";
 import ProcessIndicator from "../../components/ProcessIndicator";
+import FormHomeLogo from "../../components/Form/FormHomeLogo";
+import FormErrorMsg from "../../components/Form/FormErrorMsg";
+import Button from "../../components/Button/Button";
+import FormContainer from "../../components/Form/FormContainer";
+import SubmitButton from "../../components/Button/SubmitButton";
 
 const Signup = () => {
-    let { state } = useMomentContext();
     let {
         handleChange,
         handleImageChange,
@@ -92,16 +90,13 @@ const Signup = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [values.password]);
 
-    let { errorAlert } = state;
-
     return (
-        <section data-form="auth">
-            {errorAlert.show && <Alert {...errorAlert} />}
-            <h2 className="form__home">
-                <HomeLogo />
-            </h2>
-            <form className="form" onSubmit={handleSubmit}>
-                <h2>Create An Account</h2>
+        <section data-form="auth" className="px-4">
+            <FormHomeLogo />
+            <FormContainer
+                onSubmit={handleSubmit}
+                headerTitle="Create An Account"
+            >
                 <FormText
                     name="firstName"
                     label="First Name"
@@ -113,15 +108,7 @@ const Signup = () => {
                     required={true}
                 >
                     {errors.firstName.status && (
-                        <small className="form__input-error">
-                            {errors.firstName.msg}
-                        </small>
-                    )}
-                    {fieldError("firstName") === "invalid" && (
-                        <AiFillExclamationCircle className="form__input-icon form__input-icon-error" />
-                    )}
-                    {fieldError("firstName") === "valid" && (
-                        <AiFillCheckCircle className="form__input-icon form__input-icon-valid" />
+                        <FormErrorMsg text={errors.firstName.msg} />
                     )}
                 </FormText>
                 <FormText
@@ -135,15 +122,7 @@ const Signup = () => {
                     required={true}
                 >
                     {errors.lastName.status && (
-                        <small className="form__input-error">
-                            {errors.lastName.msg}
-                        </small>
-                    )}
-                    {fieldError("lastName") === "invalid" && (
-                        <AiFillExclamationCircle className="form__input-icon form__input-icon-error" />
-                    )}
-                    {fieldError("lastName") === "valid" && (
-                        <AiFillCheckCircle className="form__input-icon form__input-icon-valid" />
+                        <FormErrorMsg text={errors.lastName.msg} />
                     )}
                 </FormText>
                 <FormText
@@ -156,15 +135,7 @@ const Signup = () => {
                     required={true}
                 >
                     {errors.email.status && (
-                        <small className="form__input-error">
-                            {errors.email.msg}
-                        </small>
-                    )}
-                    {fieldError("email") === "invalid" && (
-                        <AiFillExclamationCircle className="form__input-icon form__input-icon-error" />
-                    )}
-                    {fieldError("email") === "valid" && (
-                        <AiFillCheckCircle className="form__input-icon form__input-icon-valid" />
+                        <FormErrorMsg text={errors.email.msg} />
                     )}
                 </FormText>
                 <FormText
@@ -177,15 +148,7 @@ const Signup = () => {
                     required={true}
                 >
                     {errors.username.status && (
-                        <small className="form__input-error">
-                            {errors.username.msg}
-                        </small>
-                    )}
-                    {fieldError("username") === "invalid" && (
-                        <AiFillExclamationCircle className="form__input-icon form__input-icon-error" />
-                    )}
-                    {fieldError("username") === "valid" && (
-                        <AiFillCheckCircle className="form__input-icon form__input-icon-valid" />
+                        <FormErrorMsg text={errors.username.msg} />
                     )}
                 </FormText>
                 <FormText
@@ -202,29 +165,21 @@ const Signup = () => {
                         showPswd={showPswd}
                     />
                     {errors.password.status && (
-                        <small className="form__input-error">
-                            {errors.password.msg}
-                        </small>
-                    )}
-                    {fieldError("password") === "invalid" && (
-                        <AiFillExclamationCircle className="form__input-icon form__input-icon-error" />
-                    )}
-                    {fieldError("password") === "valid" && (
-                        <AiFillCheckCircle className="form__input-icon form__input-icon-valid" />
+                        <FormErrorMsg text={errors.password.msg} />
                     )}
                 </FormText>
                 {fieldError("password") === "invalid" && (
-                    <ul className="form__password-errors">
+                    <ul className="mb-4">
                         {passwordConditions.map((condition) => {
                             let { label, text, valid } = condition;
                             return (
                                 <li
                                     key={label}
-                                    className={
+                                    className={`text-sm mb-1 transition-colors duration-400 ${
                                         valid
-                                            ? "form__input-icon-valid"
-                                            : "form__input-icon-error"
-                                    }
+                                            ? "text-green-primary"
+                                            : "text-red"
+                                    }`}
                                 >
                                     {text}
                                 </li>
@@ -249,19 +204,11 @@ const Signup = () => {
                         showPswd={showConfirmPswd}
                     />
                     {errors.confirmPassword.status && (
-                        <small className="form__input-error">
-                            {errors.confirmPassword.msg}
-                        </small>
-                    )}
-                    {fieldError("confirmPassword") === "invalid" && (
-                        <AiFillExclamationCircle className="form__input-icon form__input-icon-error" />
-                    )}
-                    {fieldError("confirmPassword") === "valid" && (
-                        <AiFillCheckCircle className="form__input-icon form__input-icon-valid" />
+                        <FormErrorMsg text={errors.confirmPassword.msg} />
                     )}
                 </FormText>
                 <FormFile name="profilePic" handleChange={handleImageChange} />
-                <FormButton
+                {/* <FormButton
                     text="create"
                     type="submit"
                     classname={`form__button-submit ${
@@ -270,14 +217,36 @@ const Signup = () => {
                     disabled={disabledSubmitBtn}
                 >
                     {loading && <ProcessIndicator />}
-                </FormButton>
-            </form>
-            <p className="form__other">
-                Already have an account? <Link to="/auth/login">Login</Link>
-            </p>
-            <p className="form__other">
-                <Link to="/auth/forgotPassword">Forgot Password?</Link>
-            </p>
+                </FormButton> */}
+                <div className="text-center mt-14 mb-7">
+                    <SubmitButton
+                        text="Create My Account"
+                        loading={loading}
+                        disabled={disabledSubmitBtn}
+                    />
+                    {/* <Button
+                        text="create"
+                        type="submit"
+                        disabled={disabledSubmitBtn}
+                        extraClass={`btn-submit ${
+                            disabledSubmitBtn
+                                ? "btn-submit-disable"
+                                : "btn-submit-enable"
+                        }`}
+                    >
+                        {loading && <ProcessIndicator />}
+                    </Button> */}
+                </div>
+            </FormContainer>
+            {/* </form> */}
+            <div className="form__alt">
+                <p>
+                    Already have an account? <Link to="/auth/login">Login</Link>
+                </p>
+                <p>
+                    <Link to="/auth/forgotPassword">Forgot Password?</Link>
+                </p>
+            </div>
         </section>
     );
 };
