@@ -13,6 +13,7 @@ export const reducer = (state, action) => {
             return { ...state, moments: [...state.moments, newcreatedMoment] };
 
         case actions.UPDATE_MOMENT:
+        case actions.LIKE_MOMENT:
             let { moments } = state;
             moments = moments.map((moment) =>
                 moment._id === action.payload._id ? action.payload : moment

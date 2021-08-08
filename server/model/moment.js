@@ -17,19 +17,12 @@ const momentSchema = new Schema(
             },
         ],
         image: String,
-        likes: {
-            type: Number,
-            default: 0,
-        },
-        dislikes: {
-            type: Number,
-            default: 0,
-        },
-        // comments: String,
-        // comments: {
-        //     type: Array,
-        //     default: [],
-        // },
+        likes: [
+            {
+                type: Schema.ObjectId,
+                ref: "User",
+            },
+        ],
         createdAt: {
             type: Date,
             default: () => Date.now(),

@@ -1,28 +1,32 @@
 import {
     createContext,
     useContext,
-    useEffect,
+    // useEffect,
     useReducer,
     useRef,
     useState,
 } from "react";
-import { actions } from "../reducer/actions";
+// import { actions } from "../reducer/actions";
 import { reducer } from "../reducer/reducer";
 
 const MomentContent = createContext();
 
-const initialState = {
-    moments: [],
-    user: JSON.parse(localStorage.getItem("profile")),
-};
+// const initialState = {
+//     moments: [],
+//     user: JSON.parse(localStorage.getItem("profile")),
+// };
 
-console.log("initialState", initialState);
+// console.log("initialState", initialState);
 
 export const MomentsProvider = ({ children }) => {
     // const [state, dispatch] = useReducer(reducer, initialState, () => {
     //     return { moments: [] };
     // });
-    const [state, dispatch] = useReducer(reducer, initialState);
+    // const [state, dispatch] = useReducer(reducer, initialState);
+    const [state, dispatch] = useReducer(reducer, {
+        moments: [],
+        user: JSON.parse(localStorage.getItem("profile")),
+    });
     const [showAsideProfNav, setShowAsideProfNav] = useState(false);
     const asideProfRef = useRef(null);
 

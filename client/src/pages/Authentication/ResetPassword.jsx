@@ -41,17 +41,17 @@ const ResetPassword = () => {
             // console.log(req);
             dispatch({ type: actions.AUTHENTICATION, payload: req.user });
 
-            let message = {
-                show: true,
-                type: "valid",
-                msg: "successfully logged in. Redirecting in a second..",
-            };
-            dispatch({ type: actions.ERROR, payload: message });
+            // let message = {
+            //     show: true,
+            //     type: "valid",
+            //     msg: "successfully logged in. Redirecting in a second..",
+            // };
+            // dispatch({ type: actions.ERROR, payload: message });
 
             history.replace("/");
         } catch (error) {
             // console.log(error);
-            dispatch({ type: actions.ERROR, payload: error });
+            // dispatch({ type: actions.ERROR, payload: error });
             setDisableSubmitBtn(false);
         }
     };

@@ -7,6 +7,7 @@ import { IoSchoolSharp, IoWifiSharp } from "react-icons/io5";
 import { MdWork } from "react-icons/md";
 import { RiSignalTowerFill } from "react-icons/ri";
 import { VscGithubInverted } from "react-icons/vsc";
+import humanDate from "../../utilities/humanDate";
 
 export let aboutProfile = (changedProfile) => [
     {
@@ -32,7 +33,7 @@ export let aboutProfile = (changedProfile) => [
     {
         icon: <BsClock className="text-white-secondary text-lg" />,
         text: `Joined `,
-        value: `November 2017`,
+        value: humanDate(changedProfile.createdAt),
     },
     {
         icon: <IoWifiSharp className="text-white-secondary text-lg" />,

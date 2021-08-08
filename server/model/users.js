@@ -8,100 +8,121 @@ const Schema = mongoose.Schema;
 
 const model = mongoose.model;
 
-const userSchema = new Schema({
-    name: String,
-    email: {
-        type: String,
-        required: [true, "please provide your email"],
-        trim: true,
-        unique: true,
-        lowercase: true,
-        validate: [validateEmail, "invalid email"],
-    },
-    bio: {
-        type: String,
-        default: "",
-    },
-    username: {
-        type: String,
-        // unique: true,
-        // required: true,
-    },
-    coverPic: String,
-    password: {
-        type: String,
-        required: [true, "please provide your password"],
-        minlength: 8,
-        select: false,
-    },
-    confirmPassword: {
-        type: String,
-        required: [true, "confirm password"],
-        validate: {
-            //! this only works on .create() or .save()
-            validator: function (confirm) {
-                return confirm === this.password;
-            },
-            message: "passwords do not match",
+const userSchema = new Schema(
+    {
+        name: String,
+        email: {
+            type: String,
+            required: [true, "please provide your email"],
+            trim: true,
+            unique: true,
+            lowercase: true,
+            validate: [validateEmail, "invalid email"],
         },
-    },
-    activationToken: {
-        type: String,
-        select: false,
-    },
-    activationExpires: {
-        type: Date,
-        select: false,
-    },
-    profilePic: String,
-    coverPic: String,
-    work: {
-        type: String,
-        default: "",
-    },
-    education: {
-        type: String,
-        default: "",
-    },
-    lives: {
-        type: String,
-        default: "",
-    },
-    hometown: {
-        type: String,
-        default: "",
-    },
-    twitter: String,
-    github: String,
-    instagram: String,
-    linkedin: String,
-    passwordChangedAt: Date,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
-    verified: {
-        type: Boolean,
-        default: false,
-    },
-    status: {
-        type: String,
-        // values:
-        /*
+        bio: {
+            type: String,
+            default: "",
+        },
+        username: {
+            type: String,
+            // unique: true,
+            // required: true,
+        },
+        coverPic: String,
+        password: {
+            type: String,
+            required: [true, "please provide your password"],
+            minlength: 8,
+            select: false,
+        },
+        confirmPassword: {
+            type: String,
+            required: [true, "confirm password"],
+            validate: {
+                //! this only works on .create() or .save()
+                validator: function (confirm) {
+                    return confirm === this.password;
+                },
+                message: "passwords do not match",
+            },
+        },
+        // createdAt: {
+        // type: Date,
+        // default: () => Date.now(),
+        // default: () => new Date(),
+        // default: () => ISODate(),
+        // },
+        activationToken: {
+            type: String,
+            select: false,
+        },
+        activationExpires: {
+            type: Date,
+            select: false,
+        },
+        profilePic: String,
+        coverPic: String,
+        work: {
+            type: String,
+            default: "",
+        },
+        education: {
+            type: String,
+            default: "",
+        },
+        lives: {
+            type: String,
+            default: "",
+        },
+        hometown: {
+            type: String,
+            default: "",
+        },
+        twitter: {
+            type: String,
+            default: "",
+        },
+        github: {
+            type: String,
+            default: "",
+        },
+        instagram: {
+            type: String,
+            default: "",
+        },
+        linkedin: {
+            type: String,
+            default: "",
+        },
+        passwordChangedAt: Date,
+        passwordResetToken: String,
+        passwordResetExpires: Date,
+        verified: {
+            type: Boolean,
+            default: false,
+        },
+        status: {
+            type: String,
+            // values:
+            /*
         pending: newly created account(active)
         active: verified email(active)
         deactivated
         */
-        default: "pending",
-        enum: ["pending", "active", "deactivated"],
-    },
-    // mongoose.Schema.ObjectId
-    moments: [
-        {
-            type: Schema.ObjectId,
-            ref: "Moment",
-            select: false,
+            default: "pending",
+            enum: ["pending", "active", "deactivated"],
         },
-    ],
-});
+        // mongoose.Schema.ObjectId
+        moments: [
+            {
+                type: Schema.ObjectId,
+                ref: "Moment",
+                select: false,
+            },
+        ],
+    },
+    { timestamps: true }
+);
 
 //+ only run this middleware when password is saved/modified
 userSchema.pre("save", async function (next) {

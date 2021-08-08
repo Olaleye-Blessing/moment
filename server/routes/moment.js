@@ -6,6 +6,7 @@ import {
     deleteMoment,
     getMoment,
     getMoments,
+    likeMoment,
     updateMoment,
 } from "../controllers/moment.js";
 
@@ -19,5 +20,7 @@ router.use(protect);
 router.post("/", createMoment);
 router.patch("/:id", updateMoment);
 router.delete("/:id", deleteMoment);
+
+router.patch("/like/:id", likeMoment);
 
 export default router;

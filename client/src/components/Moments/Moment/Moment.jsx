@@ -1,83 +1,73 @@
 import { useHistory } from "react-router-dom";
-// import { BiLike, BiDislike } from "react-icons/bi";
 import { FaRegComment } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
-// import { BsBookmark } from "react-icons/bs";
-// import { BiVideo } from "react-icons/bi";
-import { VscEdit, VscReactions } from "react-icons/vsc";
+// import { VscReactions } from "react-icons/vsc";
 
 import { useMomentContext } from "../../../context/MomentsContext";
-import humanDate from "../../../utilities/humanDate";
-// import defaultImage from "./../../../data/images/blueFlower.jpg";
-import Avatar from "../../Avatar";
-// import { deletePost } from "../../../reducer/fetchActions";
+import { formatDate } from "../../../utilities/formatDate";
 import { deletePost } from "../../../reducer/fetchActions/moment";
 import { actions } from "../../../reducer/actions";
-import UserName from "../../User/UserName";
 import Button from "../../Button/Button";
-import ButtonIcon from "../../Button/ButtonIcon";
 import MomentTags from "./MomentTags";
 import AvatarUserCreatedAt from "../../User/AvatarUserCreatedAt";
 import { deletedToastNotification } from "../../../utilities/Toast";
+import DeleteBasketButton from "../../Button/DeleteBasketButton";
+import EditPenIconButton from "../../Button/EditPenIconButton";
+import LikeButton from "../../Button/LikeButton";
+import toast from "react-hot-toast";
+import { updateData } from "./../../../reducer/fetchActions.js";
+import handleLikeComment, {
+    getUserHasLiked,
+} from "./../../../utilities/Comment/handleLikeComment.js";
 
 const Moment = ({ moment }) => {
-    // console.log(moment);
     let { setCurrentMomentId, state, dispatch } = useMomentContext();
-    // let { state } = useMomentContext();
     let history = useHistory();
 
     let { user } = state;
-    let {
-        creator,
-        createdAt,
-        // image,
-        title,
-        _id,
-        tags,
-        message,
-        likes,
-        dislikes,
-        comments,
-    } = moment;
-    // console.log(moment);
-    let { profilePic, name } = creator;
+    let { creator, createdAt, title, _id, tags, message, likes, comments } =
+        moment;
 
-    // profilePic = profilePic || defaultImage;
+    let { profilePic, name } = creator;
 
     tags = [...new Set([...tags])]; //? eliminate duplicate tags
 
-    // let secondsAgo = Date.now() - new Date(createdAt).getTime();
+    let timeAgo = Date.now() - new Date(createdAt).getTime();
 
-    // let formattedTime = formatDate(secondsAgo / 1000);
-
-    // console.log(humanDate(createdAt));
-
-    // image = !image ? defaultImage : image;
+    let formattedTime = formatDate(timeAgo / 1000);
 
     const showMomentDetail = (e) => {
         e.stopPropagation();
         history.push(`/moments/${_id}`);
     };
 
-    // console.log(moment);
-    // console.log(likes, dislikes);
-
-    // let reactions = Number(likes) + Number(dislikes);
-
-    // console.log(creator);
-
     const deleteMoment = async (e) => {
         e.stopPropagation();
-        // console.log("delete clicked");
         dispatch({
             type: actions.DELETE_MOMENT,
             payload: moment._id,
         });
         try {
-            // console.log("got to delete moment...");
             await deletePost(moment._id);
             deletedToastNotification("successfully deleted");
-            // console.log("done");
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // const getUserHasLiked = user && likes.find((likeId) => user._id === likeId);
+    // const getUserHasLiked = () => {
+    //     return user && likes.find((likeId) => user._id === likeId);
+    // };
+    const userHasLiked = getUserHasLiked(user, likes);
+
+    const handleLikeClicked = async (e) => {
+        let newLikes = handleLikeComment(e, user, likes);
+
+        moment = { ...moment, likes: newLikes };
+        dispatch({ type: actions.LIKE_MOMENT, payload: moment });
+
+        try {
+            await updateData(`/moments/like/${moment._id}`, {});
         } catch (error) {
             console.log(error);
         }
@@ -89,15 +79,6 @@ const Moment = ({ moment }) => {
             tabIndex={0}
             onClick={showMomentDetail}
         >
-            {/* <div className="mb-5 flex gap-2">
-                <Avatar src={profilePic} extraClass="bg-black" />
-                <div className="">
-                    <UserName name={name} username={"kikky"} id={creator._id} />
-                    <p className="text-xs text-white-secondary">
-                        {humanDate(createdAt)}
-                    </p>
-                </div>
-            </div> */}
             <AvatarUserCreatedAt
                 profilePic={profilePic}
                 name={name}
@@ -115,15 +96,12 @@ const Moment = ({ moment }) => {
                 <div className="flex items-center justify-between mt-5">
                     <ul className="flex items-center justify-start gap-4">
                         <li>
-                            <div className="flex items-center justify-start btn-icon gap-1">
-                                <VscReactions
-                                    className=""
-                                    style={{ fontSize: "20px" }}
-                                />
-                                <span className="text-base text-white-secondary">
-                                    2
-                                </span>
-                            </div>
+                            <LikeButton
+                                likes={likes}
+                                // liked={getUserHasLiked()}
+                                liked={userHasLiked}
+                                onClick={handleLikeClicked}
+                            />
                         </li>
                         <li>
                             <Button
@@ -141,18 +119,12 @@ const Moment = ({ moment }) => {
                     <ul className="flex items-center justify-start gap-2">
                         {user?._id === creator._id ? (
                             <li>
-                                <ButtonIcon
-                                    extraClass="hover:text-red-primary"
-                                    icon={<MdDelete />}
-                                    onClick={deleteMoment}
-                                />
+                                <DeleteBasketButton onClick={deleteMoment} />
                             </li>
                         ) : null}
                         {user?._id === creator._id && (
                             <li>
-                                <ButtonIcon
-                                    icon={<VscEdit />}
-                                    extraClass="hover:text-green-primary"
+                                <EditPenIconButton
                                     onClick={(e) => {
                                         e.stopPropagation();
 
@@ -166,7 +138,7 @@ const Moment = ({ moment }) => {
                 </div>
             </div>
             <div className="text-right text-xs mt-5 text-white text-opacity-50">
-                11 days ago
+                {formattedTime}
             </div>
         </article>
     );

@@ -57,6 +57,9 @@ export const signup = catchAsync(async (req, res, next) => {
     const activationToken = signToken(email, "10m");
     const activationExpires = Date.now() + 10 * 60 * 1000;
 
+    // let createdAt = new Date();
+    // console.log(createdAt.getTimezoneOffset());
+
     let user = await User.create({
         name,
         email,
@@ -66,6 +69,8 @@ export const signup = catchAsync(async (req, res, next) => {
         activationToken,
         activationExpires,
         profilePic,
+        // createdAt,
+        // createdAtOffset: createdAt.getTimezoneOffset(),
     });
 
     //? send activation token to user's email

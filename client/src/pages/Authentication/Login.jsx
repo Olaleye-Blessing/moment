@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 // import Alert from "../../components/Alert";
-import Button from "../../components/Button/Button";
+// import Button from "../../components/Button/Button";
 // import FormButton from "../../components/Form/FormButton";
 import FormContainer from "../../components/Form/FormContainer";
 import FormHomeLogo from "../../components/Form/FormHomeLogo";
 import FormText from "../../components/Form/FormText";
-import ProcessIndicator from "../../components/ProcessIndicator";
+// import ProcessIndicator from "../../components/ProcessIndicator";
 import ToggleButton from "../../components/ToggleButton";
 import { useMomentContext } from "../../context/MomentsContext";
 import { actions } from "../../reducer/actions";
@@ -47,7 +47,7 @@ const Login = () => {
         } catch (error) {
             setDisableSubmitBtn(false);
             setLoading(false);
-            dispatch({ type: actions.ERROR, payload: error });
+            // dispatch({ type: actions.ERROR, payload: error });
         }
     };
 

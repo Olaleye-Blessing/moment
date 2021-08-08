@@ -1,17 +1,17 @@
-import { useMomentContext } from "../../context/MomentsContext";
+// import { useMomentContext } from "../../context/MomentsContext";
 import FormText from "../../components/Form/FormText";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 // import { forgetPassword } from "../../reducer/fetchActions/auth";
-import { actions } from "../../reducer/actions";
+// import { actions } from "../../reducer/actions";
 import FormHomeLogo from "../../components/Form/FormHomeLogo";
 import FormContainer from "../../components/Form/FormContainer";
-import Button from "../../components/Button/Button";
+// import Button from "../../components/Button/Button";
 import { createData } from "../../reducer/fetchActions";
 import SubmitButton from "../../components/Button/SubmitButton";
 
 const ForgetPassword = () => {
-    let { dispatch } = useMomentContext();
+    // let { dispatch } = useMomentContext();
 
     const [email, setEmail] = useState("");
     const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);

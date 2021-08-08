@@ -2,7 +2,7 @@
 /* eslint-disable no-throw-literal */
 
 import toast from "react-hot-toast";
-import { handleToastNotification } from "./handleToastNotification";
+// import { handleToastNotification } from "./handleToastNotification";
 
 let headers = new Headers();
 headers.set("Content-type", "application/json;charset=utf-8");
@@ -20,8 +20,8 @@ export const fetchData = async (
         body: JSON.stringify(body),
         credentials: "include",
     };
-    console.log("got to fetch function...");
-    console.log(body);
+    // console.log("got to fetch function...");
+    // console.log(body);
 
     try {
         // let req = await fetch(`${baseUrl}${url}`, options);
@@ -32,6 +32,7 @@ export const fetchData = async (
         // if (res.data.message) {
         // handleToastNotification(method, res.data.message);
         // }
+        // console.log(res);
         return res;
     } catch (error) {
         // console.log(error);

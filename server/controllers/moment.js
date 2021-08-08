@@ -91,3 +91,41 @@ export const deleteMoment = catchAsync(async (req, res, next) => {
         "status": "success",
     });
 });
+
+export const likeMoment = catchAsync(async (req, res, next) => {
+    let { user } = req;
+    let { id } = req.params;
+
+    //+ get the moment first
+
+    let moment = await Moment.findById(id);
+
+    //! 1
+    let like = [...moment.likes].find(
+        (likeId) => likeId.toString() === user._id.toString()
+    );
+
+    // if (like) {
+    //     moment = await Moment.findByIdAndUpdate(
+    //         id,
+    //         { $pull: { likes: user._id } },
+    //         { new: true }
+    //     );
+    // } else {
+    //     moment = await Moment.findByIdAndUpdate(
+    //         id,
+    //         {
+    //             $push: { likes: user._id },
+    //         },
+    //         { new: true }
+    //     );
+    // }
+
+    moment = await Moment.findByIdAndUpdate(
+        id,
+        like ? { $pull: { likes: user._id } } : { $push: { likes: user._id } },
+        { new: true }
+    );
+
+    return res.json({ status: "success", moment });
+});

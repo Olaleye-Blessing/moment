@@ -13,7 +13,6 @@ import { createData, updateData } from "../../reducer/fetchActions";
 import { imagesToBase64 } from "../../utilities/imageToBase64";
 import { updatedToastNotification } from "../../utilities/Toast";
 import SubmitButton from "../../components/Button/SubmitButton";
-import Button from "../../components/Button/Button";
 import ResetButton from "../../components/Button/ResetButton";
 
 const AddMoment = () => {
@@ -33,7 +32,7 @@ const AddMoment = () => {
         ...momentData,
     });
 
-    console.log(defaultMomentData);
+    // console.log(defaultMomentData);
     let { moments } = state;
     let moment = currentMomentId
         ? moments.find((moment) => moment._id === currentMomentId)
@@ -87,7 +86,6 @@ const AddMoment = () => {
                     toast.success("moment created");
                 }
 
-                // reset();
                 history.replace("/");
             } catch (error) {
                 setLoading(false);
@@ -103,9 +101,9 @@ const AddMoment = () => {
         setMomentData({ ...defaultMomentData });
     };
 
-    // unmount
     useEffect(() => {
         // set id to null so that the reset button wont be displayed when the user comes back to add new moment
+        // unmount
         return () => {
             setCurrentMomentId(null);
         };
@@ -152,12 +150,6 @@ const AddMoment = () => {
                         disabled={loading}
                     />
                     {currentMomentId && <ResetButton onClick={reset} />}
-                    {/* <Button
-                        text="reset"
-                        onClick={reset}
-                        extraClass="btn-red"
-                        disabled={false}
-                    /> */}
                 </div>
             </FormContainer>
         </main>
