@@ -4,7 +4,7 @@ import Button from "../../Button/Button";
 const MomentTags = ({ tags }) => {
     let history = useHistory();
     return (
-        <ul className="mt-4 mb-3 flex gap-2 flex-wrap">
+        <ul className="mt-4 mb-3 flex space-x-2 flex-wrap">
             {tags.map((tag) => (
                 <li key={tag} className="">
                     <Button

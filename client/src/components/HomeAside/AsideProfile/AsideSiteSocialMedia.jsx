@@ -2,7 +2,7 @@ import { siteSocialmedia } from "./siteSocialmedia";
 
 const AsideSiteSocialMedia = () => {
     return (
-        <ul className="mt-4 flex items-center justify-center gap-6 flex-wrap">
+        <ul className="mt-4 flex items-center justify-center space-x-5 flex-wrap">
             {siteSocialmedia.map((media) => {
                 let { text, icon, link } = media;
                 return (

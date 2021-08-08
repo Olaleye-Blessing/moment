@@ -9,8 +9,7 @@ import {
 } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { FaRegComment } from "react-icons/fa";
-import { VscEdit, VscReactions } from "react-icons/vsc";
-// import { RiUserFollowLine } from "react-icons/ri";
+import { VscEdit } from "react-icons/vsc";
 
 import LoadingIndicator from "./../../components/LoadingIndicator";
 import { useMomentContext } from "./../../context/MomentsContext";
@@ -27,9 +26,9 @@ import ProcessIndicator from "./../../components/ProcessIndicator";
 import LikeButton from "./../../components/Button/LikeButton";
 import toast from "react-hot-toast";
 import { updateData } from "../../reducer/fetchActions";
-import handleLikeComment, {
-    getUserHasLiked,
-} from "../../utilities/Comment/handleLikeComment";
+// import handleLikeComment, {
+//     getUserHasLiked,
+// } from "../../utilities/Comment/handleLikeComment";
 
 const Moment = () => {
     let history = useHistory();
@@ -103,11 +102,7 @@ const Moment = () => {
 
     if (loading) return <LoadingIndicator />;
 
-    console.log("moment", moment);
-
     if (moment === null) return <Redirect to="/NotFound" />;
-
-    console.log("moment", moment);
 
     let {
         _id: momentId,
@@ -121,7 +116,7 @@ const Moment = () => {
         likes,
     } = moment;
 
-    let { profilePic, name, _id: creatorId } = creator;
+    let { profilePic, name, _id: creatorId, username } = creator;
 
     tags = [...new Set([...tags])];
     message = message.split("\n").filter((msg) => msg !== "");
@@ -167,15 +162,33 @@ const Moment = () => {
         }
     };
 
-    const userHasLiked = getUserHasLiked(user, likes);
+    const getUserHasLiked = () =>
+        user && likes.find((likeId) => user._id === likeId);
 
     const handleLikeClicked = async (e) => {
-        let newLikes = handleLikeComment(e, user, likes);
+        e.stopPropagation();
+        // e.preventDefault();
+        // console.log("clicked");
 
-        setMoment({ ...moment, likes: newLikes });
+        if (!user) {
+            toast.error("You need to be signed in to like this moment!!");
+            return;
+        }
+
+        // console.log("got here");
+        let like = getUserHasLiked();
+
+        if (like) {
+            likes = likes.filter((likeId) => like !== likeId);
+        } else {
+            likes.push(user._id);
+        }
+        // let newLikes = handleLikeComment(e, user, likes);
+
+        setMoment({ ...moment, likes });
         dispatch({
             type: actions.LIKE_MOMENT,
-            payload: { ...moment, likes: newLikes },
+            payload: { ...moment, likes },
         });
 
         try {
@@ -186,15 +199,11 @@ const Moment = () => {
     };
 
     return (
-        // <div className="px-3 mb-96 mt-6 md:pr-8 lg:pr-16 xl:pr-32 lg:flex lg:items-start lg:gap-4">
-        <div className=" md:ml-14 lg:flex lg:items-start lg:gap-4">
-            {/* <main className="border border-green-dark rounded-md md:ml-20 overflow-hidden lg:ml-32 xl:ml-44"> */}
+        <div className="md:ml-14 lg:flex lg:items-start lg:gap-4">
             <main className="border border-green-dark rounded-md lg:flex-auto">
-                {/* <div className="border border-green-dark rounded-md md:ml-20 overflow-hidden lg:ml-32  xl:ml-44"> */}
-                {/* <div className=""> */}
                 <article className="">
                     {momentHeaderImage && (
-                        <figure className="w-full bg-red max-h-96 overflow-hidden rounded-t-md">
+                        <figure className="w-full max-h-96 overflow-hidden rounded-t-md">
                             <img
                                 src={momentHeaderImage}
                                 alt="kk"
@@ -208,7 +217,7 @@ const Moment = () => {
                         <AvatarUserCreatedAt
                             profilePic={profilePic}
                             name={name}
-                            userName="kikky"
+                            userName={username}
                             createdAt={createdAt}
                             id={creatorId}
                         />
@@ -228,24 +237,25 @@ const Moment = () => {
                     </div>
                 </article>
                 <div className="flex items-center justify-between bg-black-primary sticky bottom-13 mb-4 pt-4 pb-3 px-2 sm:bottom-0 md:fixed md:top-20 md:left-0 md:flex md:flex-col md:justify-start md:gap-6 md:pl-6 md:mb-0 lg:left-9 xl:ml-16">
-                    <ul className="flex items-center justify-start gap-4 md:-mt-2 md:gap-4 md:flex-col-reverse">
+                    <ul className="flex items-center justify-start space-x-4 sm:space-x-0 md:-mt-2 md:gap-4 md:flex-col-reverse">
                         <li>
                             <LikeButton
                                 likes={likes}
-                                liked={userHasLiked}
+                                // liked={userHasLiked}
+                                liked={getUserHasLiked()}
                                 onClick={handleLikeClicked}
                                 extraClass="text-lg"
                             />
                         </li>
                         <li>
-                            <div className="flex items-center justify-start btn-icon gap-1">
+                            <div className="flex items-center justify-start btn-icon space-x-2 sm:space-x-0 sm:gap-2">
                                 <FaRegComment className="text-white-secondary mr-1" />
                                 <span className="text-base ">2</span>
                             </div>
                         </li>
                     </ul>
                     {user?._id === creator._id && (
-                        <ul className="flex items-center justify-start gap-2 md:flex-col md:gap-4">
+                        <ul className="flex items-center justify-start space-x-2 sm:space-x-0 gap-2 md:flex-col md:gap-4">
                             <li>
                                 <ButtonIcon
                                     extraClass="hover:text-red-primary md:text-xl"
@@ -259,10 +269,6 @@ const Moment = () => {
                                     extraClass="hover:text-green-primary md:text-xl"
                                     onClick={(e) => {
                                         e.stopPropagation();
-
-                                        // setCurrentMomentId(
-                                        //     momentId
-                                        // );
                                         history.replace("/moment");
                                     }}
                                 />
@@ -270,7 +276,6 @@ const Moment = () => {
                         </ul>
                     )}
                 </div>
-                {/* </div> */}
 
                 <section
                     id="comments"
@@ -347,9 +352,7 @@ const Moment = () => {
                         </ul>
                     )}
                 </section>
-                {/* </div> */}
             </main>
-            {/* <aside className="mt-5 border border-green-dark rounded-md py-4 px-5 md:px-12 lg:m-0 lg:min-w-sm lg:max-w-xs lg:px-5 lg:self-start lg:sticky lg:top-24 bg-red lg:flex-grow lg:w-full"> */}
             <aside className="mt-5 border border-green-dark rounded-md py-4 px-5 md:px-12 lg:m-0 lg:px-5 lg:self-start lg:sticky lg:top-24 lg:min-w-sm lg:flex-shrink-0">
                 <section>
                     <header>
@@ -373,7 +376,6 @@ const Moment = () => {
                 </section>
             </aside>
         </div>
-        // </div>
     );
 };
 

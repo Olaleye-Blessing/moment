@@ -86,7 +86,7 @@ const Navbar = () => {
             className="py-3 px-3 sticky top-0 duration-300 z-30 md:px-8 border-b border-green-dark mb-1 lg:px-16 xl:px-32"
             ref={navRef}
         >
-            <div className="flex items-center justify-start sm:gap-3">
+            <div className="flex items-center justify-start">
                 {!showAsideProfNav && (
                     <NavHamburgerBtn toggleAsideProfRef={toggleAsideProfRef} />
                 )}

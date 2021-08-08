@@ -158,7 +158,7 @@ const Profile = () => {
                                 authorize ? (
                                     <Button
                                         text="edit cover pic"
-                                        extraClass="bg-green-secondary flex items-center justify-center absolute bottom-3 right-3 text-2xl pt-2 hover:bg-opacity-60 sm:text-base sm:pt-1 gap-1 z-10"
+                                        extraClass="bg-green-secondary flex items-center justify-center absolute bottom-3 right-3 text-2xl pt-2 hover:bg-opacity-60 sm:text-base sm:pt-1 space-x-1 z-10"
                                         childClass="hidden sm:block"
                                     >
                                         <AiFillCamera className="" />
@@ -166,7 +166,7 @@ const Profile = () => {
                                 ) : (
                                     <Button
                                         text="follow"
-                                        extraClass="bg-green-secondary absolute bottom-3 right-3 pt-2 hover:bg-opacity-60 text-base sm:pt-1 gap-1 z-10"
+                                        extraClass="bg-green-secondary absolute bottom-3 right-3 pt-2 hover:bg-opacity-60 text-base sm:pt-1 space-x-1 z-10"
                                     />
                                 )
                             ) : null}
@@ -227,12 +227,12 @@ const Profile = () => {
                                     return (
                                         <li
                                             key={link || text}
-                                            className="flex items-center justify-start mb-3 gap-3"
+                                            className="flex items-center justify-start mb-3 space-x-3"
                                         >
                                             {link ? (
                                                 <a
                                                     href={link}
-                                                    className="flex items-center justify-start gap-3 group hover:text-green-secondary"
+                                                    className="flex items-center justify-start group hover:text-green-secondary"
                                                     target="_blank"
                                                     rel="noreferrer"
                                                 >
@@ -277,7 +277,7 @@ const Profile = () => {
                                             changedProfile={changedProfile}
                                             onChange={onChange}
                                         />
-                                        <div className="flex items-center justify-center gap-3">
+                                        <div className="flex items-center justify-center">
                                             <ResetButton
                                                 onClick={closeModal}
                                                 text="Cancel"
@@ -382,249 +382,8 @@ const Profile = () => {
                             </section>
                         )}
                     </div>
-
-                    {/* </section> */}
                 </div>
             </main>
-            {/* <button
-                                            className=""
-                                            type="button"
-                                            onClick={() => {
-                                                toggleModal(true);
-                                            }}
-                                        >
-                                            edit about
-                                        </button> */}
-            {/* <main data-page="profile">
-                <section className="profile__detail-1">
-                    <div className="profile__detail-sub">
-                        <figure className="user__coverPhoto">
-                            <img
-                                src={profile.coverPic || defaultImage}
-                                alt="hello"
-                            />
-                            {authorize && (
-                                <button className="user__coverPhoto-edit link">
-                                    <span className="user__coverPhoto-edit-icon">
-                                        <AiFillCamera />
-                                    </span>
-
-                                    <span className="user__coverPhoto-edit-text">
-                                        edit cover pic
-                                    </span>
-                                </button>
-                            )}
-                        </figure>
-                        <figure className="user__profilePic">
-                            <img
-                                src={profile.profilePic || defaultImage}
-                                alt="jjj"
-                            />
-                            {authorize && (
-                                <button className="user__profilePic-edit btn">
-                                    <span>
-                                        <AiFillCamera />
-                                    </span>
-                                </button>
-                            )}
-                        </figure>
-                    </div>
-                    <div className="profile__detail-sub-1">
-                        <h2 className="user__name">{profile.name}</h2>
-                        <p className="user__bio">{profile.bio}</p>
-                        {authorize && (
-                            <button className="link user__bio-edit link__noBg-green link__noBg">
-                                edit bio
-                            </button>
-                        )}
-                    </div>
-                    <div className="profile__settings">
-                        {!userLoggedIn ? (
-                            <NavLink
-                                to="/auth/login"
-                                // className="btn btn__link nav__link login"
-                                className="link link-white link__extra-pad"
-                            >
-                                Login
-                            </NavLink>
-                        ) : authorize ? (
-                            <Link
-                                to="/settings"
-                                className="link"
-                            >
-                                Edit Profile
-                            </Link>
-                        ) : (
-                            <button className="link">follow</button>
-                        )}
-                    </div>
-                </section>
-
-                <section className="profile__detail-2">
-                    <div>
-                        <section className="box user__about">
-                            <h4>About</h4>
-                            <ul className="user__about-detail">
-                                {about.map(
-                                    ({
-                                        text,
-                                        icon,
-                                        value,
-                                        link,
-                                        classStyle,
-                                    }) => {
-                                        if (!value) return null;
-                                        if (link) {
-                                            return (
-                                                <li
-                                                    key={link}
-                                                    className="iconText iconText-string iconText-vertical"
-                                                >
-                                                    <a
-                                                        href={link}
-                                                        className={`btn ${classStyle}`}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                    >
-                                                        {icon}
-                                                        <span>{value}</span>
-                                                    </a>
-                                                </li>
-                                            );
-                                        }
-                                        return (
-                                            <li
-                                                key={text}
-                                                className="iconText iconText-string iconText-vertical"
-                                            >
-                                                <span>{icon}</span>
-                                                <span>{text}</span>
-                                                <span className="user__about-val">
-                                                    {value}
-                                                </span>
-                                            </li>
-                                        );
-                                    }
-                                )}
-                                <li>
-                                    {authorize && (
-                                        <button
-                                            className="btn user__about-edit link link__noBg-green link__noBg"
-                                            type="button"
-                                            onClick={() => {
-                                                toggleModal(true);
-                                            }}
-                                        >
-                                            edit about
-                                        </button>
-                                    )}
-                                </li>
-                            </ul>
-                        </section>
-                        {showModal && (
-                            <Modal title="Edit About" toggleModal={closeModal}>
-                                <form
-                                    className="form-aboutDetail"
-                                    onSubmit={handleSubmitAbout}
-                                >
-                                    <section>
-                                        <FormText
-                                            name="work"
-                                            value={changedProfile.work}
-                                            handleChange={onChange}
-                                            placeholder={`${"your current work"}`}
-                                        />
-                                        <FormText
-                                            name="education"
-                                            value={changedProfile.education}
-                                            handleChange={onChange}
-                                            placeholder={`${"your last/current institution"}`}
-                                        />
-                                        <FormText
-                                            name="lives"
-                                            label="current city"
-                                            value={changedProfile.lives}
-                                            handleChange={onChange}
-                                            placeholder={`${"city you are currently in"}`}
-                                        />
-                                        <FormText
-                                            name="hometown"
-                                            value={changedProfile.hometown}
-                                            handleChange={onChange}
-                                            placeholder={`${"your hometown"}`}
-                                        />
-                                    </section>
-                                    <section className="about__social">
-                                        <header
-                                            className="social__header"
-                                            style={{
-                                                paddingLeft: "30px",
-                                                paddingBottom: "30px",
-                                            }}
-                                        >
-                                            <h5>Social Links</h5>
-                                        </header>
-                                        <FormText
-                                            name="twitter"
-                                            value={changedProfile.twitter}
-                                            label="twitter"
-                                            handleChange={onChange}
-                                            placeholder={`${"your twitter handle without '@'"}`}
-                                        />
-                                        <FormText
-                                            name="instagram"
-                                            value={changedProfile.instagram}
-                                            label="instagram"
-                                            handleChange={onChange}
-                                            placeholder={`${"your instagram handle without '@'"}`}
-                                        />
-                                        <FormText
-                                            name="github"
-                                            value={changedProfile.github}
-                                            label="github"
-                                            handleChange={onChange}
-                                            placeholder={`${"your github username without '@'"}`}
-                                        />
-                                    </section>
-                                    <div>
-                                        <button
-                                            className="btn danger box"
-                                            type="button"
-                                            onClick={closeModal}
-                                        >
-                                            cancel update
-                                        </button>
-                                        <button
-                                            className="btn success box"
-                                            type="submit"
-                                        >
-                                            save
-                                        </button>
-                                    </div>
-                                </form>
-                            </Modal>
-                        )}
-
-                        <section className="box user__friends">
-                            <header className="user__friends-title">
-                                <div>
-                                    <h4>Friends</h4>
-                                    <span className="user__friends-number">
-                                        (number of friends)
-                                    </span>
-                                </div>
-                                <button className="btn user__friends-btn box">
-                                    view all
-                                </button>
-                            </header>
-                            <ul>
-                                <li></li>
-                            </ul>
-                        </section>
-                    </div>
-                    <div>moment</div>
-                </section>
-            </main> */}
         </>
     );
 };

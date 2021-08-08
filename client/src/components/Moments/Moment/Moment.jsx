@@ -15,9 +15,9 @@ import EditPenIconButton from "../../Button/EditPenIconButton";
 import LikeButton from "../../Button/LikeButton";
 import toast from "react-hot-toast";
 import { updateData } from "./../../../reducer/fetchActions.js";
-import handleLikeComment, {
-    getUserHasLiked,
-} from "./../../../utilities/Comment/handleLikeComment.js";
+// import handleLikeComment, {
+//     getUserHasLiked,
+// } from "./../../../utilities/Comment/handleLikeComment.js";
 
 const Moment = ({ moment }) => {
     let { setCurrentMomentId, state, dispatch } = useMomentContext();
@@ -27,7 +27,7 @@ const Moment = ({ moment }) => {
     let { creator, createdAt, title, _id, tags, message, likes, comments } =
         moment;
 
-    let { profilePic, name } = creator;
+    let { profilePic, name, username } = creator;
 
     tags = [...new Set([...tags])]; //? eliminate duplicate tags
 
@@ -55,15 +55,32 @@ const Moment = ({ moment }) => {
     };
 
     // const getUserHasLiked = user && likes.find((likeId) => user._id === likeId);
-    // const getUserHasLiked = () => {
-    //     return user && likes.find((likeId) => user._id === likeId);
-    // };
-    const userHasLiked = getUserHasLiked(user, likes);
+    const getUserHasLiked = () => {
+        return user && likes.find((likeId) => user._id === likeId);
+    };
+    // const userHasLiked = getUserHasLiked(user, likes);
 
     const handleLikeClicked = async (e) => {
-        let newLikes = handleLikeComment(e, user, likes);
+        e.stopPropagation();
 
-        moment = { ...moment, likes: newLikes };
+        if (!user) {
+            toast.error("You need to be signed in to like this moment!!");
+            return;
+        }
+
+        // let like = likes.find((likeId) => user._id === likeId);
+        let like = getUserHasLiked();
+        // console.log(like);
+
+        if (like) {
+            likes = likes.filter((likeId) => like !== likeId);
+        } else {
+            likes.push(user._id);
+        }
+
+        // let newLikes = handleLikeComment(e, user, likes);
+
+        moment = { ...moment, likes };
         dispatch({ type: actions.LIKE_MOMENT, payload: moment });
 
         try {
@@ -82,7 +99,7 @@ const Moment = ({ moment }) => {
             <AvatarUserCreatedAt
                 profilePic={profilePic}
                 name={name}
-                userName="kikky"
+                userName={username}
                 createdAt={createdAt}
                 id={creator._id}
             />
@@ -94,18 +111,18 @@ const Moment = ({ moment }) => {
                 </p>
                 {tags[0] !== "" && <MomentTags tags={tags} />}
                 <div className="flex items-center justify-between mt-5">
-                    <ul className="flex items-center justify-start gap-4">
+                    <ul className="flex items-center justify-start space-x-4">
                         <li>
                             <LikeButton
                                 likes={likes}
-                                // liked={getUserHasLiked()}
-                                liked={userHasLiked}
+                                liked={getUserHasLiked()}
+                                // liked={userHasLiked}
                                 onClick={handleLikeClicked}
                             />
                         </li>
                         <li>
                             <Button
-                                extraClass="btn-icon text-sm flex items-center justify-start gap-2 btn-general py-1 px-2 text-white-secondary hover:text-white"
+                                extraClass="btn-icon text-sm flex items-center justify-start space-x-2 btn-general py-1 px-2 text-white-secondary hover:text-white"
                                 text={comments.length}
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -116,7 +133,7 @@ const Moment = ({ moment }) => {
                             </Button>
                         </li>
                     </ul>
-                    <ul className="flex items-center justify-start gap-2">
+                    <ul className="flex items-center justify-start space-x-2">
                         {user?._id === creator._id ? (
                             <li>
                                 <DeleteBasketButton onClick={deleteMoment} />

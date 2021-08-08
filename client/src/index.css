@@ -49,13 +49,13 @@
 
 @layer components {
     .form__control {
-        @apply flex flex-col mb-10 gap-2 relative w-full;
+        @apply flex flex-col mb-10 space-y-2 relative w-full;
     }
     .form-input {
         @apply rounded-sm pt-2 pb-2 pl-2 text-black border-current focus:outline-none focus:ring-2 hover:bg-white transition hover:opacity-90;
     }
     .form__alt {
-        @apply mx-auto max-w-lg mt-8 text-center flex flex-col gap-4 mb-9;
+        @apply mx-auto max-w-lg mt-8 text-center flex flex-col space-y-2 mb-9;
     }
 
     .form__alt a {

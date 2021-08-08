@@ -11,8 +11,7 @@ const AvatarUserCreatedAt = ({
     extraClass,
 }) => {
     return (
-        // <div className="mb-5 flex gap-2">
-        <div className={`${extraClass} flex gap-2`}>
+        <div className={`${extraClass} flex space-x-2`}>
             <Avatar src={profilePic} extraClass="bg-black" />
             <div className="">
                 <UserName name={name} username={userName} id={id} />

@@ -10,7 +10,7 @@ const AsideListSitePages = () => {
                     <li key={text}>
                         <NavLinkItem
                             href={text === "Home" ? "/" : `/${link || text}`}
-                            extraClass="flex items-center justify-start gap-3 mb-2 pt-2 pb-2 group"
+                            extraClass="flex items-center justify-start space-x-3 mb-2 pt-2 pb-2 group"
                         >
                             {icon}
                             <span className="">{text}</span>

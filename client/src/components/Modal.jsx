@@ -1,13 +1,9 @@
 import CloseButton from "./Button/CloseButton";
 
 const Modal = ({ toggleModal, children, title }) => {
-    // bg-red
     return (
         <div className=" bg-black-secondary fixed inset-0 z-61 h-screen overflow-hidden px-5 py-8">
             <div className=" bg-black-subtle w-full h-full box-shadow overflow-auto relative max-w-xl mx-auto">
-                {/* <button className="" onClick={toggleModal}>
-                    X
-                </button> */}
                 <div className="sticky right-0 top-0 text-right z-90">
                     <CloseButton extraClass="text-xl" onClick={toggleModal} />
                 </div>

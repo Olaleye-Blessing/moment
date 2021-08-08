@@ -42,7 +42,7 @@ function App() {
 
     let parentFlex = `${
         pathname === "/"
-            ? "sm:flex sm:items-start sm:justify-start sm:gap-5 "
+            ? "sm:flex sm:items-start sm:justify-start space-x-5"
             : ""
     }`;
 
@@ -68,12 +68,7 @@ function App() {
             />
             {!pathname.startsWith("/auth") &&
                 !pathname.startsWith("/NotFound") && <Navbar />}
-            {/* <div className="relative px-3 py-5 md:px-8 lg:px-16 xl:px-32 sm:flex sm:items-start sm:justify-start sm:gap-5 sm:flex-wrap"> */}
             <div className={`${parentClass} ${parentFlex}`}>
-                {/* <aside
-                    className={`absolute -top-1 bg-black transition-transform right-full px-3 py-4 z-20 max-w-md sm:bg-transparent sm:static sm:pt-0 sm:min-w-sm sm:max-w-xs sm:px-0 md:mr-auto ${smallDeviceClass}`}
-                    ref={asideProfRef}
-                > */}
                 {!pathname.startsWith("/NotFound") && (
                     <aside
                         className={`bg-black transition-transform fixed navHomeAsideTop bottom-0 right-full px-3 py-4 z-20 max-w-md sm:bg-transparent sm:static sm:pt-0 sm:min-w-sm sm:max-w-xs sm:px-0 md:mr-auto ${smallDeviceClass}`}
