@@ -1,7 +1,7 @@
 import { promisify } from "util";
 import crypto from "crypto";
 
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 
 import User from "../model/users.js";
 import { catchAsync } from "../utility/catchAsync.js";
@@ -55,10 +55,8 @@ export const signup = catchAsync(async (req, res, next) => {
     let name = `${firstName} ${lastName}`;
 
     const activationToken = signToken(email, "10m");
-    const activationExpires = Date.now() + 10 * 60 * 1000;
-
-    // let createdAt = new Date();
-    // console.log(createdAt.getTimezoneOffset());
+    // const activationToken = signToken(email, "6s");
+    const activationExpires = Date.now() + 11 * 60 * 1000; // add extra 1 min
 
     let user = await User.create({
         name,
@@ -69,11 +67,38 @@ export const signup = catchAsync(async (req, res, next) => {
         activationToken,
         activationExpires,
         profilePic,
-        // createdAt,
-        // createdAtOffset: createdAt.getTimezoneOffset(),
     });
 
     //? send activation token to user's email
+    let { message, htmlMessage } = accountActivationMessage(
+        req,
+        activationToken,
+        email
+    );
+
+    try {
+        await sendEmail({
+            email,
+            subject: "Activate your moment account(valid for 10 mins)",
+            message,
+            htmlMessage,
+        });
+        return sendToken(user, 201, res);
+    } catch (error) {
+        user.activationToken = undefined;
+        user.activationExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+
+        return next(
+            new AppError(
+                "There is an error sending the email! Try again later",
+                500
+            )
+        );
+    }
+});
+
+const accountActivationMessage = (req, activationToken, email) => {
     const activationUrl = `${req.protocol}://${req.get(
         "host"
     )}/auth/activateAccount/${activationToken}`;
@@ -90,28 +115,8 @@ export const signup = catchAsync(async (req, res, next) => {
         "activate account"
     );
 
-    try {
-        await sendEmail({
-            email,
-            subject: "Activate your moment account(valid for 2 mins)",
-            message,
-            htmlMessage,
-        });
-    } catch (error) {
-        user.activationToken = undefined;
-        user.activationExpires = undefined;
-        await user.save({ validateBeforeSave: false });
-
-        return next(
-            new AppError(
-                "There is an error sending the email! Try again later",
-                500
-            )
-        );
-    }
-
-    return sendToken(user, 201, res);
-});
+    return { message, htmlMessage };
+};
 
 export const activateAccount = catchAsync(async (req, res, next) => {
     let { activationToken } = req.params;
@@ -125,35 +130,101 @@ export const activateAccount = catchAsync(async (req, res, next) => {
     }
 
     //? 2. verify token
-    let decoded = await promisify(jwt.verify)(
-        activationToken,
-        process.env.JWT_SECRET_KEY
-    );
-
-    let { id: email, iat, exp } = decoded;
-
-    //? 3. get user and update status to "active"
-    let activeUser = await User.findOneAndUpdate(
-        { email },
-        { "status": "active" },
-        { new: true }
-    );
-
-    activeUser.activationToken = undefined;
-    activeUser.activationExpires = undefined;
-
-    await activeUser.save({ validateBeforeSave: false });
-
-    if (!activeUser) {
-        return next(
-            new AppError(
-                `This account has been deleted! Create another account`,
-                404
-            )
+    try {
+        let decoded = await promisify(jwt.verify)(
+            activationToken,
+            process.env.JWT_SECRET_KEY
         );
-    }
+        let { id: email, iat, exp } = decoded;
 
-    res.redirect(302, "/");
+        //? 3. get user and update status to "active"
+        let activeUser = await User.findOneAndUpdate(
+            { email, activationToken: { $exists: true } },
+            { "status": "active" },
+            { new: true }
+        );
+
+        if (!activeUser) {
+            return next(
+                new AppError(
+                    `This account has either been deleted/activated!`,
+                    404
+                )
+            );
+        }
+
+        activeUser.activationToken = undefined;
+        activeUser.activationExpires = undefined;
+
+        await activeUser.save({ validateBeforeSave: false });
+
+        return sendToken(activeUser, 200, res);
+    } catch (error) {
+        if (error.name === "TokenExpiredError") {
+            let { id: email } = await promisify(jwt.verify)(
+                activationToken,
+                process.env.JWT_SECRET_KEY,
+                { ignoreExpiration: true }
+            );
+
+            //? check if the user has previously activated account
+
+            let newActivatedUser = await User.findOne({ email });
+
+            if (newActivatedUser.status === "active") {
+                return next(
+                    new AppError(
+                        "This account has previously been activated",
+                        401
+                    )
+                );
+            } else if (newActivatedUser.status === "deactivated") {
+                return next(
+                    new AppError("This Account could not be found", 404)
+                );
+            }
+
+            const newActivationToken = signToken(email, "10m");
+            const newActivationExpires = Date.now() + 11 * 60 * 1000;
+
+            newActivatedUser.activationToken = newActivationToken;
+            newActivatedUser.activationExpires = newActivationExpires;
+
+            await newActivatedUser.save({ validateBeforeSave: false });
+
+            let { message, htmlMessage } = accountActivationMessage(
+                req,
+                newActivationToken,
+                email
+            );
+
+            try {
+                await sendEmail({
+                    email,
+                    subject: "Activate your moment account(valid for 10 mins)",
+                    message,
+                    htmlMessage,
+                });
+                return next(
+                    new AppError(
+                        `Activation link has expired!!New Activation Link has being sent to your account!`,
+                        401
+                    )
+                );
+            } catch (error) {
+                newActivatedUser.activationToken = undefined;
+                newActivatedUser.activationExpires = undefined;
+                await newActivatedUser.save({ validateBeforeSave: false });
+
+                return next(
+                    new AppError(
+                        "There is an error sending the email! Try again later",
+                        500
+                    )
+                );
+            }
+        }
+    }
 });
 
 export const login = catchAsync(async (req, res, next) => {
@@ -326,14 +397,14 @@ export const protect = catchAsync(async (req, res, next) => {
     }
 
     //? 4. check if user recently changed password
-    // if (currentUser.passwordChangedAfter(iat)) {
-    //     return next(
-    //         new AppError(
-    //             "User recently changed password! Please log in again",
-    //             401
-    //         )
-    //     );
-    // }
+    if (currentUser.passwordChangedAfter(iat)) {
+        return next(
+            new AppError(
+                "User recently changed password! Please log in again",
+                401
+            )
+        );
+    }
 
     req.user = currentUser;
 

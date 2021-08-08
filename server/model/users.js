@@ -25,8 +25,8 @@ const userSchema = new Schema(
         },
         username: {
             type: String,
-            // unique: true,
-            // required: true,
+            unique: true,
+            required: true,
         },
         coverPic: String,
         password: {
@@ -46,12 +46,6 @@ const userSchema = new Schema(
                 message: "passwords do not match",
             },
         },
-        // createdAt: {
-        // type: Date,
-        // default: () => Date.now(),
-        // default: () => new Date(),
-        // default: () => ISODate(),
-        // },
         activationToken: {
             type: String,
             select: false,
@@ -94,9 +88,18 @@ const userSchema = new Schema(
             type: String,
             default: "",
         },
-        passwordChangedAt: Date,
-        passwordResetToken: String,
-        passwordResetExpires: Date,
+        passwordChangedAt: {
+            type: Date,
+            select: false,
+        },
+        passwordResetToken: {
+            type: String,
+            select: false,
+        },
+        passwordResetExpires: {
+            type: Date,
+            select: false,
+        },
         verified: {
             type: Boolean,
             default: false,
@@ -156,12 +159,12 @@ userSchema.methods.generateAccountActivationToken = function () {
         .update(activateToken)
         .digest("hex");
 
-    //? expires after 2 mins
+    //? expires after 2 mins 30secs
     // this.passwordResetExpires = new Date(
     //     Date.now() + 10 * 60 * 1000
     // ).toString();
-    this.activationExpires = Date.now() + 2 * 60 * 1000;
-    console.log({ time: this.activationExpires });
+    this.activationExpires = Date.now() + 2.5 * 60 * 1000;
+    // console.log({ time: this.activationExpires });
 
     return activateToken;
 };

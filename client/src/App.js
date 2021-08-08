@@ -17,6 +17,7 @@ import HomeAsideMain from "./components/HomeAside/HomeAsideMain";
 import { useMomentContext } from "./context/MomentsContext";
 import { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
+import ActivateAccount from "./pages/Authentication/ActivateAccount";
 
 function App() {
     let { pathname } = useLocation();
@@ -93,6 +94,9 @@ function App() {
                     <Route path="/auth/signup">
                         <Signup />
                     </Route>
+                    <Route path="/auth/activateAccount/:token">
+                        <ActivateAccount />
+                    </Route>
                     <Route path="/auth/forgotPassword">
                         <ForgetPassword />
                     </Route>
@@ -111,9 +115,9 @@ function App() {
                     <Route path="/NotFound">
                         <NotFound />
                     </Route>
-                    <Route path="*">
+                    {/* <Route path="*">
                         <Redirect to="/NotFound" />
-                    </Route>
+                    </Route> */}
                 </Switch>
             </div>
         </>
