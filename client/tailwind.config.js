@@ -75,7 +75,9 @@ module.exports = {
         },
     },
     variants: {
-        extend: {},
+        extend: {
+            margin: ["first"],
+        },
     },
     plugins: [require("@tailwindcss/line-clamp")],
 };

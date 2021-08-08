@@ -4,9 +4,9 @@ import Button from "../../Button/Button";
 const MomentTags = ({ tags }) => {
     let history = useHistory();
     return (
-        <ul className="mt-4 mb-3 flex space-x-2 flex-wrap">
+        <ul className="mt-4 mb-3 flex flex-wrap">
             {tags.map((tag) => (
-                <li key={tag} className="">
+                <li key={tag} className=" first:ml-0 mx-2 my-2">
                     <Button
                         text={tag}
                         onClick={(e) => {
