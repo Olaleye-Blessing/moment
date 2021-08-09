@@ -1,6 +1,10 @@
 import User from "../model/users.js";
 import { AppError } from "../utility/AppError.js";
 import { catchAsync } from "../utility/catchAsync.js";
+import { findAll } from "./handlerFactory.js";
+import { requestParamsReg } from "./../utility/requestParamsReg.js";
+
+export const getProfiles = findAll(User);
 
 export const getProfile = catchAsync(async (req, res, next) => {
     let { id } = req.params;

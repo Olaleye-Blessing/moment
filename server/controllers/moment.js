@@ -1,29 +1,31 @@
 import Moment from "../model/moment.js";
 import User from "../model/users.js";
+import { APIFeatures } from "../utility/APIFeatures.js";
 import { catchAsync } from "../utility/catchAsync.js";
+import { AppError } from "./../utility/AppError.js";
+import { findAll } from "./handlerFactory.js";
 
-export const getMoments = async (req, res, next) => {
-    try {
-        // let moments = await Moment.find().populate({
-        //     path: "creator comment",
-        //     // select: "name",
-        // });
+// export const getMoments = catchAsync(async (req, res, next) => {
+//     let { title } = req.query;
+//     if (title) title = new RegExp(title, "i");
 
-        let moments = await Moment.find();
-        // moments.forEach((moment) => (moment.__v = undefined));
-        // console.log(moments);
+//     let features = new APIFeatures(Moment.find(), req.query)
+//         .filter({
+//             title,
+//         })
+//         .sorting()
+//         .limitFields()
+//         .paginate();
 
-        // console.log(moments[0]);
-        return res.status(200).json({
-            "status": "success",
-            moments,
-        });
-    } catch (error) {
-        return res.status(404).json({
-            "type": "fail",
-        });
-    }
-};
+//     let moments = await features.query;
+
+//     return res.status(200).json({
+//         "status": "success",
+//         moments,
+//     });
+// });
+
+export const getMoments = findAll(Moment);
 
 export const getMoment = catchAsync(async (req, res, next) => {
     let { id } = req.params;

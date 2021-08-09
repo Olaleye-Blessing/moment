@@ -23,9 +23,12 @@ const Homepage = () => {
         const fetchAllPosts = async () => {
             try {
                 let response = await getData(`/moments`, signal);
+                console.log(response);
                 dispatch({
                     type: actions.FETCH_ALL,
-                    payload: response.moments,
+                    // payload: response.moments,
+                    payload: response.data,
+                    // payload: response,
                 });
                 setLoading(false);
                 setError(null);

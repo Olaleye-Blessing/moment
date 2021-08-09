@@ -27,6 +27,9 @@ const Moment = ({ moment }) => {
     let { creator, createdAt, title, _id, tags, message, likes, comments } =
         moment;
 
+    // Did this to prevent another type of array being passed in. This happens in the search page whenever a user array is still passed in
+    if (!creator) return null;
+
     let { profilePic, name, username } = creator;
 
     tags = [...new Set([...tags])]; //? eliminate duplicate tags

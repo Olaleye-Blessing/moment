@@ -33,6 +33,7 @@ export const fetchData = async (
         // handleToastNotification(method, res.data.message);
         // }
         // console.log(res);
+        // return res.data || res;
         return res;
     } catch (error) {
         // console.log(error);

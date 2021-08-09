@@ -1,5 +1,6 @@
 import express from "express";
 import { protect } from "../controllers/authentication.js";
+import { reqParamsFilter } from "../controllers/handlerFactory.js";
 
 import {
     createMoment,
@@ -12,7 +13,7 @@ import {
 
 const router = express.Router();
 
-router.get("/", getMoments);
+router.get("/", reqParamsFilter("title"), getMoments);
 router.get("/:id", getMoment);
 
 router.use(protect);

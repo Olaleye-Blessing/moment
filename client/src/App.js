@@ -115,6 +115,9 @@ function App() {
                     <Route path="/NotFound">
                         <NotFound />
                     </Route>
+                    <Route path="/search">
+                        <Search />
+                    </Route>
                     {/* <Route path="*">
                         <Redirect to="/NotFound" />
                     </Route> */}
