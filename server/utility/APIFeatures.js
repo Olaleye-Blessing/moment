@@ -23,7 +23,7 @@ export class APIFeatures {
         );
 
         if (Object.keys(queryRegex).length > 0) {
-            console.log("yes");
+            // console.log("yes");
             queryStr = { ...queryStr, ...queryRegex };
         }
 
@@ -36,14 +36,23 @@ export class APIFeatures {
     sorting = () => {
         let { sort } = this.queryString;
 
+        let sortObj = {};
+
+        //? provided sorting
         if (sort) {
-            //? provided sorting
-            sort = sort.split(",").join(" ");
-            this.query = this.query.sort(sort);
+            // split sort properties
+            // determine if it's asc/desc
+            sort.split(",").forEach((el) => {
+                el.indexOf("-") === 0
+                    ? (sortObj[el.slice(1)] = 1) // remove the negative for descending ones
+                    : (sortObj[el] = -1);
+            });
         } else {
             //? default sorting
-            this.query = this.query.sort("-createAt");
+            sortObj.createdAt = -1;
         }
+
+        this.query = this.query.sort(sortObj);
 
         return this;
     };
@@ -66,7 +75,9 @@ export class APIFeatures {
     paginate = () => {
         let { page, limit } = this.queryString;
         page = Number(page) || 1;
-        limit = Number(limit) || 100;
+
+        // limit = Number(limit) || 3; // testing purpose
+        limit = Number(limit) || 50;
         let skip = (page - 1) * limit;
 
         this.query = this.query.skip(skip).limit(limit);

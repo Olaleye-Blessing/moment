@@ -25,8 +25,8 @@ const handleJWTExpiredError = () =>
     new AppError("Token has expired! Please login again", 401);
 
 export const globalErrorHandler = (err, req, res, next) => {
-    console.log(err.name);
-    console.log(err);
+    // console.log(err.name);
+    // console.log(err);
     err.statusCode = err.statusCode || 500;
     err.status = err.status || "error";
 

@@ -20,23 +20,14 @@ export const fetchData = async (
         body: JSON.stringify(body),
         credentials: "include",
     };
-    // console.log("got to fetch function...");
-    // console.log(body);
 
     try {
-        // let req = await fetch(`${baseUrl}${url}`, options);
         let req = await fetch(`${url}`, options);
         let res = await req.json();
         if (!(req.status >= 200 && req.status <= 299)) throw res;
-        // console.log(res);
-        // if (res.data.message) {
-        // handleToastNotification(method, res.data.message);
-        // }
-        // console.log(res);
-        // return res.data || res;
+
         return res;
     } catch (error) {
-        // console.log(error);
         if (error.name !== "AbortError") {
             if (error.type === "fail")
                 error.message = `Please check your internt connection. Come back later if error persist!`;

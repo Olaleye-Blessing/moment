@@ -2,12 +2,13 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
+import ProcessIndicator from "../components/ProcessIndicator";
 import AvatarUserCreatedAt from "../components/User/AvatarUserCreatedAt";
 import { useMomentContext } from "../context/MomentsContext";
-import { getData } from "../reducer/fetchActions";
+import useFiniteScroll from "../hook/useFiniteScroll";
+import { uniqueArrayOfObject } from "../utilities/uniqueArrayOfObject";
 import Moment from "./../components/Moments/Moments";
 
-// console.clear();
 const Search = () => {
     let { search } = useLocation();
     let history = useHistory();
@@ -18,26 +19,53 @@ const Search = () => {
 
     let authorize = user && Object.keys(user).length > 0;
 
-    let [query, setQuery] = useState("");
-    const [period, setPeriod] = useState("");
-    const [type, setType] = useState("");
+    let params = new URLSearchParams(search);
 
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [result, setResult] = useState([]);
+    const setUrlPath = (type, period, query) => {
+        let loadedUrl = ``;
+        let sort = period === "desc" ? "createdAt" : "-createdAt";
 
-    let fetchAbort = new AbortController();
-    let signal = fetchAbort.signal;
+        if (!type || type === "moment") {
+            loadedUrl += `/moments?`;
+            if (query) loadedUrl += `title=${query}&`;
+        } else {
+            loadedUrl += `/profile?`;
+            if (query) loadedUrl += `name=${query}&username=${query}&`;
+        }
+        loadedUrl += `sort=${sort}&`;
+        return loadedUrl;
+    };
 
-    let params = new URLSearchParams();
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const [query, setQuery] = useState(params.get("q") || "");
+    const [period, setPeriod] = useState(params.get("period") || "");
+
+    const [type, setType] = useState(params.get("type") || "");
+
+    const [searchUrl, setSearchUrl] = useState(() => {
+        return setUrlPath(type, period, query);
+    });
+
+    let { loading, data, error } = useFiniteScroll(searchUrl);
+
+    useEffect(() => {
+        determineUrl(type, period, query);
+    }, [type, period]);
+
+    const determineUrl = (type, period, query) => {
+        let loadedUrl = setUrlPath(type, period, query);
+
+        let params = new URLSearchParams();
         if (query) params.set("q", query);
         if (period) params.set("period", period);
         if (type) params.set("type", type);
-
         history.push({ search: params.toString() });
-        await fetchQuery();
+        setSearchUrl(loadedUrl);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (query.trim() === "") return;
+        determineUrl(type, period, query);
     };
 
     const handlePeriodChange = (period) => {
@@ -46,36 +74,6 @@ const Search = () => {
 
     const handleTypeChange = (type) => {
         setType(type);
-    };
-
-    const fetchQuery = async () => {
-        let url = ``;
-        let sort = period === "desc" ? "-createdAt" : "createdAt";
-        setLoading(true);
-        setError(null);
-        setResult([]);
-        query = query.trim();
-        try {
-            if (type === "" || type === "moment") {
-                if (query) {
-                    url += `/moments?title=${query}&sort=${sort}`;
-                } else {
-                    url += `/moments?sort=${sort}`;
-                }
-            } else if (type === "users") {
-                if (query) {
-                    url = `/profile?name=${query}&username=${query}&sort=${sort}`;
-                } else {
-                    url += `/profile?sort=${sort}`;
-                }
-            } else if (type === "personal") {
-            }
-            console.log({ url });
-            let result = await getData(url, signal);
-            setLoading(false);
-            setError(null);
-            setResult(result.data);
-        } catch (error) {}
     };
 
     let periods = [
@@ -87,68 +85,115 @@ const Search = () => {
     let types = [
         { text: "Moments", type: "moment" },
         { text: "Users", type: "users" },
-        // { text: "My Moments Only", type: "personal" },
     ];
 
     if (authorize) {
         // types.push({ text: "My Moments Only", type: "personal" });
     }
 
-    useEffect(() => {
-        let params = new URLSearchParams(search);
-        let type = params.get("type");
-        let q = params.get("q");
-        let period = params.get("period");
-
-        setType(type || "");
-        setQuery(q || "");
-        setPeriod(period || "");
-    }, []);
-
-    useEffect(() => {
-        if (query) params.set("q", query);
-        if (period) params.set("period", period);
-        if (type) params.set("type", type);
-        history.push({ search: params.toString() });
-
-        // console.log("rendered");
-        fetchQuery();
-    }, [period, type]);
-
+    if (data) {
+        data = [...uniqueArrayOfObject(data, "_id")];
+    }
     const displayResult = () => {
-        if (loading) return <div>Loading....</div>;
+        if (!data) return null;
 
-        if (error) return <div>error</div>;
-
-        if (result.length === 0) return <div>No result</div>;
-
-        if (type === "moment" || type === "")
-            return <Moment moments={result} />;
-
-        if (type === "users") {
-            return result.map((user) => {
-                return (
-                    <li
-                        key={user._id}
-                        className="list-none w-full box-shadow bg-black-subtle px-6 py-4 mb-8 transition-colors duration-500 cursor-pointer"
-                    >
-                        <AvatarUserCreatedAt
-                            profilePic={``}
-                            name={user.name}
-                            userName={user.username}
-                            createdAt={user.createdAt}
-                            id={user._id}
-                            extraClass={`w-full`}
+        return (
+            <>
+                {data.length > 0 ? (
+                    type === "users" ? (
+                        <ul>
+                            {data.map((user) => {
+                                return (
+                                    <li
+                                        key={user._id}
+                                        className="list-none w-full box-shadow bg-black-subtle px-6 py-4 mb-8 transition-colors duration-500 cursor-pointer"
+                                    >
+                                        <Link to={`/profile/${user._id}`}>
+                                            <AvatarUserCreatedAt
+                                                profilePic={``}
+                                                name={user.name}
+                                                userName={user.username}
+                                                createdAt={user.createdAt}
+                                                id={user._id}
+                                                extraClass={`w-full`}
+                                            />
+                                        </Link>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    ) : (
+                        <Moment moments={data} />
+                    )
+                ) : null}
+                {error && <div className="text-center">{error}</div>}
+                {loading && (
+                    <div>
+                        <ProcessIndicator
+                            parentExtraClass="w-full h-80"
+                            childExtraClass="w-40 h-40"
                         />
-                    </li>
-                );
-            });
-        }
+                    </div>
+                )}
+            </>
+        );
+        // if (data.length > 0) {
+        //     if (type === "moment" || type === "")
+        //         return <Moment moments={data} />;
+        //     if (type === "users") {
+        //         return data.map((user) => {
+        //             return (
+        //                 <li
+        //                     key={user._id}
+        //                     className="list-none w-full box-shadow bg-black-subtle px-6 py-4 mb-8 transition-colors duration-500 cursor-pointer"
+        //                 >
+        //                     <AvatarUserCreatedAt
+        //                         profilePic={``}
+        //                         name={user.name}
+        //                         userName={user.username}
+        //                         createdAt={user.createdAt}
+        //                         id={user._id}
+        //                         extraClass={`w-full`}
+        //                     />
+        //                 </li>
+        //             );
+        //         });
+        //     }
+        // }
+        // if (loading)
+        //     return (
+
+        //     );
+
+        // if (error) return <div>error</div>;
+
+        // if (data.length === 0) return <div>No result</div>;
+
+        // if (type === "moment" || type === "") return <Moment moments={data} />;
+
+        // if (type === "users") {
+        //     return data.map((user) => {
+        //         return (
+        //             <li
+        //                 key={user._id}
+        //                 className="list-none w-full box-shadow bg-black-subtle px-6 py-4 mb-8 transition-colors duration-500 cursor-pointer"
+        //             >
+        //                 <AvatarUserCreatedAt
+        //                     profilePic={``}
+        //                     name={user.name}
+        //                     userName={user.username}
+        //                     createdAt={user.createdAt}
+        //                     id={user._id}
+        //                     extraClass={`w-full`}
+        //                 />
+        //             </li>
+        //         );
+        //     });
+        // }
     };
 
     return (
         <main className="mx-auto lg:max-w-4xl">
-            {/* search form */}
             <form onSubmit={handleSubmit}>
                 <div className="form__control w-full max-w-md mb-6">
                     <input
@@ -212,11 +257,7 @@ const Search = () => {
                         })}
                     </ul>
                 </section>
-                <section className=" flex-grow">
-                    {/* real result */}
-
-                    {displayResult()}
-                </section>
+                <section className=" flex-grow">{displayResult()}</section>
             </div>
         </main>
     );

@@ -1,4 +1,5 @@
 import { APIFeatures } from "../utility/APIFeatures.js";
+import { AppError } from "../utility/AppError.js";
 import { catchAsync } from "../utility/catchAsync.js";
 
 export const reqParamsFilter =
@@ -27,7 +28,6 @@ export const reqParamsFilter =
 
 export const findAll = (Model) =>
     catchAsync(async (req, res, next) => {
-        // moment specific
         let { page, regexQuery } = req.query;
 
         delete req.query.regexQuery;
@@ -41,13 +41,21 @@ export const findAll = (Model) =>
 
         let data = await features.query;
 
+        if (data.length === 0) {
+            return next(new AppError("No data found", 404));
+        }
+
         page = Number(page) || 1;
-        // let totalPages = await Model.countDocuments();
-        // console.log(totalPages);
+
+        // 50 documents per page
+        let totalPages = Math.ceil((await Model.countDocuments()) / 50);
+
+        // console.log(data);
         res.status(200).json({
             status: "success",
             results: data.length,
             page,
+            totalPages,
             // moments: data,
             data,
         });
