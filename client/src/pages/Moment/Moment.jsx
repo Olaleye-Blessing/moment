@@ -238,7 +238,9 @@ const Moment = () => {
                         <li>
                             <div className="flex items-center justify-start btn-icon space-x-2 sm:space-x-0 sm:gap-2">
                                 <FaRegComment className="text-white-secondary mr-1" />
-                                <span className="text-base ">2</span>
+                                <span className="text-base ">
+                                    {comments.length}
+                                </span>
                             </div>
                         </li>
                     </ul>
