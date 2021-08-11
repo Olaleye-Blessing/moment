@@ -20,13 +20,18 @@ import { actions } from "../reducer/actions";
 import defaultImage from "./../asset/images/momentDefaultImg.JPG";
 import Button from "./../components/Button/Button";
 import ButtonIcon from "../components/Button/ButtonIcon";
-import Moment from "../components/Moments/Moment/Moment";
 import { aboutProfile } from "../components/Profile/utilities";
 import FormContainer from "../components/Form/FormContainer";
 import ResetButton from "../components/Button/ResetButton";
 import SubmitButton from "../components/Button/SubmitButton";
 import toast from "react-hot-toast";
 import EditAboutFormContent from "../components/Profile/EditAboutFormContent";
+import Moments from "../components/Moments/Moments";
+import { deletePost } from "../reducer/fetchActions/moment";
+import { deletedToastNotification } from "../utilities/Toast";
+import { updateData } from "../reducer/fetchActions";
+import { handleLikeMoment } from "../utilities/Moment/handleLikeMoment";
+import getUserHasLiked from "../utilities/Moment/getUserHasLiked";
 
 // RiSignalTowerFill -- following
 
@@ -40,6 +45,7 @@ const Profile = () => {
     const [profileError, setProfileError] = useState(null);
     const [profile, setProfile] = useState(null);
     const [changedProfile, setChangedProfile] = useState(null);
+    const [allUserMoments, setAllUserMoments] = useState([]);
 
     let abortFetch = new AbortController();
     let abortSignal = abortFetch.signal;
@@ -55,6 +61,7 @@ const Profile = () => {
             setProfile(profile);
             setChangedProfile(profile);
             changeLoadingAndError(false);
+            setAllUserMoments(profile.moments);
         } catch (error) {
             console.clear();
             console.log(error);
@@ -140,6 +147,49 @@ const Profile = () => {
     };
 
     let { name, bio, profilePic, coverPic, username, moments } = profile;
+
+    const deleteMoment = async (moment) => {
+        // delete moment visually from profile page
+        let updatedMoment = [...allUserMoments].filter(
+            (userMoment) => userMoment._id !== moment._id
+        );
+        setAllUserMoments(updatedMoment);
+
+        // delete moment from lists of context moment if present
+        dispatch({
+            type: actions.DELETE_MOMENT,
+            payload: moment._id,
+        });
+
+        try {
+            await deletePost(moment._id);
+            deletedToastNotification("successfully deleted");
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleLikeClicked = async (moment) => {
+        let result = handleLikeMoment(user, moment);
+
+        if (!result) return;
+
+        let resultedMoment = result.moment;
+        // dispatch({ type: actions.LIKE_MOMENT, payload: moment });
+        dispatch({ type: actions.LIKE_MOMENT, payload: resultedMoment });
+
+        let newLikedMoment = [...allUserMoments].map((userMoment) =>
+            userMoment._id === resultedMoment._id ? resultedMoment : userMoment
+        );
+
+        setAllUserMoments(newLikedMoment);
+
+        try {
+            await updateData(`/moments/like/${resultedMoment._id}`, {});
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <>
@@ -285,85 +335,6 @@ const Profile = () => {
                                             <SubmitButton text="Save" />
                                         </div>
                                     </FormContainer>
-                                    {/* <form
-                                        className="form-aboutDetail"
-                                        onSubmit={handleSubmitAbout}
-                                    >
-                                        <section>
-                                            <FormText
-                                                name="work"
-                                                value={changedProfile.work}
-                                                handleChange={onChange}
-                                                placeholder={`${"your current work"}`}
-                                            />
-                                            <FormText
-                                                name="education"
-                                                value={changedProfile.education}
-                                                handleChange={onChange}
-                                                placeholder={`${"your last/current institution"}`}
-                                            />
-                                            <FormText
-                                                name="lives"
-                                                label="current city"
-                                                value={changedProfile.lives}
-                                                handleChange={onChange}
-                                                placeholder={`${"city you are currently in"}`}
-                                            />
-                                            <FormText
-                                                name="hometown"
-                                                value={changedProfile.hometown}
-                                                handleChange={onChange}
-                                                placeholder={`${"your hometown"}`}
-                                            />
-                                        </section>
-                                        <section className="about__social">
-                                            <header
-                                                className="social__header"
-                                                style={{
-                                                    paddingLeft: "30px",
-                                                    paddingBottom: "30px",
-                                                }}
-                                            >
-                                                <h5>Social Links</h5>
-                                            </header>
-                                            <FormText
-                                                name="twitter"
-                                                value={changedProfile.twitter}
-                                                label="twitter"
-                                                handleChange={onChange}
-                                                placeholder={`${"your twitter handle without '@'"}`}
-                                            />
-                                            <FormText
-                                                name="instagram"
-                                                value={changedProfile.instagram}
-                                                label="instagram"
-                                                handleChange={onChange}
-                                                placeholder={`${"your instagram handle without '@'"}`}
-                                            />
-                                            <FormText
-                                                name="github"
-                                                value={changedProfile.github}
-                                                label="github"
-                                                handleChange={onChange}
-                                                placeholder={`${"your github username without '@'"}`}
-                                            />
-                                        </section>
-                                        <div>
-                                            <button
-                                                className="btn danger box"
-                                                type="button"
-                                                onClick={closeModal}
-                                            >
-                                                cancel update
-                                            </button>
-                                            <button
-                                                className="btn success box"
-                                                type="submit"
-                                            >
-                                                save
-                                            </button>
-                                        </div>
-                                    </form> */}
                                 </Modal>
                             )}
                         </section>
@@ -372,12 +343,12 @@ const Profile = () => {
                         {moments.length > 0 && (
                             <section className="mt-5 sm:mt-0">
                                 <ul>
-                                    {moments.map((moment) => (
-                                        <Moment
-                                            key={moment._id}
-                                            moment={moment}
-                                        />
-                                    ))}
+                                    <Moments
+                                        moments={allUserMoments}
+                                        deleteMoment={deleteMoment}
+                                        getUserHasLiked={getUserHasLiked}
+                                        handleLikeClicked={handleLikeClicked}
+                                    />
                                 </ul>
                             </section>
                         )}

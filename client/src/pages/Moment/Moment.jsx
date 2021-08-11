@@ -24,11 +24,9 @@ import Button from "./../../components/Button/Button";
 import ButtonIcon from "./../../components/Button/ButtonIcon";
 import ProcessIndicator from "./../../components/ProcessIndicator";
 import LikeButton from "./../../components/Button/LikeButton";
-import toast from "react-hot-toast";
 import { updateData } from "../../reducer/fetchActions";
-// import handleLikeComment, {
-//     getUserHasLiked,
-// } from "../../utilities/Comment/handleLikeComment";
+import getUserHasLiked from "../../utilities/Moment/getUserHasLiked";
+import { handleLikeMoment } from "../../utilities/Moment/handleLikeMoment";
 
 const Moment = () => {
     let history = useHistory();
@@ -162,37 +160,27 @@ const Moment = () => {
         }
     };
 
-    const getUserHasLiked = () =>
-        user && likes.find((likeId) => user._id === likeId);
+    // const getUserHasLiked = () =>
+    //     user && likes.find((likeId) => user._id === likeId);
 
     const handleLikeClicked = async (e) => {
-        e.stopPropagation();
-        // e.preventDefault();
-        // console.log("clicked");
+        let result = handleLikeMoment(user, moment);
 
-        if (!user) {
-            toast.error("You need to be signed in to like this moment!!");
-            return;
-        }
+        if (!result) return;
 
-        // console.log("got here");
-        let like = getUserHasLiked();
+        let resultedMoment = result.moment;
+        setMoment(resultedMoment);
+        // setMoment({ ...moment, likes });
 
-        if (like) {
-            likes = likes.filter((likeId) => like !== likeId);
-        } else {
-            likes.push(user._id);
-        }
-        // let newLikes = handleLikeComment(e, user, likes);
-
-        setMoment({ ...moment, likes });
         dispatch({
             type: actions.LIKE_MOMENT,
-            payload: { ...moment, likes },
+            // payload: { ...moment, likes },
+            payload: resultedMoment,
         });
 
         try {
-            await updateData(`/moments/like/${moment._id}`, {});
+            // await updateData(`/moments/like/${moment._id}`, {});
+            await updateData(`/moments/like/${resultedMoment._id}`, {});
         } catch (error) {
             console.log(error);
         }
@@ -242,7 +230,7 @@ const Moment = () => {
                             <LikeButton
                                 likes={likes}
                                 // liked={userHasLiked}
-                                liked={getUserHasLiked()}
+                                liked={getUserHasLiked(user, likes)}
                                 onClick={handleLikeClicked}
                                 extraClass="text-lg"
                             />

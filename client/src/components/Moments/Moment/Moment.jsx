@@ -4,23 +4,26 @@ import { FaRegComment } from "react-icons/fa";
 
 import { useMomentContext } from "../../../context/MomentsContext";
 import { formatDate } from "../../../utilities/formatDate";
-import { deletePost } from "../../../reducer/fetchActions/moment";
-import { actions } from "../../../reducer/actions";
+// import { deletePost } from "../../../reducer/fetchActions/moment";
+// import { actions } from "../../../reducer/actions";
 import Button from "../../Button/Button";
 import MomentTags from "./MomentTags";
 import AvatarUserCreatedAt from "../../User/AvatarUserCreatedAt";
-import { deletedToastNotification } from "../../../utilities/Toast";
+// import { deletedToastNotification } from "../../../utilities/Toast";
 import DeleteBasketButton from "../../Button/DeleteBasketButton";
 import EditPenIconButton from "../../Button/EditPenIconButton";
 import LikeButton from "../../Button/LikeButton";
-import toast from "react-hot-toast";
-import { updateData } from "./../../../reducer/fetchActions.js";
-// import handleLikeComment, {
-//     getUserHasLiked,
-// } from "./../../../utilities/Comment/handleLikeComment.js";
+// import toast from "react-hot-toast";
+// import { updateData } from "./../../../reducer/fetchActions.js";
 
-const Moment = ({ moment }) => {
-    let { setCurrentMomentId, state, dispatch } = useMomentContext();
+const Moment = ({
+    moment,
+    deleteMoment,
+    handleLikeClicked,
+    getUserHasLiked,
+}) => {
+    // let { setCurrentMomentId, state, dispatch } = useMomentContext();
+    let { setCurrentMomentId, state } = useMomentContext();
     let history = useHistory();
 
     let { user } = state;
@@ -41,56 +44,6 @@ const Moment = ({ moment }) => {
     const showMomentDetail = (e) => {
         e.stopPropagation();
         history.push(`/moments/${_id}`);
-    };
-
-    const deleteMoment = async (e) => {
-        e.stopPropagation();
-        dispatch({
-            type: actions.DELETE_MOMENT,
-            payload: moment._id,
-        });
-        try {
-            await deletePost(moment._id);
-            deletedToastNotification("successfully deleted");
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // const getUserHasLiked = user && likes.find((likeId) => user._id === likeId);
-    const getUserHasLiked = () => {
-        return user && likes.find((likeId) => user._id === likeId);
-    };
-    // const userHasLiked = getUserHasLiked(user, likes);
-
-    const handleLikeClicked = async (e) => {
-        e.stopPropagation();
-
-        if (!user) {
-            toast.error("You need to be signed in to like this moment!!");
-            return;
-        }
-
-        // let like = likes.find((likeId) => user._id === likeId);
-        let like = getUserHasLiked();
-        // console.log(like);
-
-        if (like) {
-            likes = likes.filter((likeId) => like !== likeId);
-        } else {
-            likes.push(user._id);
-        }
-
-        // let newLikes = handleLikeComment(e, user, likes);
-
-        moment = { ...moment, likes };
-        dispatch({ type: actions.LIKE_MOMENT, payload: moment });
-
-        try {
-            await updateData(`/moments/like/${moment._id}`, {});
-        } catch (error) {
-            console.log(error);
-        }
     };
 
     return (
@@ -118,9 +71,11 @@ const Moment = ({ moment }) => {
                         <li>
                             <LikeButton
                                 likes={likes}
-                                liked={getUserHasLiked()}
-                                // liked={userHasLiked}
-                                onClick={handleLikeClicked}
+                                liked={getUserHasLiked(user, likes)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleLikeClicked(moment);
+                                }}
                             />
                         </li>
                         <li>
@@ -139,7 +94,13 @@ const Moment = ({ moment }) => {
                     <ul className="flex items-center justify-start space-x-2">
                         {user?._id === creator._id ? (
                             <li>
-                                <DeleteBasketButton onClick={deleteMoment} />
+                                <DeleteBasketButton
+                                    onClick={(e) => {
+                                        // e.preventDefault();
+                                        e.stopPropagation();
+                                        deleteMoment(moment);
+                                    }}
+                                />
                             </li>
                         ) : null}
                         {user?._id === creator._id && (
