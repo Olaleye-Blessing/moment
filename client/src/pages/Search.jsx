@@ -32,8 +32,11 @@ const Search = () => {
         let loadedUrl = ``;
         let sort = period === "desc" ? "createdAt" : "-createdAt";
 
-        if (!type || type === "moment") {
+        if (!type || type === "moment" || type === "personal") {
             loadedUrl += `/moments?`;
+            if (type === "personal") {
+                loadedUrl += `creator=${user._id}&`;
+            }
             if (query) loadedUrl += `title=${query}&`;
         } else {
             loadedUrl += `/profile?`;
@@ -120,7 +123,7 @@ const Search = () => {
     ];
 
     if (authorize) {
-        // types.push({ text: "My Moments Only", type: "personal" });
+        types.push({ text: "My Moments Only", type: "personal" });
     }
 
     if (data) {
