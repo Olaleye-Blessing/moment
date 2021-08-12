@@ -6,6 +6,12 @@ import ProcessIndicator from "../components/ProcessIndicator";
 import AvatarUserCreatedAt from "../components/User/AvatarUserCreatedAt";
 import { useMomentContext } from "../context/MomentsContext";
 import useFiniteScroll from "../hook/useFiniteScroll";
+import { actions } from "../reducer/actions";
+import { updateData } from "../reducer/fetchActions";
+import { deletePost } from "../reducer/fetchActions/moment";
+import getUserHasLiked from "../utilities/Moment/getUserHasLiked";
+import { handleLikeMoment } from "../utilities/Moment/handleLikeMoment";
+import { deletedToastNotification } from "../utilities/Toast";
 import { uniqueArrayOfObject } from "../utilities/uniqueArrayOfObject";
 import Moment from "./../components/Moments/Moments";
 
@@ -15,6 +21,7 @@ const Search = () => {
 
     let {
         state: { user },
+        dispatch,
     } = useMomentContext();
 
     let authorize = user && Object.keys(user).length > 0;
@@ -45,11 +52,36 @@ const Search = () => {
         return setUrlPath(type, period, query);
     });
 
-    let { loading, data, error } = useFiniteScroll(searchUrl);
+    const abortFetch = new AbortController();
+    let signal = abortFetch.signal;
+    let { loading, data, error } = useFiniteScroll(searchUrl, signal);
 
     useEffect(() => {
         determineUrl(type, period, query);
     }, [type, period]);
+
+    // abort fetch on unmount
+    useEffect(() => {
+        return () => abortFetch.abort();
+    }, []);
+
+    // keep moments state
+    useEffect(() => {
+        // this ensures that we're dealing with moment type only
+        if (type === "users") {
+            setMomentTypeResult([]);
+            return;
+        }
+
+        // update data each time new momets is fetched
+        if (data) {
+            setMomentTypeResult(data);
+        }
+    }, [type, data]);
+
+    const [momentTypeResult, setMomentTypeResult] = useState(
+        type === "users" ? null : data
+    );
 
     const determineUrl = (type, period, query) => {
         let loadedUrl = setUrlPath(type, period, query);
@@ -94,6 +126,55 @@ const Search = () => {
     if (data) {
         data = [...uniqueArrayOfObject(data, "_id")];
     }
+
+    const deleteMoment = async (moment) => {
+        // this is just to be sure that this function is working with post type(either personal(when included) or all)
+        if (type === "users") return;
+
+        console.log("delete");
+
+        // delete moment visually from search page
+        data = [...data].filter((mom) => mom._id !== moment._id);
+        setMomentTypeResult(data);
+
+        // delete moment from lists of context moment if present
+        dispatch({
+            type: actions.DELETE_MOMENT,
+            payload: moment._id,
+        });
+
+        try {
+            await deletePost(moment._id);
+            deletedToastNotification("successfully deleted");
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleLikeClicked = async (moment) => {
+        // this is just to be sure that this function is working with post type(either personal(when included) or all)
+        if (type === "users") return;
+        // console.log("like");
+        let result = handleLikeMoment(user, moment);
+
+        if (!result) return;
+
+        let resultedMoment = result.moment;
+
+        dispatch({ type: actions.LIKE_MOMENT, payload: resultedMoment });
+
+        data = [...data].map((mom) =>
+            mom._id === resultedMoment._id ? resultedMoment : mom
+        );
+        setMomentTypeResult(data);
+
+        try {
+            await updateData(`/moments/like/${resultedMoment._id}`, {});
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const displayResult = () => {
         if (!data) return null;
 
@@ -106,24 +187,27 @@ const Search = () => {
                                 return (
                                     <li
                                         key={user._id}
-                                        className="list-none w-full box-shadow bg-black-subtle px-6 py-4 mb-8 transition-colors duration-500 cursor-pointer"
+                                        className="list-none w-full box-shadow bg-black-subtle px-6 py-4 mb-8 transition-colors duration-500"
                                     >
-                                        <Link to={`/profile/${user._id}`}>
-                                            <AvatarUserCreatedAt
-                                                profilePic={``}
-                                                name={user.name}
-                                                userName={user.username}
-                                                createdAt={user.createdAt}
-                                                id={user._id}
-                                                extraClass={`w-full`}
-                                            />
-                                        </Link>
+                                        <AvatarUserCreatedAt
+                                            profilePic={``}
+                                            name={user.name}
+                                            userName={user.username}
+                                            createdAt={user.createdAt}
+                                            id={user._id}
+                                            extraClass={`w-full`}
+                                        />
                                     </li>
                                 );
                             })}
                         </ul>
                     ) : (
-                        <Moment moments={data} />
+                        <Moment
+                            moments={momentTypeResult}
+                            deleteMoment={deleteMoment}
+                            handleLikeClicked={handleLikeClicked}
+                            getUserHasLiked={getUserHasLiked}
+                        />
                     )
                 ) : null}
                 {error && <div className="text-center">{error}</div>}
@@ -137,59 +221,6 @@ const Search = () => {
                 )}
             </>
         );
-        // if (data.length > 0) {
-        //     if (type === "moment" || type === "")
-        //         return <Moment moments={data} />;
-        //     if (type === "users") {
-        //         return data.map((user) => {
-        //             return (
-        //                 <li
-        //                     key={user._id}
-        //                     className="list-none w-full box-shadow bg-black-subtle px-6 py-4 mb-8 transition-colors duration-500 cursor-pointer"
-        //                 >
-        //                     <AvatarUserCreatedAt
-        //                         profilePic={``}
-        //                         name={user.name}
-        //                         userName={user.username}
-        //                         createdAt={user.createdAt}
-        //                         id={user._id}
-        //                         extraClass={`w-full`}
-        //                     />
-        //                 </li>
-        //             );
-        //         });
-        //     }
-        // }
-        // if (loading)
-        //     return (
-
-        //     );
-
-        // if (error) return <div>error</div>;
-
-        // if (data.length === 0) return <div>No result</div>;
-
-        // if (type === "moment" || type === "") return <Moment moments={data} />;
-
-        // if (type === "users") {
-        //     return data.map((user) => {
-        //         return (
-        //             <li
-        //                 key={user._id}
-        //                 className="list-none w-full box-shadow bg-black-subtle px-6 py-4 mb-8 transition-colors duration-500 cursor-pointer"
-        //             >
-        //                 <AvatarUserCreatedAt
-        //                     profilePic={``}
-        //                     name={user.name}
-        //                     userName={user.username}
-        //                     createdAt={user.createdAt}
-        //                     id={user._id}
-        //                     extraClass={`w-full`}
-        //                 />
-        //             </li>
-        //         );
-        //     });
-        // }
     };
 
     return (
