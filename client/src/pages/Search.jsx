@@ -35,7 +35,7 @@ const Search = () => {
         if (!type || type === "moment" || type === "personal") {
             loadedUrl += `/moments?`;
             if (type === "personal") {
-                loadedUrl += `creator=${user._id}&`;
+                loadedUrl = `/moments/personal?creator=${user._id}&`;
             }
             if (query) loadedUrl += `title=${query}&`;
         } else {

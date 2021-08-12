@@ -10,8 +10,24 @@ import {
     likeMoment,
     updateMoment,
 } from "../controllers/moment.js";
+import { checkRequestIdIsUserId } from "../controllers/users.js";
 
 const router = express.Router();
+
+router.get(
+    "/personal",
+    protect,
+    function (req, res, next) {
+        let { creator: userEditingId } = req.query;
+
+        // add the id to req body so that the next middleware will use it
+        req.body = { ...req.body, userEditingId };
+        next();
+    },
+    checkRequestIdIsUserId,
+    reqParamsFilter("title"),
+    getMoments
+);
 
 router.get("/", reqParamsFilter("title"), getMoments);
 router.get("/:id", getMoment);
