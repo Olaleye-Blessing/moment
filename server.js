@@ -12,6 +12,8 @@ const DB = process.env.DATABASE.replace(
     process.env.DATABASE_PASSWORD
 );
 
+let nodeEnv = process.env.NODE_ENV.trim() === "development";
+
 mongoose
     .connect(DB, {
         useNewUrlParser: true,
@@ -20,12 +22,11 @@ mongoose
         useUnifiedTopology: true,
     })
     .then((con) => {
-        console.log({ db_status: `Connection successful` });
+        if (nodeEnv) console.log({ db_status: `Connection successful` });
     });
 
 const server = app.listen(PORT, () => {
-    console.log(`app is listening on port ${PORT}...`);
-    console.log("started...");
+    if (nodeEnv) console.log(`app is listening on port ${PORT}...`);
 });
 
 process.on("unhandledRejection", (err) => {

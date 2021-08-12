@@ -6,6 +6,7 @@ import {
     getProfile,
     getProfiles,
     updateProfile,
+    followProfile,
 } from "../controllers/users.js";
 import { protect } from "../controllers/authentication.js";
 import { reqParamsFilter } from "../controllers/handlerFactory.js";
@@ -22,5 +23,8 @@ router.use(checkRequestIdIsUserId);
 
 router.patch("/editAbout/:id", editAbout, updateProfile);
 // router.route("/:id").patch(updateProfile);
+
+// router.patch("/follow", followProfile, updateProfile);
+router.patch("/follow", followProfile);
 
 export default router;

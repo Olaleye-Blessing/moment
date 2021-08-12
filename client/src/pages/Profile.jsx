@@ -32,6 +32,8 @@ import { deletedToastNotification } from "../utilities/Toast";
 import { updateData } from "../reducer/fetchActions";
 import { handleLikeMoment } from "../utilities/Moment/handleLikeMoment";
 import getUserHasLiked from "../utilities/Moment/getUserHasLiked";
+import ProcessIndicator from "../components/ProcessIndicator";
+import { getUserIsFollowing } from "../utilities/Profile/getUserIsFollowing";
 
 // RiSignalTowerFill -- following
 
@@ -65,7 +67,8 @@ const Profile = () => {
         } catch (error) {
             console.clear();
             console.log(error);
-            changeLoadingAndError(false, error);
+            // changeLoadingAndError(false, error);
+            changeLoadingAndError(false, error.message);
         }
     };
 
@@ -100,7 +103,13 @@ const Profile = () => {
     };
 
     if (profileLoading) {
-        return <div>Loading....</div>;
+        // return <div>Loading....</div>;
+        return (
+            <ProcessIndicator
+                parentExtraClass="w-full h-80"
+                childExtraClass="w-40 h-40"
+            />
+        );
     }
 
     if (profileError) {
@@ -190,6 +199,35 @@ const Profile = () => {
             console.log(error);
         }
     };
+    const handleFollow = async () => {
+        // get the logged-in user and the person they want to follow ids
+        let userId = user._id;
+        let followingId = profile._id;
+
+        try {
+            let result = await updateData(`/profile/follow`, {
+                followingId,
+                userEditingId: userId,
+            });
+            let { profileResult, userResult } = result.data;
+
+            user = { ...user, following: userResult.following };
+
+            // update logged in user profile
+            dispatch({
+                type: actions.UPDATE_USER,
+                payload: user,
+            });
+
+            // update the profile user is viewing
+            setChangedProfile({
+                ...changedProfile,
+                followers: profileResult.followers,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <>
@@ -215,7 +253,17 @@ const Profile = () => {
                                     </Button>
                                 ) : (
                                     <Button
-                                        text="follow"
+                                        onClick={handleFollow}
+                                        // text="follow"
+                                        text={
+                                            getUserIsFollowing(
+                                                user,
+                                                user.following,
+                                                profile._id
+                                            )
+                                                ? "unfollow"
+                                                : "follow"
+                                        }
                                         extraClass="bg-green-secondary absolute bottom-3 right-3 pt-2 hover:bg-opacity-60 text-base sm:pt-1 space-x-1 z-10"
                                     />
                                 )
@@ -273,7 +321,12 @@ const Profile = () => {
                             <h4 className="mb-4">About</h4>
                             <ul className="">
                                 {about.map(({ text, icon, value, link }) => {
-                                    if (!value) return null;
+                                    if (
+                                        text !== "Followers " &&
+                                        text !== "Following " &&
+                                        !value
+                                    )
+                                        return null;
                                     return (
                                         <li
                                             key={link || text}

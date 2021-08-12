@@ -13,6 +13,7 @@ export const getProfile = catchAsync(async (req, res, next) => {
     let user = await User.findById(id).populate({
         path: "moments",
     });
+    // let user = await User.findById(id);
 
     // console.log(user);
 
@@ -77,4 +78,45 @@ export const updateProfile = catchAsync(async (req, res, next) => {
     });
 
     return res.status(201).json({ status: "success", data: updatedUser });
+});
+
+export const followProfile = catchAsync(async (req, res, next) => {
+    let {
+        body: { followingId },
+        user: { _id: userId, following },
+    } = req;
+
+    let hasFollowed = [...following].find(
+        (followedId) => followedId.toString() === followingId.toString()
+    );
+
+    // handles the number of followers in the profile that the user follows
+    let followerResult = await User.findByIdAndUpdate(
+        followingId,
+        hasFollowed
+            ? { $pull: { followers: userId } }
+            : { $push: { followers: userId } },
+        { new: true }
+    );
+
+    let userResult = await User.findByIdAndUpdate(
+        userId,
+        hasFollowed
+            ? { $pull: { following: followingId } }
+            : { $push: { following: followingId } },
+        { new: true }
+    );
+
+    return res.json({
+        status: "success",
+        data: {
+            userResult,
+            profileResult: followerResult,
+        },
+    });
+    // this handles following in the user profile
+    // (req.data = hasFollowed
+    //     ? { $pull: { following: followingId } }
+    //     : { $push: { following: followingId } }),
+    //     next();
 });

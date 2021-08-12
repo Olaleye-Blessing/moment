@@ -55,6 +55,13 @@ const EditAboutFormContent = ({ changedProfile, onChange }) => {
                     handleChange={onChange}
                     placeholder={`${"your github username without '@'"}`}
                 />
+                <FormText
+                    name="linkedin"
+                    value={changedProfile.linkedin}
+                    label="linkedin"
+                    handleChange={onChange}
+                    placeholder={`${"your linkedin username without '@'"}`}
+                />
             </section>
         </>
     );

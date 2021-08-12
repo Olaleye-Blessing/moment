@@ -27,6 +27,8 @@ import LikeButton from "./../../components/Button/LikeButton";
 import { updateData } from "../../reducer/fetchActions";
 import getUserHasLiked from "../../utilities/Moment/getUserHasLiked";
 import { handleLikeMoment } from "../../utilities/Moment/handleLikeMoment";
+import toast from "react-hot-toast";
+import { getUserIsFollowing } from "../../utilities/Profile/getUserIsFollowing";
 
 const Moment = () => {
     let history = useHistory();
@@ -181,6 +183,38 @@ const Moment = () => {
         try {
             // await updateData(`/moments/like/${moment._id}`, {});
             await updateData(`/moments/like/${resultedMoment._id}`, {});
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleFollowClicked = async (e) => {
+        if (!user) {
+            toast.error("Please log in to follow this user");
+            return;
+        }
+
+        try {
+            let result = await updateData(`/profile/follow`, {
+                followingId: creatorId,
+                userEditingId: user._id,
+            });
+            let { profileResult, userResult } = result.data;
+            user = { ...user, following: userResult.following };
+
+            // update logged in user profile
+            dispatch({
+                type: actions.UPDATE_USER,
+                payload: user,
+            });
+
+            // update moment
+            let updatedMoment = {
+                ...moment,
+                creator: { ...creator, following: profileResult.following },
+            };
+
+            setMoment(updatedMoment);
         } catch (error) {
             console.log(error);
         }
@@ -357,11 +391,31 @@ const Moment = () => {
                     </header>
                     {creator.bio && <p>{creator.bio}</p>}
                     <div className="mt-4">
-                        <Button
-                            text="Follow"
-                            disabled={false}
-                            extraClass={`btn-submit btn-submit-enable`}
-                        />
+                        {user._id === creatorId ? (
+                            <Button
+                                text="profile"
+                                disabled={false}
+                                extraClass={`btn-submit btn-submit-enable`}
+                                onClick={() =>
+                                    history.push(`/profile/${user._id}`)
+                                }
+                            />
+                        ) : (
+                            <Button
+                                text={
+                                    getUserIsFollowing(
+                                        user,
+                                        user.following,
+                                        creatorId
+                                    )
+                                        ? "unfollow"
+                                        : "follow"
+                                }
+                                disabled={false}
+                                extraClass={`btn-submit btn-submit-enable`}
+                                onClick={handleFollowClicked}
+                            />
+                        )}
                     </div>
                 </section>
             </aside>

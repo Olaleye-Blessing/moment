@@ -38,12 +38,14 @@ export let aboutProfile = (changedProfile) => [
     {
         icon: <IoWifiSharp className="text-white-secondary text-lg" />,
         text: `Followers `,
-        value: `200`,
+        // value: `200`,
+        value: changedProfile.followers.length,
     },
     {
         icon: <RiSignalTowerFill className="text-white-secondary text-lg" />,
         text: `Following `,
-        value: `1`,
+        // value: `1`,
+        value: changedProfile.following.length,
     },
     {
         icon: <ImTwitter className="text-social-twitter mr-3" />,
@@ -65,7 +67,7 @@ export let aboutProfile = (changedProfile) => [
     },
     {
         icon: <FiLinkedin className="text-social-linkedin mr-3" />,
-        value: changedProfile.instagram,
+        value: changedProfile.linkedin,
         link: `https://www.linkedin.com/${changedProfile.instagram}`,
         // classStyle: "instagram",
     },

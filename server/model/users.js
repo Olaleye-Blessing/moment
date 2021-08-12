@@ -123,6 +123,18 @@ const userSchema = new Schema(
                 select: false,
             },
         ],
+        followers: [
+            {
+                type: Schema.ObjectId,
+                ref: "User",
+            },
+        ],
+        following: [
+            {
+                type: Schema.ObjectId,
+                ref: "User",
+            },
+        ],
     },
     { timestamps: true }
 );
@@ -211,6 +223,14 @@ userSchema.methods.generatePasswordToken = function () {
     // console.log({ resetToken, hashed: this.passwordResetToken });
     return resetToken;
 };
+
+// userSchema.pre(/^find/, function (next) {
+//     this.populate({
+//         path: "followers",
+//         //     // select: ""
+//     });
+//     next();
+// });
 
 const User = model("User", userSchema);
 
