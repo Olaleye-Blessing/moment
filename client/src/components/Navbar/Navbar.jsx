@@ -75,8 +75,10 @@ const Navbar = () => {
     }, []);
 
     useEffect(() => {
-        if (pathname === "/") setShowAsideProfNav(false);
-        // setShowAsideProfNav(false);
+        setShowAsideProfNav(false);
+        asideProfRef.current.classList.add("right-full");
+        asideProfRef.current.classList.remove("right-0");
+        asideProfRef.current.classList.remove("left-0");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
 

@@ -18,10 +18,13 @@ import { useMomentContext } from "./context/MomentsContext";
 import { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import ActivateAccount from "./pages/Authentication/ActivateAccount";
+import FAQ from "./pages/FAQ";
+import About from "./pages/About";
+import Terms from "./pages/Terms";
 
 function App() {
     let { pathname } = useLocation();
-    let { asideProfRef } = useMomentContext();
+    let { asideProfRef, showAsideProfNav } = useMomentContext();
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const checkSize = () => {
@@ -72,7 +75,7 @@ function App() {
             <div className={`${parentClass} ${parentFlex}`}>
                 {!pathname.startsWith("/NotFound") && (
                     <aside
-                        className={`bg-black transition-transform fixed navHomeAsideTop bottom-0 right-full px-3 py-4 z-20 max-w-md sm:bg-transparent sm:static sm:pt-0 sm:min-w-sm sm:max-w-xs sm:px-0 md:mr-auto ${smallDeviceClass}`}
+                        className={`bg-black transition-transform fixed navHomeAsideTop bottom-0 right-full px-3 pt-0 pb-4 z-20 max-w-md sm:bg-transparent sm:sticky sm:top-24 sm:pt-0 sm:min-w-sm sm:max-w-xs sm:px-0 md:mr-auto ${smallDeviceClass}`}
                         ref={asideProfRef}
                     >
                         <HomeAsideMain />
@@ -105,6 +108,15 @@ function App() {
                     </Route>
                     <Route path="/profile/:id">
                         <Profile />
+                    </Route>
+                    <Route path="/faq">
+                        <FAQ />
+                    </Route>
+                    <Route path="/about">
+                        <About />
+                    </Route>
+                    <Route path="/terms">
+                        <Terms />
                     </Route>
                     <Route path="/search">
                         <Search />

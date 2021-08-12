@@ -7,6 +7,7 @@ const NavLinkItem = ({ href, children, title, text, extraClass }) => {
             className={`${extraClass} btn btn-general`}
             title={title}
             activeClassName="text-green-primary"
+            exact
         >
             {children}
             {text}

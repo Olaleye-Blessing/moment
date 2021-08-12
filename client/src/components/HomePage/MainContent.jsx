@@ -63,7 +63,7 @@ const MainContent = ({ abortControl }) => {
     };
 
     return (
-        <main className="sm:w-full lg:max-w-2xl" data-content="moments">
+        <main className="sm:w-full" data-content="moments">
             {moments.length > 0 ? (
                 <Moments
                     moments={moments}
