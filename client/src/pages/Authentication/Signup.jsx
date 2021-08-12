@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 //     AiFillCheckCircle,
 // } from "react-icons/ai";
 
-import FormFile from "../../components/Form/FormFile";
+// import FormFile from "../../components/Form/FormFile";
 import FormText from "../../components/Form/FormText";
 import useSignUpForm from "../../hook/useSignUpForm";
 // import { actions } from "../../reducer/actions";
@@ -24,7 +24,7 @@ import SubmitButton from "../../components/Button/SubmitButton";
 const Signup = () => {
     let {
         handleChange,
-        handleImageChange,
+        // handleImageChange,
         values,
         errors,
         handleSubmit,
@@ -207,7 +207,7 @@ const Signup = () => {
                         <FormErrorMsg text={errors.confirmPassword.msg} />
                     )}
                 </FormText>
-                <FormFile name="profilePic" handleChange={handleImageChange} />
+                {/* <FormFile name="profilePic" handleChange={handleImageChange} /> */}
                 {/* <FormButton
                     text="create"
                     type="submit"

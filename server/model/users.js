@@ -28,7 +28,6 @@ const userSchema = new Schema(
             unique: true,
             required: true,
         },
-        coverPic: String,
         password: {
             type: String,
             required: [true, "please provide your password"],

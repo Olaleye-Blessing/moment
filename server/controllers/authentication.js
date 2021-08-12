@@ -45,7 +45,7 @@ export const signup = catchAsync(async (req, res, next) => {
         username,
         password,
         confirmPassword,
-        profilePic,
+        // profilePic,
     } = req.body;
 
     if (!firstName) return next(new AppError("Please provide first name", 400));
@@ -66,7 +66,7 @@ export const signup = catchAsync(async (req, res, next) => {
         confirmPassword,
         activationToken,
         activationExpires,
-        profilePic,
+        // profilePic,
     });
 
     //? send activation token to user's email

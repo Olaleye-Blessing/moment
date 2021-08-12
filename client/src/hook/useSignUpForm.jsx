@@ -6,7 +6,7 @@ import { createData } from "../reducer/fetchActions";
 // import { signup } from "../reducer/fetchActions/auth";
 // import { signup } from "../reducer/fetchActions";
 import { preventUnnecessaryKeys } from "../utilities/Form/preventUnnecessaryKeys";
-import { imagesToBase64 } from "../utilities/imageToBase64";
+// import { imagesToBase64 } from "../utilities/imageToBase64";
 
 const useSignUpForm = (validate) => {
     let history = useHistory();
@@ -20,7 +20,7 @@ const useSignUpForm = (validate) => {
         username: "",
         password: "",
         confirmPassword: "",
-        profilePic: "",
+        // profilePic: "",
     });
 
     // const [errors, setErrors] = useState({});
@@ -56,12 +56,12 @@ const useSignUpForm = (validate) => {
         });
     };
 
-    const handleImageChange = async (e) => {
-        let image = await imagesToBase64(e);
-        image = image[0];
-        // setSignUpData({ ...signUpData, profilePic: image });
-        setValues({ ...values, profilePic: image });
-    };
+    // const handleImageChange = async (e) => {
+    //     let image = await imagesToBase64(e);
+    //     image = image[0];
+    //     // setSignUpData({ ...signUpData, profilePic: image });
+    //     setValues({ ...values, profilePic: image });
+    // };
 
     const [touched, setTouched] = useState({
         firstName: false,
@@ -100,7 +100,7 @@ const useSignUpForm = (validate) => {
 
     return {
         handleChange,
-        handleImageChange,
+        // handleImageChange,
         values,
         errors,
         handleSubmit,
