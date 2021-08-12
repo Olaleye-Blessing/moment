@@ -5,7 +5,7 @@ const CloseAsideBtn = ({ closeSideBar }) => {
         <div className=" absolute top-3 right-3">
             <CloseButton
                 onClick={closeSideBar}
-                extraClass="ml-auto block mb-3 sm:hidden"
+                extraClass="ml-auto block mb-3 sm:hidden bg-red-subtle hover:bg-red hover:opacity-80"
             />
         </div>
     );

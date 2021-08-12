@@ -3,7 +3,7 @@ import FormText from "../Form/FormText";
 const EditAboutFormContent = ({ changedProfile, onChange }) => {
     return (
         <>
-            <section>
+            <section className="pt-8">
                 <FormText
                     name="work"
                     value={changedProfile.work}
