@@ -11,14 +11,14 @@ const AvatarUserCreatedAt = ({
     extraClass,
 }) => {
     return (
-        <div className={`${extraClass} flex space-x-2`}>
+        <div className={`${extraClass} flex space-x-2 flex-nowrap`}>
             <Avatar src={profilePic} extraClass="bg-black" />
-            <div className="">
+            <h5 className="max-w-full flex-1 min-w-0">
                 <UserName name={name} username={userName} id={id} />
-                <p className="text-xs text-white-secondary">
+                <p className="text-xs font-normal  text-green-dark">
                     {humanDate(createdAt)}
                 </p>
-            </div>
+            </h5>
         </div>
     );
 };

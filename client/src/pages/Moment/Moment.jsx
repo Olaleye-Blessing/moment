@@ -234,7 +234,8 @@ const Moment = () => {
                         </figure>
                     )}
                     <div className="px-3 pt-4 md:px-12">
-                        <h1 className="text-3xl mb-4">{title}</h1>
+                        {/* <h1 className="text-3xl mb-4">{title}</h1> */}
+                        <h1 className="mb-4">{title}</h1>
                         {tags[0] !== "" && <MomentTags tags={tags} />}
                         <AvatarUserCreatedAt
                             profilePic={profilePic}
@@ -249,8 +250,8 @@ const Moment = () => {
                                 key={`${msg}${i}`}
                                 className={`${
                                     i === +message.length - 1
-                                        ? "md:mb-4"
-                                        : "mb-4"
+                                        ? "md:mb-5"
+                                        : "mb-5"
                                 }`}
                             >
                                 {msg}
@@ -305,12 +306,12 @@ const Moment = () => {
                     id="comments"
                     className="py-4 px-5 border-t border-green-dark md:px-12"
                 >
-                    <h3 className="text-xl mb-6">
+                    <h2 className="mb-6">
                         Comments
-                        <span className="text-white-secondary pl-1">
+                        <span className="text-white-secondary pl-1 text-lg">
                             ({comments.length})
                         </span>
-                    </h3>
+                    </h2>
                     {user ? (
                         <div className="flex gap-2">
                             <Avatar extraClass="bg-black flex-shrink-1 min-w-fg" />

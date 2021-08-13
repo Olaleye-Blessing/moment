@@ -237,7 +237,7 @@ const Profile = () => {
                         <div className="relative mx-auto max-w-2xl rounded-b-md overflow-hidden">
                             <figure className="h-80 lg:h-96 w-full">
                                 <img
-                                    className="block mx-auto object-cover object-top w-full "
+                                    className="block mx-auto object-cover object-top w-full h-full"
                                     src={coverPic || profilePic || defaultImage}
                                     alt={`${profile.name} cover`}
                                 />
@@ -286,8 +286,8 @@ const Profile = () => {
                         </div>
                     </div>
                     <header className="px-4 mt-8 mb-3">
-                        <h1 className="text-center text-2xl">{name}</h1>
-                        <small className="block mx-auto text-center mt-0 text-gray">
+                        <h1 className="text-center">{name}</h1>
+                        <small className="block mx-auto text-center -mt-2 text-gray text-sm">
                             @{username}
                         </small>
                     </header>

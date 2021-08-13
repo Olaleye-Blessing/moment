@@ -23,5 +23,5 @@ export function formatDate(seconds) {
 
     if (years !== 0) units.unshift(`${years}y`);
 
-    return units.join(" ");
+    return units.slice(0, 2).join(" ");
 }

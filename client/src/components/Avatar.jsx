@@ -3,7 +3,7 @@ import { BsPerson } from "react-icons/bs";
 const Avatar = ({ src, extraClass, alt, figureWidth }) => {
     return (
         <figure
-            className={`flex items-center justify-center rounded-50 ${extraClass} ${figureWidth}`}
+            className={`flex items-center flex-shrink-0 justify-center rounded-50 ${extraClass} ${figureWidth}`}
         >
             {src ? (
                 <img

@@ -1,20 +1,14 @@
 import { useHistory } from "react-router-dom";
 import { FaRegComment } from "react-icons/fa";
-// import { VscReactions } from "react-icons/vsc";
 
 import { useMomentContext } from "../../../context/MomentsContext";
 import { formatDate } from "../../../utilities/formatDate";
-// import { deletePost } from "../../../reducer/fetchActions/moment";
-// import { actions } from "../../../reducer/actions";
 import Button from "../../Button/Button";
 import MomentTags from "./MomentTags";
 import AvatarUserCreatedAt from "../../User/AvatarUserCreatedAt";
-// import { deletedToastNotification } from "../../../utilities/Toast";
 import DeleteBasketButton from "../../Button/DeleteBasketButton";
 import EditPenIconButton from "../../Button/EditPenIconButton";
 import LikeButton from "../../Button/LikeButton";
-// import toast from "react-hot-toast";
-// import { updateData } from "./../../../reducer/fetchActions.js";
 
 const Moment = ({
     moment,
@@ -61,7 +55,7 @@ const Moment = ({
             />
 
             <div className="pl-10">
-                <h3 className="text-lg text-center mb-3 text-white">{title}</h3>
+                <h2 className="text-center mb-3 text-white">{title}</h2>
                 <p className="line-clamp-9 mb-3 text-white opacity-80">
                     {message}
                 </p>

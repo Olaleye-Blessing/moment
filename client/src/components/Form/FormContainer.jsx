@@ -8,9 +8,7 @@ const FormContainer = ({ onSubmit, headerTitle, children }) => {
             className="mx-auto max-w-lg rounded box-shadow mt-4 px-5 pb-8 relative"
         >
             {headerTitle && (
-                <h2 className="text-2xl sm:text-3xl font-bold text-center py-9">
-                    {headerTitle}
-                </h2>
+                <h2 className="font-bold text-center py-9">{headerTitle}</h2>
             )}
             {children}
         </form>
