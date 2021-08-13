@@ -56,16 +56,10 @@ const validateInfo = (name, value, values) => {
             } else if (!validatePassword(value)) {
                 error.password.msg = "invalid password";
                 error.password.status = true;
-            }
-            // else if (confirmPassword !== "" && value !== confirmPassword) {
-            //     error.password.msg = "passwords do not match";
-            //     error.password.status = true;
-            //     error.confirmPassword = {
-            //         msg: "passwords do not match",
-            //         status: true,
-            //     };
-            // }
-            else if (value === confirmPassword) {
+            } else if (value !== confirmPassword && confirmPassword) {
+                error.password.msg = "Passwords do not match";
+                error.password.status = true;
+            } else if (value === confirmPassword) {
                 error.password.msg = "";
                 error.password.status = false;
                 error.confirmPassword = {
@@ -79,15 +73,11 @@ const validateInfo = (name, value, values) => {
             if (!value) {
                 error.confirmPassword.msg = "Please confirm password";
                 error.confirmPassword.status = true;
-            }
-            // else if (password !== "" && !validatePassword(password)) {
-            //     error.password = {
-            //         msg: "invalid password",
-            //         status: true,
-            //     };
-            // }
-            else if (value !== password) {
+            } else if (value !== password) {
                 error.confirmPassword.msg = "Passwords do not match";
+                error.confirmPassword.status = true;
+            } else if (!validatePassword(value)) {
+                error.confirmPassword.msg = "Invalid Password";
                 error.confirmPassword.status = true;
             } else if (value === password) {
                 error.confirmPassword.msg = "";
