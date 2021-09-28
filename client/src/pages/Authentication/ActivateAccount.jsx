@@ -7,14 +7,13 @@ import ProcessIndicator from "../../components/ProcessIndicator";
 import { useMomentContext } from "../../context/MomentsContext";
 import { actions } from "../../reducer/actions";
 import { getData } from "../../reducer/fetchActions";
-import NavBar from "./../../components/Navbar/Navbar";
+// import NavBar from "./../../components/Navbar/Navbar";
 
 const ActivateAccount = () => {
     let { token } = useParams();
     let history = useHistory();
 
     let { dispatch } = useMomentContext();
-    console.log(token);
 
     useEffect(() => {
         const activateAccount = async () => {
@@ -24,6 +23,7 @@ const ActivateAccount = () => {
                     type: actions.AUTHENTICATION,
                     payload: result.user,
                 });
+                history.replace("/");
                 toast.success("Account activated successfully");
             } catch (error) {
                 // console.log(error);

@@ -1,14 +1,20 @@
 import { validateEmail } from "./validateEmail";
 import { validatePassword } from "./validatePassword";
+import { validateUserName } from "./validateUserName";
+import { validateName } from "./validation";
 
 const validateInfo = (name, value, values) => {
     let { password, confirmPassword } = values;
     let error = { [name]: {} };
-    // //console.log(error);
+
     switch (name) {
         case "firstName":
             if (!value.trim()) {
                 error.firstName.msg = "provide your first name";
+                error.firstName.status = true;
+            } else if (!validateName(value.trim())) {
+                error.firstName.msg =
+                    "Invalid name!! Name should be letters only!!";
                 error.firstName.status = true;
             } else {
                 error.firstName.msg = "";
@@ -19,6 +25,10 @@ const validateInfo = (name, value, values) => {
         case "lastName":
             if (!value.trim()) {
                 error.lastName.msg = "provide last name";
+                error.lastName.status = true;
+            } else if (!validateName(value.trim())) {
+                error.lastName.msg =
+                    "Invalid name!! Name should be letters only!!";
                 error.lastName.status = true;
             } else {
                 error.lastName.msg = "";
@@ -43,6 +53,16 @@ const validateInfo = (name, value, values) => {
             if (!value.trim()) {
                 error.username.msg = "provide unique username";
                 error.username.status = true;
+            } else if (value.length < 5) {
+                error.username = {
+                    msg: "username should be at least 5 chracters long",
+                    status: true,
+                };
+            } else if (!validateUserName(value)) {
+                error.username = {
+                    msg: "invalid username",
+                    status: true,
+                };
             } else {
                 error.username.msg = "";
                 error.username.status = false;

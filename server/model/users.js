@@ -3,6 +3,8 @@ import crypto from "crypto";
 import mongoose from "mongoose";
 import bycrypt from "bcryptjs";
 import { validateEmail } from "../utility/validateEmail.js";
+import { validateUserName } from "../utility/UserModel/validations.js";
+import { validatePassword } from "../utility/UserModel/passwordValidation.js";
 
 const Schema = mongoose.Schema;
 
@@ -27,12 +29,14 @@ const userSchema = new Schema(
             type: String,
             unique: true,
             required: true,
+            validate: [validateUserName, "invalid username"],
         },
         password: {
             type: String,
             required: [true, "please provide your password"],
             minlength: 8,
             select: false,
+            validate: [validatePassword, "Invalid password"],
         },
         confirmPassword: {
             type: String,

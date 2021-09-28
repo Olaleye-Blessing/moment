@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { useMomentContext } from "../context/MomentsContext";
@@ -84,11 +85,12 @@ const useSignUpForm = (validate) => {
         setLoading(true);
 
         try {
-            // let res = await signup(values);
             let res = await createData(`/auth/signup`, values);
-            // console.log(res);
             if (res.status === "success") {
                 dispatch({ type: actions.AUTHENTICATION, payload: res.user });
+                toast.success(
+                    `Account created successfully! An activation link has been sent to ${values.email}.`
+                );
                 history.replace("/");
             }
         } catch (error) {

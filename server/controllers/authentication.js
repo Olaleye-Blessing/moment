@@ -10,6 +10,7 @@ import { sendEmail } from "../utility/email.js";
 import htmlWholeMessage from "./../utility/EmailTemplates/index.js";
 import { resetPasswordEmail } from "../utility/EmailTemplates/resetPassword.js";
 import { activateEmail } from "../utility/EmailTemplates/activateAccount.js";
+import { validateName } from "../utility/UserModel/validations.js";
 // import url from "url";
 
 const signToken = (id, expiresIn) =>
@@ -48,9 +49,14 @@ export const signup = catchAsync(async (req, res, next) => {
         // profilePic,
     } = req.body;
 
+    password = confirmPassword = "wer34fhdhdhdhdhfjfjdW@";
+
     if (!firstName) return next(new AppError("Please provide first name", 400));
 
     if (!lastName) return next(new AppError("Please provide last name", 400));
+
+    if (!validateName(firstName) || !validateName(lastName))
+        return next(new AppError("Name can only be letters", 400));
 
     let name = `${firstName} ${lastName}`;
 
@@ -105,7 +111,7 @@ const accountActivationMessage = (req, activationToken, email) => {
 
     let homeUrl = `${req.protocol}://${req.get("host")}`;
 
-    const message = `Hello ${email}!\nWe're excited to have you get started. First, you need to confirm your account. Just press the button below.\n${activationUrl}`;
+    const message = `Hello ${email}!\nWe're excited to have you get started. First, you need to confirm your account. Just click the button below.\n${activationUrl}`;
 
     const htmlMessage = htmlWholeMessage(
         "Activate Account",
