@@ -15,8 +15,6 @@ import Settings from "./pages/Settings";
 import Search from "./pages/Search";
 import HomeAsideMain from "./components/HomeAside/HomeAsideMain";
 import { useMomentContext } from "./context/MomentsContext";
-import { useEffect, useState } from "react";
-import { Redirect } from "react-router-dom";
 import ActivateAccount from "./pages/Authentication/ActivateAccount";
 import FAQ from "./pages/FAQ";
 import About from "./pages/About";
@@ -24,25 +22,9 @@ import Terms from "./pages/Terms";
 
 function App() {
     let { pathname } = useLocation();
-    let { asideProfRef, showAsideProfNav } = useMomentContext();
+    let { asideProfRef } = useMomentContext();
 
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-    const checkSize = () => {
-        setWindowWidth(window.innerWidth);
-    };
-    useEffect(() => {
-        window.addEventListener("resize", checkSize);
-
-        return () => window.removeEventListener("resize", checkSize);
-    }, []);
-
-    // console.log({ windowWidth });
-
-    // console.log({ pathname });
-
-    let smallDeviceClass = ` ${
-        pathname !== "/" && windowWidth > 639 ? "hidden" : ""
-    }`;
+    let smallDeviceClass = pathname === "/" ? "" : "sm:hidden";
 
     let parentFlex = `${
         pathname === "/"
