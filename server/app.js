@@ -21,17 +21,30 @@ app.use(cookieParser());
 
 console.log({ env: process.env.NODE_ENV, length: process.env.NODE_ENV.length });
 
+// if (process.env.NODE_ENV === "production") {
+//     // app.use(express.static("client/build"));
+//     // app.use(
+//     //     "/static",
+//     //     express.static(path.join(__dirname, "../client/build//static"))
+//     // );
+//     app.use(express.static(path.join(__dirname, "../client/build")));
+//     app.get("*", (req, res) => {
+//         res.sendFile(
+//             path.resolve(__dirname, "..", "client", "build", "index.html")
+//         );
+//     });
+// } else {
+//     app.use("/moments", momentRoutes);
+//     app.use("/auth", authenticationRoutes);
+//     app.use("/comments", commentRoutes);
+//     app.use("/profile", userRoutes);
+// }
+
 if (process.env.NODE_ENV === "production") {
-    // app.use(express.static("client/build"));
-    // app.use(
-    //     "/static",
-    //     express.static(path.join(__dirname, "../client/build//static"))
-    // );
-    app.use(express.static(path.join(__dirname, "../client/build")));
+    app.use(express.static(path.join(__dirname, "client/build")));
+
     app.get("*", (req, res) => {
-        res.sendFile(
-            path.resolve(__dirname, "..", "client", "build", "index.html")
-        );
+        res.sendFile(path.join(__dirname + "/client/build/index.html"));
     });
 } else {
     app.use("/moments", momentRoutes);
