@@ -14,8 +14,6 @@ const DB = process.env.DATABASE.replace(
 
 let nodeEnv = process.env.NODE_ENV.trim() === "development";
 
-console.log({ env: process.env.NODE_ENV, length: process.env.NODE_ENV.length });
-
 mongoose
     .connect(DB, {
         useNewUrlParser: true,

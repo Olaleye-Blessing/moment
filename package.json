@@ -10,6 +10,7 @@
         "install-client": "cd client && yarn install",
         "heroku-postbuild": "yarn run install-client && yarn run build",
         "start:dev": "set NODE_ENV=development && nodemon server.js --ignore client",
+        "start:prod": "set NODE_ENV=production && yarn run build && nodemon server.js --ignore client",
         "debug": "ndb server.js"
     },
     "keywords": [],
