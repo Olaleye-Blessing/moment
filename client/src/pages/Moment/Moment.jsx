@@ -392,13 +392,13 @@ const Moment = () => {
                     </header>
                     {creator.bio && <p>{creator.bio}</p>}
                     <div className="mt-4">
-                        {user._id === creatorId ? (
+                        {!user || user._id === creatorId ? (
                             <Button
                                 text="profile"
                                 disabled={false}
                                 extraClass={`btn-submit btn-submit-enable`}
                                 onClick={() =>
-                                    history.push(`/profile/${user._id}`)
+                                    history.push(`/profile/${creatorId}`)
                                 }
                             />
                         ) : (
