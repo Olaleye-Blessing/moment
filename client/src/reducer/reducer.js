@@ -6,11 +6,21 @@ export const reducer = (state, action) => {
     // console.log(action.payload);
     switch (action.type) {
         case actions.FETCH_ALL:
-            return { ...state, moments: [...action.payload] };
+            // console.log({ ...state });
+            return {
+                ...state,
+                moments: [...action.payload.totalMoments],
+                currentMomentPage: action.payload.page,
+                totalMomentPages: action.payload.totalPages,
+            };
 
         case actions.CREATE_MOMENT:
             let newcreatedMoment = { ...action.payload, comments: [] };
-            return { ...state, moments: [...state.moments, newcreatedMoment] };
+            // return { ...state, moments: [...state.moments, newcreatedMoment] };
+            return {
+                ...state,
+                moments: [newcreatedMoment, ...state.moments],
+            };
 
         case actions.UPDATE_MOMENT:
         case actions.LIKE_MOMENT:

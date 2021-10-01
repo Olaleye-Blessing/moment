@@ -6,42 +6,53 @@ import {
     useRef,
     useState,
 } from "react";
+// import { useLocation } from "react-router-dom";
 // import { actions } from "../reducer/actions";
 import { reducer } from "../reducer/reducer";
+// import useFiniteScroll from "./../hook/useFiniteScroll";
 
 const MomentContent = createContext();
 
-// const initialState = {
-//     moments: [],
-//     user: JSON.parse(localStorage.getItem("profile")),
-// };
-
-// console.log("initialState", initialState);
-
 export const MomentsProvider = ({ children }) => {
-    // const [state, dispatch] = useReducer(reducer, initialState, () => {
-    //     return { moments: [] };
-    // });
-    // const [state, dispatch] = useReducer(reducer, initialState);
     const [state, dispatch] = useReducer(reducer, {
         moments: [],
         user: JSON.parse(localStorage.getItem("profile")),
+        currentMomentPage: 1,
+        totalMomentPages: 1,
     });
     const [showAsideProfNav, setShowAsideProfNav] = useState(false);
     const asideProfRef = useRef(null);
 
-    // const showAsideProfNavNow = (show) => {
-    //     setShowAsideProfNav(show);
-    // };
-
-    // console.log(state.moments);
     const [currentMomentId, setCurrentMomentId] = useState(null);
 
-    // let momentBaseUrl =
-    //     process.env.NODE_ENV === "development"
-    //         ? "http://localhost:7000"
-    //         : "https://wahala-movie.herokuapp.com";
+    // let abortFetch = new AbortController();
 
+    // let location = useLocation();
+    // console.log(location);
+
+    // let { data, loading, error } = useFiniteScroll(
+    //     `/moments?`,
+    //     abortFetch.signal
+    // );
+
+    // console.log({ totalMoments, status, error });
+
+    // useEffect(() => {
+    //     return () => abortFetch.abort();
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
+
+    // useEffect(() => {
+    //     if (data) {
+    //         dispatch({
+    //             type: actions.FETCH_ALL,
+    //             payload: data,
+    //         });
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [data]);
+
+    // console.log(totalMoments);
     return (
         <MomentContent.Provider
             value={{
@@ -49,11 +60,13 @@ export const MomentsProvider = ({ children }) => {
                 dispatch,
                 currentMomentId,
                 setCurrentMomentId,
-                // momentBaseUrl,
                 asideProfRef,
                 showAsideProfNav,
                 setShowAsideProfNav,
-                // showAsideProfNavNow,
+                // loading,
+                // error,
+                // momentsStatus,
+                // momentsError,
             }}
         >
             {children}

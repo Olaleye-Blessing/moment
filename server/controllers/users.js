@@ -1,26 +1,28 @@
 import User from "../model/users.js";
 import { AppError } from "../utility/AppError.js";
 import { catchAsync } from "../utility/catchAsync.js";
-import { findAll } from "./handlerFactory.js";
+import { findAll, findOne } from "./handlerFactory.js";
 import { requestParamsReg } from "./../utility/requestParamsReg.js";
 
 export const getProfiles = findAll(User);
 
-export const getProfile = catchAsync(async (req, res, next) => {
-    let { id } = req.params;
-    // let user = await User.findById(id);
+export const getProfile = findOne(User, { path: "moments" });
 
-    let user = await User.findById(id).populate({
-        path: "moments",
-    });
-    // let user = await User.findById(id);
+// export const getProfile = catchAsync(async (req, res, next) => {
+//     let { id } = req.params;
+//     // let user = await User.findById(id);
 
-    // console.log(user);
+//     let user = await User.findById(id).populate({
+//         path: "moments",
+//     });
+//     // let user = await User.findById(id);
 
-    if (!user) return next(new AppError("User not found", 404));
+//     // console.log(user);
 
-    return res.status(200).json({ status: "success", data: user });
-});
+//     if (!user) return next(new AppError("User not found", 404));
+
+//     return res.status(200).json({ status: "success", data: user });
+// });
 
 //+ check if the person that makes the request is the owner of the profile
 export const checkRequestIdIsUserId = (req, res, next) => {

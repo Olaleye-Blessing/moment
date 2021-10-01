@@ -3,7 +3,7 @@ import User from "../model/users.js";
 import { APIFeatures } from "../utility/APIFeatures.js";
 import { catchAsync } from "../utility/catchAsync.js";
 import { AppError } from "./../utility/AppError.js";
-import { findAll } from "./handlerFactory.js";
+import { findAll, findOne } from "./handlerFactory.js";
 
 // export const getMoments = catchAsync(async (req, res, next) => {
 //     let { title } = req.query;
@@ -27,20 +27,22 @@ import { findAll } from "./handlerFactory.js";
 
 export const getMoments = findAll(Moment);
 
-export const getMoment = catchAsync(async (req, res, next) => {
-    let { id } = req.params;
+export const getMoment = findOne(Moment);
 
-    // let moment = await Moment.findById(id).populate({
-    //     path: "creator",
-    //     select: "-password -__v",
-    // });
+// export const getMoment = catchAsync(async (req, res, next) => {
+//     let { id } = req.params;
 
-    let moment = await Moment.findById(id);
-    // let moment = await Moment.findById(id).populate("comments");
-    // console.log(moment);
+//     // let moment = await Moment.findById(id).populate({
+//     //     path: "creator",
+//     //     select: "-password -__v",
+//     // });
 
-    return res.status(200).json({ status: "success", data: moment });
-});
+//     let moment = await Moment.findById(id);
+//     // let moment = await Moment.findById(id).populate("comments");
+//     // console.log(moment);
+
+//     return res.status(200).json({ status: "success", data: moment });
+// });
 
 export const createMoment = async (req, res, next) => {
     // console.log(req.user);

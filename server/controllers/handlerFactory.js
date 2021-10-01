@@ -41,14 +41,15 @@ export const findAll = (Model) =>
 
         let data = await features.query;
 
-        if (data.length === 0) {
-            return next(new AppError("No data found", 404));
-        }
+        // if (data.length === 0) {
+        //     return next(new AppError("No data found", 404));
+        // }
 
         page = Number(page) || 1;
 
         // 50 documents per page
-        let totalPages = Math.ceil((await Model.countDocuments()) / 50);
+        // let totalPages = Math.ceil((await Model.countDocuments()) / 50);
+        let totalPages = Math.ceil((await Model.countDocuments()) / 3);
 
         // console.log(data);
         res.status(200).json({
@@ -57,6 +58,29 @@ export const findAll = (Model) =>
             page,
             totalPages,
             // moments: data,
+            data,
+        });
+    });
+
+export const findOne = (Model, populateOptions) =>
+    catchAsync(async (req, res, next) => {
+        let { id } = req.params;
+        console.log({ id });
+
+        let query = Model.findById(id);
+
+        if (populateOptions) query = query.populate(populateOptions);
+
+        let data = await query;
+
+        if (!data) {
+            return next(new AppError("Invalid ID", 404));
+        }
+
+        data.__v = undefined;
+
+        res.json({
+            status: "success",
             data,
         });
     });

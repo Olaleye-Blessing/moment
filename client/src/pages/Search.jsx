@@ -57,7 +57,15 @@ const Search = () => {
 
     const abortFetch = new AbortController();
     let signal = abortFetch.signal;
-    let { loading, data, error } = useFiniteScroll(searchUrl, signal);
+    // let { loading, data, error } = useFiniteScroll(searchUrl, signal);
+    let {
+        totalData: data,
+        status: loading,
+        error,
+        page,
+        totalPages,
+    } = useFiniteScroll(searchUrl, signal);
+    // console.log({ searchUrl });
 
     useEffect(() => {
         determineUrl(type, period, query);
@@ -179,7 +187,8 @@ const Search = () => {
     };
 
     const displayResult = () => {
-        if (!data) return null;
+        if (loading === "idle") return null;
+        // if (!data) return null;
 
         return (
             <>
@@ -212,9 +221,16 @@ const Search = () => {
                             getUserHasLiked={getUserHasLiked}
                         />
                     )
-                ) : null}
-                {error && <div className="text-center">{error}</div>}
-                {loading && (
+                ) : (
+                    loading === "fetched" && (
+                        <div className="text-center">No result found</div>
+                    )
+                )}
+                {/* {error && <div className="text-center">{error}</div>} */}
+                {loading === "error" && (
+                    <div className="text-center">{error}</div>
+                )}
+                {loading === "fetching" && (
                     <div>
                         <ProcessIndicator
                             parentExtraClass="w-full h-80"
@@ -226,6 +242,7 @@ const Search = () => {
         );
     };
 
+    // console.log({ data, loading, error, page, totalPages });
     return (
         <main className="mx-auto lg:max-w-4xl">
             <form onSubmit={handleSubmit}>
