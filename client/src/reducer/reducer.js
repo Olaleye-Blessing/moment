@@ -54,7 +54,10 @@ export const reducer = (state, action) => {
             let oldMoment = oldMoments.find(
                 (moment) => moment._id === momentId
             );
-            oldMoment.comments = [...oldMoment.comments, action.payload];
+            if (oldMoment) {
+                oldMoment.comments = [...oldMoment.comments, action.payload];
+            }
+            // oldMoment.comments = [...oldMoment.comments, action.payload];
 
             return { ...state, moments: oldMoments };
     }

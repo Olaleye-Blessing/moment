@@ -48,6 +48,8 @@ const useFiniteScroll = (pathUrl, signal, currentPage, totalPage) => {
 
         // console.log(fetchedData);
         // // console.log(data);
+        if (!fetchedData) return;
+
         let { data, totalPages } = fetchedData;
         setTotalData((prev) => [...prev, ...data]);
         setTotalPages(totalPages);

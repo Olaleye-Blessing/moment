@@ -29,17 +29,19 @@ import getUserHasLiked from "../../utilities/Moment/getUserHasLiked";
 import { handleLikeMoment } from "../../utilities/Moment/handleLikeMoment";
 import toast from "react-hot-toast";
 import { getUserIsFollowing } from "../../utilities/Profile/getUserIsFollowing";
+import useFetch from "./../../hook/useFetch";
+import EditPenIconButton from "../../components/Button/EditPenIconButton";
 
 const Moment = () => {
     let history = useHistory();
     let { id } = useParams();
     let { hash } = useLocation();
-    let { state, dispatch } = useMomentContext();
+    let { state, dispatch, setCurrentMomentId } = useMomentContext();
     const [comment, setComment] = useState("");
     let { moments, user } = state;
 
     const [moment, setMoment] = useState(null);
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     // const [error, setError] = useState(false);
     const [submitComment, setSubmitComment] = useState(false);
 
@@ -47,33 +49,56 @@ const Moment = () => {
     let signal = abortMoment.signal;
 
     const getMoment = () => moments.find((moment) => moment._id === id) || null;
+
+    let url = moments.length === 0 && `/moments/${id}`;
+    let {
+        status,
+        error,
+        data: { data },
+    } = useFetch(url, signal);
+
+    useEffect(() => {
+        if (moments.length !== 0) {
+            console.log("initialized");
+            setMoment(getMoment());
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    useEffect(() => {
+        if (status !== "fetched" || moments.length !== 0) return;
+        console.log("not initialized");
+
+        setMoment(data);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data]);
     // console.log(moments);
     // console.log({ getMoment: getMoment() });
 
-    const fetchMoment = async () => {
-        try {
-            let response = await momentDetails(id, signal);
-            setMoment(response.data);
-            setLoading(false);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    useEffect(() => {
-        if (moments.length > 0) {
-            // console.log("useEffect");
-            // console.log(moments);
-            // console.log({ getMoment: getMoment() });
-            setMoment(getMoment());
-            setLoading(false);
-        } else {
-            fetchMoment();
-        }
-        setMoment(getMoment());
+    // return null;
+    // const fetchMoment = async () => {
+    //     try {
+    //         let response = await momentDetails(id, signal);
+    //         setMoment(response.data);
+    //         setLoading(false);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+    // useEffect(() => {
+    //     if (moments.length > 0) {
+    //         // console.log("useEffect");
+    //         // console.log(moments);
+    //         // console.log({ getMoment: getMoment() });
+    //         setMoment(getMoment());
+    //         setLoading(false);
+    //     } else {
+    //         fetchMoment();
+    //     }
+    //     setMoment(getMoment());
 
-        return () => abortMoment.abort();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    //     return () => abortMoment.abort();
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
 
     const scrollToComment = () => {
         let commentHeader = document.getElementById("comments");
@@ -100,9 +125,19 @@ const Moment = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [moment]);
 
-    if (loading) return <LoadingIndicator />;
+    // if (loading) return <LoadingIndicator />;
 
-    if (moment === null) return <Redirect to="/NotFound" />;
+    // if (moment === null) return <Redirect to="/NotFound" />;
+
+    if (status === "idle" && moments.length === 0) return null;
+
+    // if (status === "fetching") return <LoadingIndicator />;
+    if (status === "fetching") return <main>Loading....</main>;
+
+    if (state === "error") return <main>There is an error</main>;
+
+    console.log(moment);
+    if (!moment) return null;
 
     let {
         _id: momentId,
@@ -139,6 +174,12 @@ const Moment = () => {
                 type: actions.CREATE_COMMENT,
                 payload: res.data.comment,
             });
+            if (moments.length === 0) {
+                setMoment((prev) => ({
+                    ...prev,
+                    comments: [...prev.comments, res.data.comment],
+                }));
+            }
             setSubmitComment(false);
         } catch (error) {
             console.info(error);
@@ -289,14 +330,22 @@ const Moment = () => {
                                 />
                             </li>
                             <li>
-                                <ButtonIcon
+                                <EditPenIconButton
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+
+                                        setCurrentMomentId(moment._id);
+                                        history.replace("/moment");
+                                    }}
+                                />
+                                {/* <ButtonIcon
                                     icon={<VscEdit />}
                                     extraClass="hover:text-green-primary md:text-xl"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         history.replace("/moment");
                                     }}
-                                />
+                                /> */}
                             </li>
                         </ul>
                     )}
