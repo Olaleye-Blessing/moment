@@ -57,7 +57,6 @@ const Search = () => {
 
     const abortFetch = new AbortController();
     let signal = abortFetch.signal;
-    // let { loading, data, error } = useFiniteScroll(searchUrl, signal);
     let {
         totalData: data,
         status: loading,
@@ -65,7 +64,6 @@ const Search = () => {
         page,
         totalPages,
     } = useFiniteScroll(searchUrl, signal);
-    // console.log({ searchUrl });
 
     useEffect(() => {
         determineUrl(type, period, query);
@@ -165,7 +163,6 @@ const Search = () => {
     const handleLikeClicked = async (moment) => {
         // this is just to be sure that this function is working with post type(either personal(when included) or all)
         if (type === "users") return;
-        // console.log("like");
         let result = handleLikeMoment(user, moment);
 
         if (!result) return;
@@ -188,7 +185,6 @@ const Search = () => {
 
     const displayResult = () => {
         if (loading === "idle") return null;
-        // if (!data) return null;
 
         return (
             <>
@@ -242,7 +238,6 @@ const Search = () => {
         );
     };
 
-    // console.log({ data, loading, error, page, totalPages });
     return (
         <main className="mx-auto lg:max-w-4xl">
             <form onSubmit={handleSubmit}>

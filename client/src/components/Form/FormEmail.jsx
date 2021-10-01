@@ -6,7 +6,6 @@ const FormEmail = ({ label, name, value, handleChange, placeholder }) => {
                 id={name}
                 name={name}
                 placeholder={placeholder || name}
-                // placeholder={placeholder ? `${name} ${placeholder}` : name}
                 className="form__input"
                 value={value}
                 onChange={handleChange}

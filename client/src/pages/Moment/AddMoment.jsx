@@ -32,7 +32,6 @@ const AddMoment = () => {
         ...momentData,
     });
 
-    // console.log(defaultMomentData);
     let { moments } = state;
     let moment = currentMomentId
         ? moments.find((moment) => moment._id === currentMomentId)
@@ -64,7 +63,6 @@ const AddMoment = () => {
     };
 
     const handleSubmit = async () => {
-        // e.preventDefault();
         setLoading(true);
 
         const handleMomentSubmission = async () => {
@@ -97,7 +95,6 @@ const AddMoment = () => {
     };
 
     const reset = () => {
-        // setCurrentMomentId(null);
         setMomentData({ ...defaultMomentData });
     };
 

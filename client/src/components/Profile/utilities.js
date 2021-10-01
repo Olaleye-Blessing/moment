@@ -38,37 +38,31 @@ export let aboutProfile = (changedProfile) => [
     {
         icon: <IoWifiSharp className="text-white-secondary text-lg" />,
         text: `Followers `,
-        // value: `200`,
         value: changedProfile.followers.length,
     },
     {
         icon: <RiSignalTowerFill className="text-white-secondary text-lg" />,
         text: `Following `,
-        // value: `1`,
         value: changedProfile.following.length,
     },
     {
         icon: <ImTwitter className="text-social-twitter mr-3" />,
         value: changedProfile.twitter,
         link: `https://www.twitter.com/${changedProfile.twitter}`,
-        // classStyle: "twitter",
     },
     {
         icon: <VscGithubInverted className="text-social-github mr-3" />,
         value: changedProfile.github,
         link: `https://github.com/${changedProfile.github}`,
-        // classStyle: "github",
     },
     {
         icon: <FiInstagram className="text-social-instagram mr-3" />,
         value: changedProfile.instagram,
         link: `https://www.instagram.com/${changedProfile.instagram}`,
-        // classStyle: "instagram",
     },
     {
         icon: <FiLinkedin className="text-social-linkedin mr-3" />,
         value: changedProfile.linkedin,
         link: `https://www.linkedin.com/${changedProfile.instagram}`,
-        // classStyle: "instagram",
     },
 ];

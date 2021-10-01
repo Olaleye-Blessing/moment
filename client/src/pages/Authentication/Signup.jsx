@@ -1,23 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-// import {
-//     AiFillExclamationCircle,
-//     AiFillCheckCircle,
-// } from "react-icons/ai";
-
-// import FormFile from "../../components/Form/FormFile";
 import FormText from "../../components/Form/FormText";
 import useSignUpForm from "../../hook/useSignUpForm";
-// import { actions } from "../../reducer/actions";
-// import { signup } from "../../reducer/fetchActions";
-// import { imagesToBase64 } from "../../utilities/imageToBase64";
 import validateInfo from "../../utilities/Form/validateSignUpInfo";
 import validatePasswordErrors from "../../utilities/Form/validatePassword";
 import ToggleButton from "../../components/ToggleButton";
-// import ProcessIndicator from "../../components/ProcessIndicator";
 import FormHomeLogo from "../../components/Form/FormHomeLogo";
 import FormErrorMsg from "../../components/Form/FormErrorMsg";
-// import Button from "../../components/Button/Button";
 import FormContainer from "../../components/Form/FormContainer";
 import SubmitButton from "../../components/Button/SubmitButton";
 

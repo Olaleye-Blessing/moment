@@ -22,9 +22,7 @@ router.use(protect);
 router.use(checkRequestIdIsUserId);
 
 router.patch("/editAbout/:id", editAbout, updateProfile);
-// router.route("/:id").patch(updateProfile);
 
-// router.patch("/follow", followProfile, updateProfile);
 router.patch("/follow", followProfile);
 
 export default router;

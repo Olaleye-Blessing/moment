@@ -1,32 +1,15 @@
-// import { NavLink } from "react-router-dom";
-// import { BsSearch } from "react-icons/bs";
-// import { IoMdNotifications } from "react-icons/io";
-// import { AiOutlinePlus } from "react-icons/ai";
 import { useEffect, useRef } from "react";
-// import { BsPerson } from "react-icons/bs";
-// import { GiHamburgerMenu } from "react-icons/gi";
 
 import HomeLogo from "../HomeLogo";
-// import Avatar from "../Avatar";
-// import mjImg from "./../../data/images/mj1.jpg";
 import { useMomentContext } from "../../context/MomentsContext";
 import { actions } from "../../reducer/actions";
-// import { logout } from "../../reducer/fetchActions/auth";
-// import NavLinkItem from "./NavLinkItem";
-// import NavLinkItem from "./NavLinkItem";
-// import NavLinkItem from "./NavLinkItem";
-// import Button from "../Button/Button";
 import { getData } from "../../reducer/fetchActions";
-// import { links } from "./links";
-// import NavAuthenticatedUser from "./NavAuthenticatedUser";
-// import NavNotAuthenticated from "./NavNotAuthenticated";
 import NavAuthentication from "./NavAuthentication";
 import NavSitePagesAction from "./NavSitePagesAction";
 import NavHamburgerBtn from "./NavHamburgerBtn";
 import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
-    // let history = useHistory();
     let { pathname } = useLocation();
 
     let {
@@ -36,7 +19,6 @@ const Navbar = () => {
         showAsideProfNav,
         setShowAsideProfNav,
     } = useMomentContext();
-    // console.log(state);
 
     let { user } = state;
 
@@ -52,7 +34,6 @@ const Navbar = () => {
     };
 
     const logoutUser = async (e) => {
-        // let res = await logout();
         let res = await getData(`/auth/logout`);
         if (res.status === "success") {
             dispatch({ type: actions.LOGOUT, payload: res });

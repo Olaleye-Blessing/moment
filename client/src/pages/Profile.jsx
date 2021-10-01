@@ -2,21 +2,10 @@ import { Link, useLocation, useParams } from "react-router-dom";
 
 import { useMomentContext } from "../context/MomentsContext";
 import { AiFillCamera } from "react-icons/ai";
-// import { MdWork } from "react-icons/md";
-// import { IoSchoolSharp } from "react-icons/io5";
-// import { AiFillHome } from "react-icons/ai";
-// import { GoLocation } from "react-icons/go";
-// import { BsClock } from "react-icons/bs";
-// import { IoWifiSharp } from "react-icons/io5";
-// import { RiSignalTowerFill } from "react-icons/ri";
 import { useEffect, useState } from "react";
-// import FormText from "../components/Form/FormText";
 import Modal from "../components/Modal";
 import { getProfile, updateAbout } from "../reducer/fetchActions/user";
 import { actions } from "../reducer/actions";
-// import { ImTwitter } from "react-icons/im";
-// import { VscGithubInverted } from "react-icons/vsc";
-// import { FiInstagram, FiLinkedin } from "react-icons/fi";
 import defaultImage from "./../asset/images/momentDefaultImg.JPG";
 import Button from "./../components/Button/Button";
 import ButtonIcon from "../components/Button/ButtonIcon";
@@ -34,8 +23,6 @@ import { handleLikeMoment } from "../utilities/Moment/handleLikeMoment";
 import getUserHasLiked from "../utilities/Moment/getUserHasLiked";
 import ProcessIndicator from "../components/ProcessIndicator";
 import { getUserIsFollowing } from "../utilities/Profile/getUserIsFollowing";
-
-// RiSignalTowerFill -- following
 
 const Profile = () => {
     let { pathname } = useLocation();
@@ -67,18 +54,11 @@ const Profile = () => {
         } catch (error) {
             console.clear();
             console.log(error);
-            // changeLoadingAndError(false, error);
             changeLoadingAndError(false, error.message);
         }
     };
 
     useEffect(() => {
-        // if (user?._id === id) {
-        //     changeLoadingAndError(false);
-        //     setProfile(user);
-        //     setChangedProfile(user);
-        //     return;
-        // }
         fetchProfile();
 
         return () => abortFetch.abort();
@@ -103,7 +83,6 @@ const Profile = () => {
     };
 
     if (profileLoading) {
-        // return <div>Loading....</div>;
         return (
             <ProcessIndicator
                 parentExtraClass="w-full h-80"
@@ -122,7 +101,6 @@ const Profile = () => {
     let about = aboutProfile(changedProfile);
 
     const handleSubmitAbout = async () => {
-        // e.preventDefault();
         toggleModal(false);
 
         //+ in case someone manipulates your code to edit someone's data
@@ -141,9 +119,6 @@ const Profile = () => {
             //? test revert
             // await updateAbout(`${user._id}k`, changedProfile);
         } catch (error) {
-            // dispatch({ type: actions.ERROR, payload: error });
-            // toast.error(error);
-
             //? revert changes if there is an error
             setChangedProfile({ ...profile });
 
@@ -184,7 +159,6 @@ const Profile = () => {
         if (!result) return;
 
         let resultedMoment = result.moment;
-        // dispatch({ type: actions.LIKE_MOMENT, payload: moment });
         dispatch({ type: actions.LIKE_MOMENT, payload: resultedMoment });
 
         let newLikedMoment = [...allUserMoments].map((userMoment) =>
@@ -254,7 +228,6 @@ const Profile = () => {
                                 ) : (
                                     <Button
                                         onClick={handleFollow}
-                                        // text="follow"
                                         text={
                                             getUserIsFollowing(
                                                 user,

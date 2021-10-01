@@ -35,9 +35,6 @@ const useFetch = (url, signal) => {
     useEffect(() => {
         if (!url) return;
 
-        // let abortFetch = new AbortController();
-        // let signal = abortFetch.signal;
-
         const fetchingData = async () => {
             dispatch({ type: "FETCHING" });
             let data;
@@ -59,7 +56,6 @@ const useFetch = (url, signal) => {
 
         fetchingData();
 
-        // return () => abortFetch.abort();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [url]);
 

@@ -1,18 +1,11 @@
-// import { Link, NavLink } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
-// import { BiUserPlus } from "react-icons/bi";
 import { FaQuestion } from "react-icons/fa";
-// import { BsInfoCircle, BsEyeFill, BsPerson } from "react-icons/bs";
 import { BsInfoCircle, BsEyeFill } from "react-icons/bs";
 import { useMomentContext } from "../../context/MomentsContext";
-// import Avatar from "../Avatar";
 
 import { AiOutlineTags } from "react-icons/ai";
 import { BsPerson } from "react-icons/bs";
-// import NavLinkItem from "../Navbar/NavLinkItem";
-// import CloseButton from "../Button/CloseButton";
 
-// import { socialmedia } from "./AsideProfile/siteSocialmedia";
 import CloseAsideBtn from "./CloseAsideBtn";
 import NotAuthenticatedMessage from "./AsideProfile/NotAuthenticatedMessage";
 import AsideListSitePages from "./AsideProfile/AsideListSitePages";

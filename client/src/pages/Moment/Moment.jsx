@@ -41,14 +41,11 @@ const Moment = () => {
     let { moments, user } = state;
 
     const [moment, setMoment] = useState(null);
-    // const [loading, setLoading] = useState(true);
-    // const [error, setError] = useState(false);
     const [submitComment, setSubmitComment] = useState(false);
 
     let abortMoment = new AbortController();
     let signal = abortMoment.signal;
 
-    // const getMoment = () => moments.find((moment) => moment._id === id) || null;
     const getMoment = () => moments.find((moment) => moment._id === id);
 
     // this covers all cases of either app has been initialised, a moment that is not part of context moments is searched for or a moment from a profile is clicked
@@ -61,10 +58,6 @@ const Moment = () => {
     } = useFetch(url, signal);
 
     useEffect(() => {
-        // if (moments.length !== 0) {
-        //     console.log("initialized");
-        //     setMoment(getMoment());
-        // }
         if (momentFound) {
             // moment is among state context moments
             setMoment(getMoment());
@@ -72,41 +65,11 @@ const Moment = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     useEffect(() => {
-        // if (status !== "fetched" || moments.length !== 0) return;
         if (status !== "fetched" || momentFound) return;
-        // console.log("not found");
 
         setMoment(data);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
-    // console.log(moments);
-    // console.log({ getMoment: getMoment() });
-
-    // return null;
-    // const fetchMoment = async () => {
-    //     try {
-    //         let response = await momentDetails(id, signal);
-    //         setMoment(response.data);
-    //         setLoading(false);
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // };
-    // useEffect(() => {
-    //     if (moments.length > 0) {
-    //         // console.log("useEffect");
-    //         // console.log(moments);
-    //         // console.log({ getMoment: getMoment() });
-    //         setMoment(getMoment());
-    //         setLoading(false);
-    //     } else {
-    //         fetchMoment();
-    //     }
-    //     setMoment(getMoment());
-
-    //     return () => abortMoment.abort();
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []);
 
     const scrollToComment = () => {
         let commentHeader = document.getElementById("comments");
@@ -133,18 +96,12 @@ const Moment = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [moment]);
 
-    // if (loading) return <LoadingIndicator />;
-
-    // if (moment === null) return <Redirect to="/NotFound" />;
-
     if (status === "idle" && moments.length === 0) return null;
 
-    // if (status === "fetching") return <LoadingIndicator />;
     if (status === "fetching") return <main>Loading....</main>;
 
     if (state === "error") return <main>There is an error</main>;
 
-    // console.log(moment);
     if (!moment) return null;
 
     let {
@@ -158,7 +115,6 @@ const Moment = () => {
         tags,
         likes,
     } = moment;
-    // console.log(moment);
 
     let {
         profilePic,
@@ -195,12 +151,9 @@ const Moment = () => {
             moment: momentId,
         };
 
-        // console.log(data);
         setSubmitComment(true);
         try {
-            // let res = await createComment(JSON.stringify(data));
             let res = await createComment(data);
-            // console.log(res);
             dispatch({
                 type: actions.CREATE_COMMENT,
                 payload: res.data.comment,
@@ -234,9 +187,6 @@ const Moment = () => {
         }
     };
 
-    // const getUserHasLiked = () =>
-    //     user && likes.find((likeId) => user._id === likeId);
-
     const handleLikeClicked = async (e) => {
         let result = handleLikeMoment(user, moment);
 
@@ -244,16 +194,13 @@ const Moment = () => {
 
         let resultedMoment = result.moment;
         setMoment(resultedMoment);
-        // setMoment({ ...moment, likes });
 
         dispatch({
             type: actions.LIKE_MOMENT,
-            // payload: { ...moment, likes },
             payload: resultedMoment,
         });
 
         try {
-            // await updateData(`/moments/like/${moment._id}`, {});
             await updateData(`/moments/like/${resultedMoment._id}`, {});
         } catch (error) {
             console.log(error);
@@ -291,7 +238,6 @@ const Moment = () => {
             console.log(error);
         }
     };
-    // console.log(creator);
 
     return (
         <div className="md:ml-14 lg:flex lg:items-start lg:gap-4">
@@ -337,7 +283,6 @@ const Moment = () => {
                         <li>
                             <LikeButton
                                 likes={likes}
-                                // liked={userHasLiked}
                                 liked={getUserHasLiked(user, likes)}
                                 onClick={handleLikeClicked}
                                 extraClass="text-lg"
@@ -398,7 +343,6 @@ const Moment = () => {
                             <Avatar extraClass="bg-black flex-shrink-1 min-w-fg" />
                             <form className="flex-1" onSubmit={handleSubmit}>
                                 <FormTextArea
-                                    // name="comment"
                                     extraClass="mb-0"
                                     value={comment}
                                     handleChange={(e) =>
@@ -468,7 +412,6 @@ const Moment = () => {
                             userName={username}
                             createdAt={createdAt}
                             id={creatorId}
-                            // extraClass=""
                         />
                     </header>
                     {creator.bio && (

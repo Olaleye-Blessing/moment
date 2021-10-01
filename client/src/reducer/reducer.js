@@ -1,12 +1,8 @@
 /* eslint-disable default-case */
 import { actions } from "./actions";
 export const reducer = (state, action) => {
-    // console.log(state);
-    // console.log(action);
-    // console.log(action.payload);
     switch (action.type) {
         case actions.FETCH_ALL:
-            // console.log({ ...state });
             return {
                 ...state,
                 moments: [...action.payload.totalMoments],
@@ -16,7 +12,6 @@ export const reducer = (state, action) => {
 
         case actions.CREATE_MOMENT:
             let newcreatedMoment = { ...action.payload, comments: [] };
-            // return { ...state, moments: [...state.moments, newcreatedMoment] };
             return {
                 ...state,
                 moments: [newcreatedMoment, ...state.moments],
@@ -57,7 +52,6 @@ export const reducer = (state, action) => {
             if (oldMoment) {
                 oldMoment.comments = [...oldMoment.comments, action.payload];
             }
-            // oldMoment.comments = [...oldMoment.comments, action.payload];
 
             return { ...state, moments: oldMoments };
     }

@@ -11,8 +11,6 @@ export const preventUnnecessaryKeys = (e) => {
         case "ArrowLeft":
         case "ArrowDown":
         case "ArrowUp":
-            // case "":
-            // case "":
             return;
     }
     return true;

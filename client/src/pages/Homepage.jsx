@@ -85,15 +85,12 @@ const Homepage = () => {
         }
     };
     const scrollToMoment = (id) => {
-        // console.log("yes");
         history.push(`/#${id}`);
     };
 
-    // console.log({ currentMomentPage, totalMomentPages });
     return (
         <>
             <MainContent
-                // abortControl={abortFetch}
                 currentMomentPage={currentMomentPage}
                 deleteMoment={deleteMoment}
                 handleLikeClicked={handleLikeClicked}

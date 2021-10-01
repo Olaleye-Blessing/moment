@@ -17,7 +17,6 @@ const Moment = ({
     getUserHasLiked,
     scrollToMoment,
 }) => {
-    // let { setCurrentMomentId, state, dispatch } = useMomentContext();
     let { setCurrentMomentId, state } = useMomentContext();
     let history = useHistory();
 
@@ -95,7 +94,6 @@ const Moment = ({
                             <li>
                                 <DeleteBasketButton
                                     onClick={(e) => {
-                                        // e.preventDefault();
                                         e.stopPropagation();
                                         deleteMoment(moment);
                                     }}
