@@ -291,19 +291,18 @@ const Profile = () => {
                             @{username}
                         </small>
                     </header>
-                    {bio && (
-                        <div className="px-4 text-center mx-auto max-w-2xl pb-3">
-                            <p className="text-center mb-1 text-white text-opacity-90">
-                                {bio}
-                            </p>
-                            {authorize && (
-                                <Button
-                                    text="edit bio"
-                                    extraClass="text-green-secondary text-center mx-auto block hover:underline hover:opacity-90"
-                                />
-                            )}
-                        </div>
-                    )}
+                    <div className={`px-4 text-center mx-auto max-w-2xl pb-3`}>
+                        <p className="text-center mb-1 text-white text-opacity-90">
+                            {bio || "No bio"}
+                        </p>
+                        {authorize && (
+                            <Button
+                                text="edit bio"
+                                extraClass="text-green-secondary text-center mx-auto block hover:underline hover:opacity-90"
+                            />
+                        )}
+                    </div>
+
                     {authorize && (
                         <div className="w-max ml-auto mr-4">
                             <Link
@@ -315,8 +314,8 @@ const Profile = () => {
                         </div>
                     )}
                 </section>
-                <div className="px-4 sm:flex sm:gap-5 sm:items-start sm:justify-start md:gap-6 max-w-3xl mx-auto">
-                    <div className="sm:min-w-sm sm:w-full max-w-xs sm:px-0">
+                <div className="px-4 sm:flex sm:gap-5 sm:items-start sm:justify-start md:gap-6 max-w-4xl mx-auto">
+                    <div className="sm:min-w-sm sm:w-full sm:px-0 sm:sticky sm:top-20">
                         <section className="box-shadow bg-black-subtle rounded py-4 px-4">
                             <h4 className="mb-4">About</h4>
                             <ul className="">
@@ -370,26 +369,6 @@ const Profile = () => {
                                     </li>
                                 )}
                             </ul>
-                            {showModal && (
-                                <Modal
-                                    title="Edit About"
-                                    toggleModal={closeModal}
-                                >
-                                    <FormContainer onSubmit={handleSubmitAbout}>
-                                        <EditAboutFormContent
-                                            changedProfile={changedProfile}
-                                            onChange={onChange}
-                                        />
-                                        <div className="flex items-center justify-center">
-                                            <ResetButton
-                                                onClick={closeModal}
-                                                text="Cancel"
-                                            />
-                                            <SubmitButton text="Save" />
-                                        </div>
-                                    </FormContainer>
-                                </Modal>
-                            )}
                         </section>
                     </div>
                     <div className="md:mr-auto sm:w-full lg:max-w-2xl">
@@ -408,6 +387,20 @@ const Profile = () => {
                     </div>
                 </div>
             </main>
+            {showModal && (
+                <Modal title="Edit About" toggleModal={closeModal}>
+                    <FormContainer onSubmit={handleSubmitAbout}>
+                        <EditAboutFormContent
+                            changedProfile={changedProfile}
+                            onChange={onChange}
+                        />
+                        <div className="flex items-center justify-center">
+                            <ResetButton onClick={closeModal} text="Cancel" />
+                            <SubmitButton text="Save" />
+                        </div>
+                    </FormContainer>
+                </Modal>
+            )}
         </>
     );
 };
