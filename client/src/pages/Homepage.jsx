@@ -24,11 +24,6 @@ const Homepage = () => {
 
     let abortFetch = new AbortController();
 
-    console.log({
-        initialPage: currentMomentPage,
-        initialTotal: totalMomentPages,
-    });
-    // console.log("----------");
     let {
         totalData: totalMoments,
         status,

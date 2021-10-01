@@ -48,9 +48,12 @@ const Moment = () => {
     let abortMoment = new AbortController();
     let signal = abortMoment.signal;
 
-    const getMoment = () => moments.find((moment) => moment._id === id) || null;
+    // const getMoment = () => moments.find((moment) => moment._id === id) || null;
+    const getMoment = () => moments.find((moment) => moment._id === id);
 
-    let url = moments.length === 0 && `/moments/${id}`;
+    // this covers all cases of either app has been initialised, a moment that is not part of context moments is searched for or a moment from a profile is clicked
+    let momentFound = Boolean(getMoment());
+    let url = !momentFound && `/moments/${id}`;
     let {
         status,
         error,
@@ -58,15 +61,20 @@ const Moment = () => {
     } = useFetch(url, signal);
 
     useEffect(() => {
-        if (moments.length !== 0) {
-            console.log("initialized");
+        // if (moments.length !== 0) {
+        //     console.log("initialized");
+        //     setMoment(getMoment());
+        // }
+        if (momentFound) {
+            // moment is among state context moments
             setMoment(getMoment());
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     useEffect(() => {
-        if (status !== "fetched" || moments.length !== 0) return;
-        console.log("not initialized");
+        // if (status !== "fetched" || moments.length !== 0) return;
+        if (status !== "fetched" || momentFound) return;
+        // console.log("not found");
 
         setMoment(data);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -136,7 +144,7 @@ const Moment = () => {
 
     if (state === "error") return <main>There is an error</main>;
 
-    console.log(moment);
+    // console.log(moment);
     if (!moment) return null;
 
     let {
@@ -150,12 +158,35 @@ const Moment = () => {
         tags,
         likes,
     } = moment;
+    // console.log(moment);
 
-    let { profilePic, name, _id: creatorId, username } = creator;
+    let {
+        profilePic,
+        name,
+        _id: creatorId,
+        username,
+        lives: location,
+        education,
+        work,
+        followers,
+        following,
+    } = creator;
+
+    let creatorSubdetail = [
+        { header: "Location", text: location },
+        { header: "Education", text: education },
+        { header: "Work", text: work },
+    ];
+
+    creatorSubdetail = creatorSubdetail.filter(({ text }) => text);
+
+    creatorSubdetail.push(
+        { header: "Following", text: following.length },
+        { header: "Followers", text: followers.length }
+    );
 
     tags = [...new Set([...tags])];
     message = message.split("\n").filter((msg) => msg !== "");
-    // console.log(message);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -174,7 +205,7 @@ const Moment = () => {
                 type: actions.CREATE_COMMENT,
                 payload: res.data.comment,
             });
-            if (moments.length === 0) {
+            if (!momentFound) {
                 setMoment((prev) => ({
                     ...prev,
                     comments: [...prev.comments, res.data.comment],
@@ -260,6 +291,7 @@ const Moment = () => {
             console.log(error);
         }
     };
+    // console.log(creator);
 
     return (
         <div className="md:ml-14 lg:flex lg:items-start lg:gap-4">
@@ -427,19 +459,33 @@ const Moment = () => {
                     )}
                 </section>
             </main>
-            <aside className="mt-5 border border-green-dark rounded-md py-4 px-5 md:px-12 lg:m-0 lg:px-5 lg:self-start lg:sticky lg:top-24 lg:min-w-sm lg:flex-shrink-0">
+            <aside className="mt-5 border border-green-dark rounded-md py-7 px-5 md:px-12 lg:m-0 lg:px-5 lg:self-start lg:sticky lg:top-24 lg:min-w-sm lg:flex-shrink-1 lg:max-w-xs">
                 <section>
                     <header>
                         <AvatarUserCreatedAt
                             profilePic={profilePic}
                             name={name}
-                            userName="blexxy"
+                            userName={username}
                             createdAt={createdAt}
                             id={creatorId}
                             // extraClass=""
                         />
                     </header>
-                    {creator.bio && <p>{creator.bio}</p>}
+                    {creator.bio && (
+                        <p className="text-opacity-90 text-white">
+                            {creator.bio}
+                        </p>
+                    )}
+                    <ul className="mt-5">
+                        {creatorSubdetail.map(({ text, header }) => (
+                            <li key={header} className="mb-5">
+                                <div className="text-white-secondary text-lg font-semibold">
+                                    {header}
+                                </div>
+                                <div className="capitalize">{text}</div>
+                            </li>
+                        ))}
+                    </ul>
                     <div className="mt-4">
                         {!user || user._id === creatorId ? (
                             <Button
