@@ -5,6 +5,7 @@ const Moments = ({
     deleteMoment,
     handleLikeClicked,
     getUserHasLiked,
+    scrollToMoment,
 }) => {
     return (
         <>
@@ -16,6 +17,7 @@ const Moments = ({
                         deleteMoment={deleteMoment}
                         getUserHasLiked={getUserHasLiked}
                         handleLikeClicked={handleLikeClicked}
+                        scrollToMoment={scrollToMoment}
                     />
                 ))}
             </section>

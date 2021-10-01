@@ -7,7 +7,6 @@ const FormFile = ({ name, handleChange }) => {
                 name={name}
                 className="form__input"
                 accept="image/*"
-                // multiple
                 onChange={handleChange}
             />
             {/* <label htmlFor={name} className="form__label">

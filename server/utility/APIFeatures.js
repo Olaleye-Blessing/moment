@@ -76,8 +76,8 @@ export class APIFeatures {
         let { page, limit } = this.queryString;
         page = Number(page) || 1;
 
-        // limit = Number(limit) || 3; // testing purpose
-        limit = Number(limit) || 50;
+        limit = Number(limit) || 3; // testing purpose
+        // limit = Number(limit) || 50;
         let skip = (page - 1) * limit;
 
         this.query = this.query.skip(skip).limit(limit);

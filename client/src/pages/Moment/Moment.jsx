@@ -29,51 +29,47 @@ import getUserHasLiked from "../../utilities/Moment/getUserHasLiked";
 import { handleLikeMoment } from "../../utilities/Moment/handleLikeMoment";
 import toast from "react-hot-toast";
 import { getUserIsFollowing } from "../../utilities/Profile/getUserIsFollowing";
+import useFetch from "./../../hook/useFetch";
+import EditPenIconButton from "../../components/Button/EditPenIconButton";
 
 const Moment = () => {
     let history = useHistory();
     let { id } = useParams();
     let { hash } = useLocation();
-    let { state, dispatch } = useMomentContext();
+    let { state, dispatch, setCurrentMomentId } = useMomentContext();
     const [comment, setComment] = useState("");
     let { moments, user } = state;
 
     const [moment, setMoment] = useState(null);
-    const [loading, setLoading] = useState(true);
-    // const [error, setError] = useState(false);
     const [submitComment, setSubmitComment] = useState(false);
 
     let abortMoment = new AbortController();
     let signal = abortMoment.signal;
 
-    const getMoment = () => moments.find((moment) => moment._id === id) || null;
-    // console.log(moments);
-    // console.log({ getMoment: getMoment() });
+    const getMoment = () => moments.find((moment) => moment._id === id);
 
-    const fetchMoment = async () => {
-        try {
-            let response = await momentDetails(id, signal);
-            setMoment(response.data);
-            setLoading(false);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    // this covers all cases of either app has been initialised, a moment that is not part of context moments is searched for or a moment from a profile is clicked
+    let momentFound = Boolean(getMoment());
+    let url = !momentFound && `/moments/${id}`;
+    let {
+        status,
+        error,
+        data: { data },
+    } = useFetch(url, signal);
+
     useEffect(() => {
-        if (moments.length > 0) {
-            // console.log("useEffect");
-            // console.log(moments);
-            // console.log({ getMoment: getMoment() });
+        if (momentFound) {
+            // moment is among state context moments
             setMoment(getMoment());
-            setLoading(false);
-        } else {
-            fetchMoment();
         }
-        setMoment(getMoment());
-
-        return () => abortMoment.abort();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    useEffect(() => {
+        if (status !== "fetched" || momentFound) return;
+
+        setMoment(data);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data]);
 
     const scrollToComment = () => {
         let commentHeader = document.getElementById("comments");
@@ -100,9 +96,13 @@ const Moment = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [moment]);
 
-    if (loading) return <LoadingIndicator />;
+    if (status === "idle" && moments.length === 0) return null;
 
-    if (moment === null) return <Redirect to="/NotFound" />;
+    if (status === "fetching") return <main>Loading....</main>;
+
+    if (state === "error") return <main>There is an error</main>;
+
+    if (!moment) return null;
 
     let {
         _id: momentId,
@@ -116,11 +116,33 @@ const Moment = () => {
         likes,
     } = moment;
 
-    let { profilePic, name, _id: creatorId, username } = creator;
+    let {
+        profilePic,
+        name,
+        _id: creatorId,
+        username,
+        lives: location,
+        education,
+        work,
+        followers,
+        following,
+    } = creator;
+
+    let creatorSubdetail = [
+        { header: "Location", text: location },
+        { header: "Education", text: education },
+        { header: "Work", text: work },
+    ];
+
+    creatorSubdetail = creatorSubdetail.filter(({ text }) => text);
+
+    creatorSubdetail.push(
+        { header: "Following", text: following.length },
+        { header: "Followers", text: followers.length }
+    );
 
     tags = [...new Set([...tags])];
     message = message.split("\n").filter((msg) => msg !== "");
-    // console.log(message);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -129,16 +151,19 @@ const Moment = () => {
             moment: momentId,
         };
 
-        // console.log(data);
         setSubmitComment(true);
         try {
-            // let res = await createComment(JSON.stringify(data));
             let res = await createComment(data);
-            // console.log(res);
             dispatch({
                 type: actions.CREATE_COMMENT,
                 payload: res.data.comment,
             });
+            if (!momentFound) {
+                setMoment((prev) => ({
+                    ...prev,
+                    comments: [...prev.comments, res.data.comment],
+                }));
+            }
             setSubmitComment(false);
         } catch (error) {
             console.info(error);
@@ -162,9 +187,6 @@ const Moment = () => {
         }
     };
 
-    // const getUserHasLiked = () =>
-    //     user && likes.find((likeId) => user._id === likeId);
-
     const handleLikeClicked = async (e) => {
         let result = handleLikeMoment(user, moment);
 
@@ -172,16 +194,13 @@ const Moment = () => {
 
         let resultedMoment = result.moment;
         setMoment(resultedMoment);
-        // setMoment({ ...moment, likes });
 
         dispatch({
             type: actions.LIKE_MOMENT,
-            // payload: { ...moment, likes },
             payload: resultedMoment,
         });
 
         try {
-            // await updateData(`/moments/like/${moment._id}`, {});
             await updateData(`/moments/like/${resultedMoment._id}`, {});
         } catch (error) {
             console.log(error);
@@ -264,7 +283,6 @@ const Moment = () => {
                         <li>
                             <LikeButton
                                 likes={likes}
-                                // liked={userHasLiked}
                                 liked={getUserHasLiked(user, likes)}
                                 onClick={handleLikeClicked}
                                 extraClass="text-lg"
@@ -289,14 +307,22 @@ const Moment = () => {
                                 />
                             </li>
                             <li>
-                                <ButtonIcon
+                                <EditPenIconButton
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+
+                                        setCurrentMomentId(moment._id);
+                                        history.replace("/moment");
+                                    }}
+                                />
+                                {/* <ButtonIcon
                                     icon={<VscEdit />}
                                     extraClass="hover:text-green-primary md:text-xl"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         history.replace("/moment");
                                     }}
-                                />
+                                /> */}
                             </li>
                         </ul>
                     )}
@@ -317,7 +343,6 @@ const Moment = () => {
                             <Avatar extraClass="bg-black flex-shrink-1 min-w-fg" />
                             <form className="flex-1" onSubmit={handleSubmit}>
                                 <FormTextArea
-                                    // name="comment"
                                     extraClass="mb-0"
                                     value={comment}
                                     handleChange={(e) =>
@@ -378,19 +403,32 @@ const Moment = () => {
                     )}
                 </section>
             </main>
-            <aside className="mt-5 border border-green-dark rounded-md py-4 px-5 md:px-12 lg:m-0 lg:px-5 lg:self-start lg:sticky lg:top-24 lg:min-w-sm lg:flex-shrink-0">
+            <aside className="mt-5 border border-green-dark rounded-md py-7 px-5 md:px-12 lg:m-0 lg:px-5 lg:self-start lg:sticky lg:top-24 lg:min-w-sm lg:flex-shrink-1 lg:max-w-xs">
                 <section>
                     <header>
                         <AvatarUserCreatedAt
                             profilePic={profilePic}
                             name={name}
-                            userName="blexxy"
+                            userName={username}
                             createdAt={createdAt}
                             id={creatorId}
-                            // extraClass=""
                         />
                     </header>
-                    {creator.bio && <p>{creator.bio}</p>}
+                    {creator.bio && (
+                        <p className="text-opacity-90 text-white">
+                            {creator.bio}
+                        </p>
+                    )}
+                    <ul className="mt-5">
+                        {creatorSubdetail.map(({ text, header }) => (
+                            <li key={header} className="mb-5">
+                                <div className="text-white-secondary text-lg font-semibold">
+                                    {header}
+                                </div>
+                                <div className="capitalize">{text}</div>
+                            </li>
+                        ))}
+                    </ul>
                     <div className="mt-4">
                         {!user || user._id === creatorId ? (
                             <Button

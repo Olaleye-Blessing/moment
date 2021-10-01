@@ -1,46 +1,19 @@
-import {
-    createContext,
-    useContext,
-    // useEffect,
-    useReducer,
-    useRef,
-    useState,
-} from "react";
-// import { actions } from "../reducer/actions";
+import { createContext, useContext, useReducer, useRef, useState } from "react";
 import { reducer } from "../reducer/reducer";
 
 const MomentContent = createContext();
 
-// const initialState = {
-//     moments: [],
-//     user: JSON.parse(localStorage.getItem("profile")),
-// };
-
-// console.log("initialState", initialState);
-
 export const MomentsProvider = ({ children }) => {
-    // const [state, dispatch] = useReducer(reducer, initialState, () => {
-    //     return { moments: [] };
-    // });
-    // const [state, dispatch] = useReducer(reducer, initialState);
     const [state, dispatch] = useReducer(reducer, {
         moments: [],
         user: JSON.parse(localStorage.getItem("profile")),
+        currentMomentPage: 1,
+        totalMomentPages: 1,
     });
     const [showAsideProfNav, setShowAsideProfNav] = useState(false);
     const asideProfRef = useRef(null);
 
-    // const showAsideProfNavNow = (show) => {
-    //     setShowAsideProfNav(show);
-    // };
-
-    // console.log(state.moments);
     const [currentMomentId, setCurrentMomentId] = useState(null);
-
-    // let momentBaseUrl =
-    //     process.env.NODE_ENV === "development"
-    //         ? "http://localhost:7000"
-    //         : "https://wahala-movie.herokuapp.com";
 
     return (
         <MomentContent.Provider
@@ -49,11 +22,9 @@ export const MomentsProvider = ({ children }) => {
                 dispatch,
                 currentMomentId,
                 setCurrentMomentId,
-                // momentBaseUrl,
                 asideProfRef,
                 showAsideProfNav,
                 setShowAsideProfNav,
-                // showAsideProfNavNow,
             }}
         >
             {children}

@@ -2,7 +2,6 @@
 /* eslint-disable no-throw-literal */
 
 import toast from "react-hot-toast";
-// import { handleToastNotification } from "./handleToastNotification";
 
 let headers = new Headers();
 headers.set("Content-type", "application/json;charset=utf-8");
@@ -33,7 +32,6 @@ export const fetchData = async (
                 error.message = `Please check your internt connection. Come back later if error persist!`;
             let message = error.message;
             toast.error(message);
-            // throw message;
             throw error;
         }
     }

@@ -57,7 +57,13 @@ const Search = () => {
 
     const abortFetch = new AbortController();
     let signal = abortFetch.signal;
-    let { loading, data, error } = useFiniteScroll(searchUrl, signal);
+    let {
+        totalData: data,
+        status: loading,
+        error,
+        page,
+        totalPages,
+    } = useFiniteScroll(searchUrl, signal);
 
     useEffect(() => {
         determineUrl(type, period, query);
@@ -157,7 +163,6 @@ const Search = () => {
     const handleLikeClicked = async (moment) => {
         // this is just to be sure that this function is working with post type(either personal(when included) or all)
         if (type === "users") return;
-        // console.log("like");
         let result = handleLikeMoment(user, moment);
 
         if (!result) return;
@@ -179,7 +184,7 @@ const Search = () => {
     };
 
     const displayResult = () => {
-        if (!data) return null;
+        if (loading === "idle") return null;
 
         return (
             <>
@@ -212,9 +217,16 @@ const Search = () => {
                             getUserHasLiked={getUserHasLiked}
                         />
                     )
-                ) : null}
-                {error && <div className="text-center">{error}</div>}
-                {loading && (
+                ) : (
+                    loading === "fetched" && (
+                        <div className="text-center">No result found</div>
+                    )
+                )}
+                {/* {error && <div className="text-center">{error}</div>} */}
+                {loading === "error" && (
+                    <div className="text-center">{error}</div>
+                )}
+                {loading === "fetching" && (
                     <div>
                         <ProcessIndicator
                             parentExtraClass="w-full h-80"

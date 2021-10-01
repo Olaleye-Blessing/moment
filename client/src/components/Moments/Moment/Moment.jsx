@@ -15,8 +15,8 @@ const Moment = ({
     deleteMoment,
     handleLikeClicked,
     getUserHasLiked,
+    scrollToMoment,
 }) => {
-    // let { setCurrentMomentId, state, dispatch } = useMomentContext();
     let { setCurrentMomentId, state } = useMomentContext();
     let history = useHistory();
 
@@ -37,6 +37,9 @@ const Moment = ({
 
     const showMomentDetail = (e) => {
         e.stopPropagation();
+        if (scrollToMoment) {
+            scrollToMoment(_id);
+        }
         history.push(`/moments/${_id}`);
     };
 
@@ -45,6 +48,7 @@ const Moment = ({
             className="box-shadow bg-black-subtle px-6 py-4 mb-8 transition-colors duration-500 cursor-pointer"
             tabIndex={0}
             onClick={showMomentDetail}
+            id={_id}
         >
             <AvatarUserCreatedAt
                 profilePic={profilePic}
@@ -90,7 +94,6 @@ const Moment = ({
                             <li>
                                 <DeleteBasketButton
                                     onClick={(e) => {
-                                        // e.preventDefault();
                                         e.stopPropagation();
                                         deleteMoment(moment);
                                     }}
@@ -117,6 +120,10 @@ const Moment = ({
             </div>
         </article>
     );
+};
+
+Moment.defaultProps = {
+    scrollToMoment: null,
 };
 
 export default Moment;

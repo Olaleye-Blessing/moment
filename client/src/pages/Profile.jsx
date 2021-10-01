@@ -2,21 +2,10 @@ import { Link, useLocation, useParams } from "react-router-dom";
 
 import { useMomentContext } from "../context/MomentsContext";
 import { AiFillCamera } from "react-icons/ai";
-// import { MdWork } from "react-icons/md";
-// import { IoSchoolSharp } from "react-icons/io5";
-// import { AiFillHome } from "react-icons/ai";
-// import { GoLocation } from "react-icons/go";
-// import { BsClock } from "react-icons/bs";
-// import { IoWifiSharp } from "react-icons/io5";
-// import { RiSignalTowerFill } from "react-icons/ri";
 import { useEffect, useState } from "react";
-// import FormText from "../components/Form/FormText";
 import Modal from "../components/Modal";
 import { getProfile, updateAbout } from "../reducer/fetchActions/user";
 import { actions } from "../reducer/actions";
-// import { ImTwitter } from "react-icons/im";
-// import { VscGithubInverted } from "react-icons/vsc";
-// import { FiInstagram, FiLinkedin } from "react-icons/fi";
 import defaultImage from "./../asset/images/momentDefaultImg.JPG";
 import Button from "./../components/Button/Button";
 import ButtonIcon from "../components/Button/ButtonIcon";
@@ -34,8 +23,6 @@ import { handleLikeMoment } from "../utilities/Moment/handleLikeMoment";
 import getUserHasLiked from "../utilities/Moment/getUserHasLiked";
 import ProcessIndicator from "../components/ProcessIndicator";
 import { getUserIsFollowing } from "../utilities/Profile/getUserIsFollowing";
-
-// RiSignalTowerFill -- following
 
 const Profile = () => {
     let { pathname } = useLocation();
@@ -67,18 +54,11 @@ const Profile = () => {
         } catch (error) {
             console.clear();
             console.log(error);
-            // changeLoadingAndError(false, error);
             changeLoadingAndError(false, error.message);
         }
     };
 
     useEffect(() => {
-        // if (user?._id === id) {
-        //     changeLoadingAndError(false);
-        //     setProfile(user);
-        //     setChangedProfile(user);
-        //     return;
-        // }
         fetchProfile();
 
         return () => abortFetch.abort();
@@ -103,7 +83,6 @@ const Profile = () => {
     };
 
     if (profileLoading) {
-        // return <div>Loading....</div>;
         return (
             <ProcessIndicator
                 parentExtraClass="w-full h-80"
@@ -122,7 +101,6 @@ const Profile = () => {
     let about = aboutProfile(changedProfile);
 
     const handleSubmitAbout = async () => {
-        // e.preventDefault();
         toggleModal(false);
 
         //+ in case someone manipulates your code to edit someone's data
@@ -141,9 +119,6 @@ const Profile = () => {
             //? test revert
             // await updateAbout(`${user._id}k`, changedProfile);
         } catch (error) {
-            // dispatch({ type: actions.ERROR, payload: error });
-            // toast.error(error);
-
             //? revert changes if there is an error
             setChangedProfile({ ...profile });
 
@@ -184,7 +159,6 @@ const Profile = () => {
         if (!result) return;
 
         let resultedMoment = result.moment;
-        // dispatch({ type: actions.LIKE_MOMENT, payload: moment });
         dispatch({ type: actions.LIKE_MOMENT, payload: resultedMoment });
 
         let newLikedMoment = [...allUserMoments].map((userMoment) =>
@@ -254,7 +228,6 @@ const Profile = () => {
                                 ) : (
                                     <Button
                                         onClick={handleFollow}
-                                        // text="follow"
                                         text={
                                             getUserIsFollowing(
                                                 user,
@@ -291,19 +264,18 @@ const Profile = () => {
                             @{username}
                         </small>
                     </header>
-                    {bio && (
-                        <div className="px-4 text-center mx-auto max-w-2xl pb-3">
-                            <p className="text-center mb-1 text-white text-opacity-90">
-                                {bio}
-                            </p>
-                            {authorize && (
-                                <Button
-                                    text="edit bio"
-                                    extraClass="text-green-secondary text-center mx-auto block hover:underline hover:opacity-90"
-                                />
-                            )}
-                        </div>
-                    )}
+                    <div className={`px-4 text-center mx-auto max-w-2xl pb-3`}>
+                        <p className="text-center mb-1 text-white text-opacity-90">
+                            {bio || "No bio"}
+                        </p>
+                        {authorize && (
+                            <Button
+                                text="edit bio"
+                                extraClass="text-green-secondary text-center mx-auto block hover:underline hover:opacity-90"
+                            />
+                        )}
+                    </div>
+
                     {authorize && (
                         <div className="w-max ml-auto mr-4">
                             <Link
@@ -315,8 +287,8 @@ const Profile = () => {
                         </div>
                     )}
                 </section>
-                <div className="px-4 sm:flex sm:gap-5 sm:items-start sm:justify-start md:gap-6 max-w-3xl mx-auto">
-                    <div className="sm:min-w-sm sm:w-full max-w-xs sm:px-0">
+                <div className="px-4 sm:flex sm:gap-5 sm:items-start sm:justify-start md:gap-6 max-w-4xl mx-auto">
+                    <div className="sm:min-w-sm sm:w-full sm:px-0 sm:sticky sm:top-20">
                         <section className="box-shadow bg-black-subtle rounded py-4 px-4">
                             <h4 className="mb-4">About</h4>
                             <ul className="">
@@ -370,26 +342,6 @@ const Profile = () => {
                                     </li>
                                 )}
                             </ul>
-                            {showModal && (
-                                <Modal
-                                    title="Edit About"
-                                    toggleModal={closeModal}
-                                >
-                                    <FormContainer onSubmit={handleSubmitAbout}>
-                                        <EditAboutFormContent
-                                            changedProfile={changedProfile}
-                                            onChange={onChange}
-                                        />
-                                        <div className="flex items-center justify-center">
-                                            <ResetButton
-                                                onClick={closeModal}
-                                                text="Cancel"
-                                            />
-                                            <SubmitButton text="Save" />
-                                        </div>
-                                    </FormContainer>
-                                </Modal>
-                            )}
                         </section>
                     </div>
                     <div className="md:mr-auto sm:w-full lg:max-w-2xl">
@@ -408,6 +360,20 @@ const Profile = () => {
                     </div>
                 </div>
             </main>
+            {showModal && (
+                <Modal title="Edit About" toggleModal={closeModal}>
+                    <FormContainer onSubmit={handleSubmitAbout}>
+                        <EditAboutFormContent
+                            changedProfile={changedProfile}
+                            onChange={onChange}
+                        />
+                        <div className="flex items-center justify-center">
+                            <ResetButton onClick={closeModal} text="Cancel" />
+                            <SubmitButton text="Save" />
+                        </div>
+                    </FormContainer>
+                </Modal>
+            )}
         </>
     );
 };

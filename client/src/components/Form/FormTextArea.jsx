@@ -15,8 +15,6 @@ const FormTextArea = ({
                 </label>
             )}
             <textarea
-                // className="rounded-sm pt-2 pb-2 pl-2 text-black border-b-2 border-current resize-none"
-                // rounded-sm pt-2 pb-2 pl-2 text-black focus:outline-none focus:ring-2 focus:ring-green-primary hover:bg-white transition hover:opacity-90
                 className={`form-input resize-none focus:ring-green-primary w-full`}
                 id={name}
                 name={name}

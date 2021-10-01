@@ -1,8 +1,4 @@
-// import toast from "react-hot-toast";
 import { FaRegHeart } from "react-icons/fa";
-// import { useMomentContext } from "../../context/MomentsContext";
-// import { actions } from "../../reducer/actions";
-// import { updateData } from "../../reducer/fetchActions";
 import Button from "./Button";
 import { ImHeart } from "react-icons/im";
 
